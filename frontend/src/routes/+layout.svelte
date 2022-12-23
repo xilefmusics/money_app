@@ -1,5 +1,8 @@
 <script>
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
+	import { goto } from "$app/navigation";
+	import getUser from '../lib/api/getUser';
 
 	let isOpen = true;
 	let innerWidth = 0;
@@ -37,6 +40,13 @@
 			href: '/logout'
 		}
 	];
+
+	onMount(async () => {
+		if ($page.url.pathname !== '/login' && !getUser()) {
+			goto('/login')
+		}
+    })
+
 </script>
 
 <svelte:window bind:innerWidth bind:innerHeight />

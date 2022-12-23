@@ -1,10 +1,19 @@
 <script>
 	import List from '../../lib/components/List.svelte';
+	import { onMount } from 'svelte';
+	import fetch from '../../lib/api/fetch'
 
-	export let data;
-	const debts = data.debts;
+	let debts = null
+    onMount(async () => {
+		let debtHistory = await (await fetch(`/api/history/debt`)).json();
+		debts = Object.keys(debtHistory[0]).filter(key => key !== 'date').map((key) => ({
+			'name': key,
+			'amount': debtHistory[0][key].value,
+		}));
+    })
 </script>
 
+{#if debts}
 <List
 	items={debts.map((debt) => ({
 		title: debt.name,
@@ -18,6 +27,7 @@
 		newBlock: null
 	}))}
 />
+{/if}
 
 <style>
 </style>

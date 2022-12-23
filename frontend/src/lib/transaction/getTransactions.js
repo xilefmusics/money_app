@@ -1,7 +1,8 @@
 import parseDate from '../general/parseDate';
+import fetch from '../api/fetch'
 
-export default async (filter, fetch) => {
-	let transactions = await (await fetch(`/transactions.json`)).json();
+export default async (filter) => {
+	let transactions = await (await fetch(`/api/transactions`)).json();
 
 	transactions.forEach((transaction) => {
 		transaction.date = new Date(transaction.date);

@@ -1,10 +1,29 @@
 <script>
 	import List from '../../lib/components/List.svelte';
+	import arrayToObject from '../../lib/general/arrayToObject';
+	import getTransactions from '../../lib/transaction/getTransactions';
+	import { onMount } from 'svelte';
 
-	export let data;
-	const transactions = data.transactions;
+	let transactions = null
+    onMount(async () => {
+        const filter = {}
+		let lastMonth = null;
+		const today = new Date();
+		transactions = (await getTransactions(filter)).map((transaction) => {
+			if (lastMonth !== transaction.date.getMonth()) {
+				transaction.newBlock = transaction.date.toLocaleString('en-US', { month: 'long' });
+				if (transaction.date.getFullYear() < today.getFullYear()) {
+					transaction.newBlock = transaction.newBlock + ' ' + transaction.date.getFullYear();
+				}
+			}
+			lastMonth = transaction.date.getMonth();
+			return transaction;
+		});
+    })
+
 </script>
 
+{#if transactions}
 <List
 	items={transactions.map((transaction) => ({
 		title:
@@ -25,6 +44,7 @@
 		newBlock: transaction.newBlock
 	}))}
 />
+{/if}
 
 <style>
 </style>

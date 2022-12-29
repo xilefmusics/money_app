@@ -1,46 +1,54 @@
 <script>
 	import Chart from '../../lib/components/Chart.svelte';
+	import { onMount } from 'svelte';
+	import fetch from '../../lib/api/fetch'
 
-	export let data;
-	const amountHistory = data.amountHistory;
+	let wealthHistory = null
+    onMount(async () => {
+		wealthHistory = (await (await fetch(`/api/history/wealth?len=18&month=3&year=0`)).json()).map(item => {
+			item.date = `${new Date(item.date).getMonth()+1}-${new Date(item.date).getFullYear()}`;
+			return item
+		})
+    })
 </script>
 
+{#if wealthHistory}
 <Chart
 	type="line"
 	data={{
-		labels: amountHistory.map((amount) => amount.date),
+		labels: wealthHistory.map((item) => item.date),
 		datasets: [
 			{
 				label: 'Sum',
-				data: amountHistory.map((amount) => amount.sum / 100),
+				data: wealthHistory.map((item) => item.sum.value / 100),
 				borderWidth: 1,
 				borderColor: 'blue',
 				backgroundColor: 'blue'
 			},
 			{
 				label: 'Real',
-				data: amountHistory.map((amount) => amount.real / 100),
+				data: wealthHistory.map((item) => item.real.value / 100),
 				borderWidth: 1,
 				borderColor: 'lightgreen',
 				backgroundColor: 'lightgreen'
 			},
 			{
 				label: 'Debt',
-				data: amountHistory.map((amount) => amount.debt / 100),
+				data: wealthHistory.map((item) => item.debt.value / 100),
 				borderWidth: 1,
 				borderColor: 'purple',
 				backgroundColor: 'purple'
 			},
 			{
 				label: 'In',
-				data: amountHistory.map((amount) => amount.income / 100),
+				data: wealthHistory.map((item) => item.in.value / 100),
 				borderWidth: 1,
 				borderColor: 'green',
 				backgroundColor: 'green'
 			},
 			{
 				label: 'Out',
-				data: amountHistory.map((amount) => amount.outcome / 100),
+				data: wealthHistory.map((item) => item.out.value / 100),
 				borderWidth: 1,
 				borderColor: 'red',
 				backgroundColor: 'red'
@@ -49,3 +57,4 @@
 		options: {}
 	}}
 />
+{/if}

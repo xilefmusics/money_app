@@ -60,7 +60,7 @@
 			amount: item.value,
 			color: item.value < 0 ? 'green' : item.value > 0 ? 'red' : 'gray',
 			link: null,
-			link2: `/transactions?budget=${item.value}`,
+			link2: `/transactions?budget=${item.name}`,
 			link3: null,
 			newBlock: null
 		}))}

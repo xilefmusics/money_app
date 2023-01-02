@@ -1,15 +1,18 @@
 <script>
 	import List from '../../lib/components/List.svelte';
-	import arrayToObject from '../../lib/general/arrayToObject';
-	import getTransactions from '../../lib/transaction/getTransactions';
+	import fetch from '../../lib/api/fetch'
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores'
 
 	let transactions = null
     onMount(async () => {
-        const filter = {}
+        const filter = $page.url.href.split("?")[1] ? "?" + $page.url.href.split("?")[1] : ""
 		let lastMonth = null;
 		const today = new Date();
-		transactions = (await getTransactions(filter)).map((transaction) => {
+		transactions = (await (await fetch(`/api/transactions${filter}`)).json()).map(transaction => {
+			transaction.date = new Date(transaction.date);
+			return transaction;
+		}).sort((a, b) => b.date - a.date).map(transaction => {
 			if (lastMonth !== transaction.date.getMonth()) {
 				transaction.newBlock = transaction.date.toLocaleString('en-US', { month: 'long' });
 				if (transaction.date.getFullYear() < today.getFullYear()) {

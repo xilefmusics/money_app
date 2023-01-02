@@ -18,7 +18,15 @@ func GetTransactions(gc *gin.Context) {
 		return
 	}
 
-	gc.IndentedJSON(http.StatusOK, globalData.GetTransactions(user))
+	podFilter := gc.DefaultQuery("pod", "*")
+	debtFilter := gc.DefaultQuery("debt", "*")
+	budgetFilter := gc.DefaultQuery("budget", "*")
+	inbudgetFilter := gc.DefaultQuery("inbudget", "*")
+	typeFilter := gc.DefaultQuery("type", "*")
+
+	transactions := transaction.Filter(globalData.GetTransactions(user), podFilter, debtFilter, budgetFilter, inbudgetFilter, typeFilter)
+
+	gc.IndentedJSON(http.StatusOK, transactions)
 }
 
 func GetPods(gc *gin.Context) {

@@ -20,6 +20,7 @@ func main() {
 
 	router := gin.New()
 	router.GET("/transactions", GetTransactions)
+	router.GET("/lint", Lint)
 	router.GET("/pods", GetPods)
 	router.GET("/debts", GetDebts)
 	router.GET("/budgets", GetBudgets)

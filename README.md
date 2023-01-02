@@ -16,6 +16,7 @@ The currently supported requests are
 |Endpoint|Method|Description|
 |--------|------|-----------|
 |/transactions|GET|Returns all transactions.|
+|/lint|GET|Returns all linting problems of transactions.|
 |/pods|GET|Returns all pods.|
 |/debts|GET|Returns all debts.|
 |/budgets|GET|Returns all budgets.|

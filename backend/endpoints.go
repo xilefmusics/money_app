@@ -30,6 +30,20 @@ func GetTransactions(gc *gin.Context) {
 	gc.IndentedJSON(http.StatusOK, transactions)
 }
 
+func Lint(gc *gin.Context) {
+	user, err := helper.GC2User(gc)
+	if err != nil {
+		log.Printf("ERROR: %s\n", err.Error())
+		gc.String(http.StatusInternalServerError, "501 Internal Server Error")
+		return
+	}
+
+	transactions := globalData.GetTransactions(user)
+	lint := transaction.LintTransactions(transactions)
+
+	gc.IndentedJSON(http.StatusOK, lint)
+}
+
 func GetPods(gc *gin.Context) {
 	user, err := helper.GC2User(gc)
 	if err != nil {

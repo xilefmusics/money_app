@@ -1,3 +1,3 @@
 export default () => {
-    return localStorage.getItem("username")
+	return localStorage.getItem('username');
 };

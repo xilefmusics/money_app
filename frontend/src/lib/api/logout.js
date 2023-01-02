@@ -1,4 +1,4 @@
 export default async () => {
-    localStorage.removeItem("token")
-    localStorage.removeItem("username")
+	localStorage.removeItem('token');
+	localStorage.removeItem('username');
 };

@@ -1,6 +1,17 @@
 <script>
+	import { onMount } from 'svelte';
+	import fetch from '../../../lib/api/fetch';
+
 	export let data;
-	const transaction = data.transaction;
+	const id = data.id;
+
+	let transaction = null;
+	onMount(async () => {
+		transaction = (await (await fetch(`/api/transactions?id=${id}`)).json()).map((transaction) => {
+			transaction.date = new Date(transaction.date);
+			return transaction;
+		})[0];
+	});
 </script>
 
 <div class="main">

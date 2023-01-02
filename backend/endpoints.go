@@ -23,8 +23,9 @@ func GetTransactions(gc *gin.Context) {
 	budgetFilter := gc.DefaultQuery("budget", "*")
 	inbudgetFilter := gc.DefaultQuery("inbudget", "*")
 	typeFilter := gc.DefaultQuery("type", "*")
+	idFilter := gc.DefaultQuery("id", "*")
 
-	transactions := transaction.Filter(globalData.GetTransactions(user), podFilter, debtFilter, budgetFilter, inbudgetFilter, typeFilter)
+	transactions := transaction.Filter(globalData.GetTransactions(user), podFilter, debtFilter, budgetFilter, inbudgetFilter, typeFilter, idFilter)
 
 	gc.IndentedJSON(http.StatusOK, transactions)
 }

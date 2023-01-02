@@ -17,6 +17,9 @@ func GenIntSeriesFromTransactions(timeSeries TimeSeries, transactions []transact
 		value += f(transaction, key)
 	}
 	result = append(result, value)
+	for len(result) < len(timeSeries) {
+		result = append(result, result[len(result)-1])
+	}
 	return result
 }
 

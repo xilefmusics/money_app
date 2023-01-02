@@ -49,10 +49,10 @@ func History(year, month, day, n int, kind Kind, transactions []transaction.Tran
 		})
 	case Pod:
 		return history(year, month, day, n, transactions, transaction.GetPods(transactions), func(t transaction.Transaction, key string) int {
-			if t.In() {
+			if t.Receiver == key {
 				return t.Amount
 			}
-			if t.Out() {
+			if t.Sender == key {
 				return -t.Amount
 			}
 			return 0

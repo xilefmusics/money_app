@@ -58,5 +58,5 @@ func (data *Data) Reindex(user string) {
 	data.transactions[user] = transactions
 
 	// TODO: change loading and add errorhandling
-	defer transaction.Save("../frontend/static/transactions.json", transactions)
+	transaction.Save("../frontend/static/transactions.json", transactions)
 }

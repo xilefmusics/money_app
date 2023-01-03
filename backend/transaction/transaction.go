@@ -130,6 +130,19 @@ func GetInbudgets(transactions []Transaction) []string {
 	return result
 }
 
+func GetTags(transactions []Transaction) []string {
+	result := []string{}
+	for _, transaction := range transactions {
+		for tag := range transaction.Tags {
+			if !slices.Contains(result, tag) {
+				result = append(result, tag)
+			}
+		}
+	}
+	sort.Strings(result)
+	return result
+}
+
 func GetPods(transactions []Transaction) []string {
 	result := []string{}
 	for _, transaction := range transactions {

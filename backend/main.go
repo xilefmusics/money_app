@@ -26,6 +26,7 @@ func main() {
 	router.GET("/debts", GetDebts)
 	router.GET("/budgets", GetBudgets)
 	router.GET("/inbudgets", GetInbudgets)
+	router.GET("/tags", GetTags)
 	router.GET("/history/:kind", GetHistory)
 	log.Fatal(http.ListenAndServe(":8080", router))
 }

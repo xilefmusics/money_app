@@ -9,11 +9,11 @@
 	let datasets = null;
 	onMount(async () => {
 		debtHistory = await (await fetch(`/api/history/debt?len=10&month=3&year=0`)).json();
-		debts = Object.keys(debtHistory[debtHistory.length-1])
+		debts = Object.keys(debtHistory[debtHistory.length - 1])
 			.filter((key) => key !== 'date')
 			.map((key) => ({
 				name: key,
-				amount: debtHistory[debtHistory.length-1][key].value
+				amount: debtHistory[debtHistory.length - 1][key].value
 			}));
 		datasets = debts
 			.map((item) => item.name)

@@ -113,6 +113,20 @@ func GetInbudgets(gc *gin.Context) {
 	gc.IndentedJSON(http.StatusOK, inbudget)
 }
 
+func GetTags(gc *gin.Context) {
+	user, err := helper.GC2User(gc)
+	if err != nil {
+		log.Printf("ERROR in GetTransactions: %s\n", err.Error())
+		gc.String(http.StatusInternalServerError, "501 Internal Server Error")
+		return
+	}
+
+	transactions := globalData.GetTransactions(user)
+	tags := transaction.GetTags(transactions)
+
+	gc.IndentedJSON(http.StatusOK, tags)
+}
+
 func GetHistory(gc *gin.Context) {
 	user, err := helper.GC2User(gc)
 	if err != nil {

@@ -22,6 +22,7 @@ The currently supported requests are
 |/debts|GET|Returns all debts.|
 |/budgets|GET|Returns all budgets.|
 |/inbudgets|GET|Returns all inbudgets.|
+|/tags|GET|Returns all tags.|
 |/history/debt|GET|Returns the history of debts.|
 |/history/budgets|GET|Returns the history of budgets.|
 |/history/inbudgets|GET|Returns the history of inbudgets.|

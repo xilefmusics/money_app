@@ -5,6 +5,8 @@ import (
 )
 
 func LintTransaction(transaction Transaction) (string, bool) {
+	// TODO: Check no inbudget if not in, no budget if not out and no debt if not in or out
+
 	if transaction.Out() {
 		budgetSum := transaction.BudgetSum("*")
 		debtSum := transaction.DebtSum("*")

@@ -5,33 +5,44 @@ import (
 )
 
 func LintTransaction(transaction Transaction) (string, bool) {
-	// TODO: Check no inbudget if not in, no budget if not out and no debt if not in or out
-
 	if transaction.Out() {
 		budgetSum := transaction.BudgetSum("*")
+		inbudgetSum := transaction.InbudgetSum("*")
 		debtSum := transaction.DebtSum("*")
-		schuldenreduzierung := transaction.BudgetSum("Schuldenreduzierung")
 
-		if budgetSum != transaction.Amount {
-			return fmt.Sprintf("%d: Invalid amounts: budgetSum (%d) != amount (%d)", transaction.ID, budgetSum, transaction.Amount), false
+		if budgetSum+debtSum != transaction.Amount {
+			return fmt.Sprintf("%d: Invalid amounts: budgetSum (%d) + debtSum (%d) != amount (%d)", transaction.ID, budgetSum, debtSum, transaction.Amount), false
 		}
 
-		if debtSum != schuldenreduzierung {
-			return fmt.Sprintf("%d: Invalid amounts: debtSum (%d) != budget Schuldenreduzierung (%d)", transaction.ID, debtSum, schuldenreduzierung), false
+		if inbudgetSum != 0 {
+			return fmt.Sprintf("%d: Invalid amounts: inbudgetSum (%d) != 0", transaction.ID, inbudgetSum), false
 		}
 	}
 
 	if transaction.In() {
+		budgetSum := transaction.BudgetSum("*")
 		inbudgetSum := transaction.InbudgetSum("*")
 		debtSum := transaction.DebtSum("*")
-		schuldenaufbau := transaction.InbudgetSum("Schuldenaufbau")
 
-		if inbudgetSum != transaction.Amount {
-			return fmt.Sprintf("%d: Invalid amounts: inbudgetSum (%d) != amount (%d)", transaction.ID, inbudgetSum, transaction.Amount), false
+		if inbudgetSum+debtSum != transaction.Amount {
+			return fmt.Sprintf("%d: Invalid amounts: inbudgetSum (%d) + debtSum (%d) != amount (%d)", transaction.ID, inbudgetSum, debtSum, transaction.Amount), false
 		}
 
-		if debtSum != schuldenaufbau {
-			return fmt.Sprintf("%d: Invalid amounts: debtSum (%d) != budget Schuldenaufbau (%d)", transaction.ID, debtSum, schuldenaufbau), false
+		if budgetSum != 0 {
+			return fmt.Sprintf("%d: Invalid amounts: budgetSum (%d) != 0", transaction.ID, budgetSum), false
+		}
+	}
+
+	if transaction.Type == "move" {
+		budgetSum := transaction.BudgetSum("*")
+		inbudgetSum := transaction.InbudgetSum("*")
+
+		if budgetSum != 0 {
+			return fmt.Sprintf("%d: Invalid amounts: budgetSum (%d) != 0", transaction.ID, budgetSum), false
+		}
+
+		if inbudgetSum != 0 {
+			return fmt.Sprintf("%d: Invalid amounts: inbudgetSum (%d) != 0", transaction.ID, inbudgetSum), false
 		}
 	}
 

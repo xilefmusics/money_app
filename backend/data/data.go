@@ -35,3 +35,28 @@ func (data *Data) GetTransactions(user string) []transaction.Transaction {
 	}
 	return transactions
 }
+
+func (data *Data) Reindex(user string) {
+	mutex, ok := data.transactionsMutex[user]
+	if !ok {
+		return
+	}
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	transactions, ok := data.transactions[user]
+	if !ok {
+		return
+	}
+
+	transaction.SortByDate(transactions)
+
+	for idx, _ := range transactions {
+		transactions[idx].ID = uint(idx)
+	}
+
+	data.transactions[user] = transactions
+
+	// TODO: change loading and add errorhandling
+	defer transaction.Save("../frontend/static/transactions.json", transactions)
+}

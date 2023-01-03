@@ -17,6 +17,7 @@ The currently supported requests are
 |--------|------|-----------|
 |/transactions|GET|Returns all transactions.|
 |/lint|GET|Returns all linting problems of transactions.|
+|/reindex|GET|Sorts transactions by date and overwrites the ID with the index.|
 |/pods|GET|Returns all pods.|
 |/debts|GET|Returns all debts.|
 |/budgets|GET|Returns all budgets.|

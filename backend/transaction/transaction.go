@@ -174,3 +174,13 @@ func Load(path string) ([]Transaction, error) {
 
 	return transactions, nil
 }
+
+func Save(path string, transactions []Transaction) error {
+	bytes, err := json.MarshalIndent(transactions, "", "  ")
+	if err != nil {
+		return err
+	}
+
+	ioutil.WriteFile(path, bytes, 0644)
+	return nil
+}

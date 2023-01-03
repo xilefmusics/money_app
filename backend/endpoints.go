@@ -44,6 +44,19 @@ func Lint(gc *gin.Context) {
 	gc.IndentedJSON(http.StatusOK, lint)
 }
 
+func Reindex(gc *gin.Context) {
+	user, err := helper.GC2User(gc)
+	if err != nil {
+		log.Printf("ERROR: %s\n", err.Error())
+		gc.String(http.StatusInternalServerError, "501 Internal Server Error")
+		return
+	}
+
+	globalData.Reindex(user)
+
+	gc.IndentedJSON(http.StatusOK, "")
+}
+
 func GetPods(gc *gin.Context) {
 	user, err := helper.GC2User(gc)
 	if err != nil {

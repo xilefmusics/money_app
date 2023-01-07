@@ -106,6 +106,21 @@
 		delete tags[name];
 		transaction.tags = tags;
 	};
+
+	const updateTransaction = () => {
+		let t = transaction
+
+		if (t.type !== "out") {
+			t.budgets = {}
+		}
+		if (t.type !== "in") {
+			t.inbudgets = {}
+		}
+
+		t.date = new Date(t.date)
+
+		console.log(t)
+	}
 </script>
 
 <div class="main">
@@ -176,7 +191,7 @@
 					<tr>
 						<td>{budget}</td>
 						<td>{transaction.budgets[budget]}</td>
-						<td><button on:click={removeBudget(budget)}>Delete</button></td>
+						<td><span on:click={removeBudget(budget)} class="material-icons-sharp">delete</span></td>
 					</tr>
 				{/each}
 				<tr>
@@ -199,7 +214,7 @@
 							oninput="validity.valid||(value='');"
 						/>
 					</td>
-					<td><button on:click={addBudget}>Add</button></td>
+					<td><span on:click={addBudget} class="material-icons-sharp">add</span></td>
 				</tr>
 			{/if}
 			<!-- Inbudgets -->
@@ -214,7 +229,7 @@
 					<tr>
 						<td>{inbudget}</td>
 						<td>{transaction.inbudgets[inbudget]}</td>
-						<td><button on:click={removeInbudget(inbudget)}>Delete</button></td>
+						<td><span on:click={removeInbudget(inbudget)} class="material-icons-sharp">delete</span></td>
 					</tr>
 				{/each}
 				<tr>
@@ -237,7 +252,7 @@
 							oninput="validity.valid||(value='');"
 						/>
 					</td>
-					<td><button on:click={addInbudget}>Add</button></td>
+					<td><span on:click={addInbudget} class="material-icons-sharp">add</span></td>
 				</tr>
 			{/if}
 			<!-- Debts -->
@@ -252,7 +267,7 @@
 					<tr>
 						<td>{debt}</td>
 						<td>{transaction.debts[debt]}</td>
-						<td><button on:click={removeDebt(debt)}>Delete</button></td>
+						<td><span on:click={removeDebt(debt)} class="material-icons-sharp">delete</span></td>
 					</tr>
 				{/each}
 				<tr>
@@ -275,7 +290,7 @@
 							oninput="validity.valid||(value='');"
 						/>
 					</td>
-					<td><button on:click={addDebt}>Add</button></td>
+					<td><span on:click={addDebt} class="material-icons-sharp">add</span></td>
 				</tr>
 			{/if}
 			<!-- Tags -->
@@ -289,7 +304,7 @@
 				<tr>
 					<td>{tag}</td>
 					<td>{transaction.tags[tag]}</td>
-					<td><button on:click={removeTag(tag)}>Delete</button></td>
+					<td><span on:click={removeTag(tag)} class="material-icons-sharp">delete</span></td>
 				</tr>
 			{/each}
 			<tr>
@@ -306,15 +321,35 @@
 				<td>
 					<input type="text" bind:value={newTagValue} placeholder="value" />
 				</td>
-				<td><button on:click={addTag}>Add</button></td>
+				<td><span on:click={addTag} class="material-icons-sharp">add</span></td>
 			</tr>
 		</table>
 	{/if}
+	<tr>
+		<td colspan=3>
+			<div class="btn" on:click={updateTransaction}>Update</div>
+		</td>
+	</tr>
 </div>
 
 <style>
 	.header {
 		font-weight: bold;
 		text-align: center;
+	}
+	input, select {
+		background-color: var(--fg1);
+		color: var(--bg2);
+	}
+	.btn {
+		background-color: var(--fg1);
+		color: var(--bg2);
+		padding: 0.2rem;
+		border-radius: 5%;
+		font-weight: bold;
+	}
+	.btn:hover {
+		background-color: var(--bg1);
+		color: var(--fg1);
 	}
 </style>

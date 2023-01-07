@@ -8,7 +8,7 @@
 	let podHistory = null;
 	let datasets = null;
 	onMount(async () => {
-		podHistory = await (await fetch(`/api/history/pod?len=10&month=3&year=0`)).json();
+		podHistory = await (await fetch(`/api/history/pod?len=26&month=3&year=0`)).json();
 		pods = Object.keys(podHistory[podHistory.length - 1])
 			.filter((key) => key !== 'date')
 			.map((key) => ({

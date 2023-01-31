@@ -1,18 +1,22 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
+	"xilefmusics.de/money-app/config"
 	"xilefmusics.de/money-app/data"
 )
 
 var globalData data.Data
 
 func main() {
-	d, err := data.New()
+	c := config.Load()
+
+	d, err := data.New(c.DataPath)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -28,5 +32,5 @@ func main() {
 	router.GET("/inbudgets", GetInbudgets)
 	router.GET("/tags", GetTags)
 	router.GET("/history/:kind", GetHistory)
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", c.Port), router))
 }

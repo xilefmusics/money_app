@@ -1,7 +1,7 @@
 .DS_Store
 scripts
+data
 
-frontend/static/transactions.json
 frontend/static/pods.json
 frontend/.DS_Store
 frontend/node_modules

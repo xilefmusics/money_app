@@ -1,6 +1,10 @@
 package data
 
 import (
+	"log"
+	"os"
+	"path/filepath"
+	"strings"
 	"sync"
 
 	"xilefmusics.de/money-app/transaction"
@@ -11,15 +15,26 @@ type Data struct {
 	transactionsMutex map[string]*sync.Mutex
 }
 
-func New() (Data, error) {
+func New(dataPath string) (Data, error) {
 	transactions := make(map[string][]transaction.Transaction)
 	transactionsMutex := make(map[string]*sync.Mutex)
 
-	// TODO: change loading and add errorhandling
-	transactions["xilef"], _ = transaction.Load("../frontend/static/transactions.json")
-	transactionsMutex["xilef"] = &sync.Mutex{}
+	err := filepath.Walk(dataPath, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
 
-	return Data{transactions, transactionsMutex}, nil
+		if filepath.Ext(info.Name()) == ".json" {
+			user := strings.TrimSuffix(info.Name(), filepath.Ext(info.Name()))
+			transactions[user], _ = transaction.Load(path)
+			transactionsMutex[user] = &sync.Mutex{}
+			log.Printf("INFO: Load data of user %s from path %s", user, path)
+		}
+
+		return nil
+	})
+
+	return Data{transactions, transactionsMutex}, err
 }
 
 func (data *Data) GetTransactions(user string) []transaction.Transaction {

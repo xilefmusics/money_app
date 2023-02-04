@@ -88,7 +88,7 @@
 		<nav>
 			<ul>
 				{#each navItems as item}
-					<li class={item.href === $page.url.pathname ? 'selected' : ''}>
+					<li class={item.href === $page.url.pathname || item.href === "/dashboard" && $page.url.pathname === "/" ? 'selected' : ''}>
 						<a href={item.href}>
 							<span class="material-icons-sharp">{item.icon}</span>
 							<span class="text">{item.text}</span>

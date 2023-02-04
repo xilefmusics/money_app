@@ -8,6 +8,7 @@ FROM nginx:1.23.3
 WORKDIR /usr/share/nginx/html
 RUN rm -rf ./*
 COPY --from=Builder /app/build .
+COPY ./nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 80
 

@@ -58,14 +58,15 @@ func (data *Data) Reindex(user string) {
 
 	mutex, ok := data.transactionsMutex[user]
 	if !ok {
-		return
+		mutex = &sync.Mutex{}
+		data.transactionsMutex[user] = mutex
 	}
 	mutex.Lock()
 	defer mutex.Unlock()
 
 	transactions, ok := data.transactions[user]
 	if !ok {
-		return
+		transactions = []transaction.Transaction{}
 	}
 
 	transaction.SortByDate(transactions)
@@ -85,14 +86,15 @@ func (data *Data) AddTransactions(user string, newTransactions []transaction.Tra
 
 	mutex, ok := data.transactionsMutex[user]
 	if !ok {
-		return createdTransactions
+		mutex = &sync.Mutex{}
+		data.transactionsMutex[user] = mutex
 	}
 	mutex.Lock()
 	defer mutex.Unlock()
 
 	transactions, ok := data.transactions[user]
 	if !ok {
-		return createdTransactions
+		transactions = []transaction.Transaction{}
 	}
 
 	var id uint

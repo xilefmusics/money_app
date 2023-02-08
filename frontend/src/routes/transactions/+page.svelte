@@ -57,22 +57,22 @@
 
 </script>
 
+<div class="export">
+	<div class="flex-fill"></div>
+	<span style={extendUpload ? "" : "visibility: hidden;"}>
+		<input id="upload-file" type="file" on:change={upload}/>
+	</span>
+	<span style={extendDownload ? "margin-right: 1rem;" : "visibility: hidden;"} on:click={() => exportTransactionsJSON()}>
+		JSON <span class="material-icons-sharp">download</span>
+	</span>
+	<span style={extendDownload || extendUpload ? "visibility: hidden;" : ""} on:click={() => toggleExtendUpload()}>
+		<span class="material-icons-sharp">upload</span>
+	</span>	
+	<span style={extendDownload || extendUpload ? "visibility: hidden;" : ""} on:click={() => toggleExtendDownload()}>
+		<span class="material-icons-sharp">download</span>
+	</span>	
+</div>
 {#if transactions}
-	<div class="export">
-		<div class="flex-fill"></div>
-		<span style={extendUpload ? "" : "visibility: hidden;"}>
-			<input id="upload-file" type="file" on:change={upload}/>
-		</span>
-		<span style={extendDownload ? "margin-right: 1rem;" : "visibility: hidden;"} on:click={() => exportTransactionsJSON()}>
-			JSON <span class="material-icons-sharp">download</span>
-		</span>
-		<span style={extendDownload || extendUpload ? "visibility: hidden;" : ""} on:click={() => toggleExtendUpload()}>
-			<span class="material-icons-sharp">upload</span>
-		</span>	
-		<span style={extendDownload || extendUpload ? "visibility: hidden;" : ""} on:click={() => toggleExtendDownload()}>
-			<span class="material-icons-sharp">download</span>
-		</span>	
-	</div>
 	<List
 		items={transactions.map((transaction) => ({
 			title:

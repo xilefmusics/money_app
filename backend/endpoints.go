@@ -1,12 +1,14 @@
 package main
 
 import (
+	"io/ioutil"
 	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"xilefmusics.de/money-app/helper"
 	"xilefmusics.de/money-app/history"
+	"xilefmusics.de/money-app/import_transactions"
 	"xilefmusics.de/money-app/transaction"
 )
 
@@ -165,4 +167,31 @@ func GetHistory(gc *gin.Context) {
 	default:
 		gc.IndentedJSON(http.StatusNotFound, "404 page not found")
 	}
+}
+
+func PostTransactions(gc *gin.Context) {
+	user, err := helper.GC2User(gc)
+	if err != nil {
+		log.Printf("ERROR: %s\n", err.Error())
+		gc.String(http.StatusInternalServerError, "501 Internal Server Error")
+		return
+	}
+
+	body, err := ioutil.ReadAll(gc.Request.Body)
+	if err != nil {
+		log.Printf("ERROR: %s\n", err.Error())
+		gc.String(http.StatusInternalServerError, "501 Internal Server Error")
+		return
+	}
+
+	transactions, err := import_transactions.Import(string(body))
+	if err != nil {
+		log.Printf("ERROR: %s\n", err.Error())
+		gc.String(http.StatusInternalServerError, "501 Internal Server Error")
+		return
+	}
+
+	newTransactions := globalData.AddTransactions(user, transactions)
+
+	gc.IndentedJSON(http.StatusOK, newTransactions)
 }

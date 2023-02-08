@@ -1,7 +1,6 @@
 <script>
 	import List from '../../lib/components/List.svelte';
 	import fetch from '../../lib/api/fetch';
-	import libExportTransactionsCSV from '../../lib/export/transactions_csv'
 	import libExportTransactionsJSON from '../../lib/export/transactions_json'
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
@@ -35,28 +34,25 @@
 		libExportTransactionsJSON(transactions)
 		toggleExtendDownload()
 	}
-	const exportTransactionsCSV = () => {
-		libExportTransactionsCSV(transactions)
-		toggleExtendDownload()
-	}
 
 	let extendUpload = false;
 	const toggleExtendUpload = () => extendUpload = !extendUpload;
-	const importJSON = () => {
-		console.log("import JSON")
-		toggleExtendUpload()
-	}
-	const importCSV = () => {
-		console.log("import CSV")
-		toggleExtendUpload()
-	}
-	const importN26 = () => {
-		console.log("import N26")
-		toggleExtendUpload()
-	}
-	const importBarclays = () => {
-		console.log("import Barclays")
-		toggleExtendUpload()
+	function upload() {
+		const reader = new FileReader();
+    	reader.onload = async event => {
+			try {
+				await (await fetch("/api/transactions", {
+					method: 'POST',
+					body: event.target.result
+				})).json()
+				// todo reload
+			} catch (e) {
+    			console.error(e);
+			} finally {
+				toggleExtendUpload()
+			}
+    	};
+    	reader.readAsText(this.files[0]);
 	}
 
 </script>
@@ -64,23 +60,11 @@
 {#if transactions}
 	<div class="export">
 		<div class="flex-fill"></div>
-		<span style={extendUpload ? "margin-right: 1rem;" : "visibility: hidden;"} on:click={() => importJSON()}>
-			JSON <span class="material-icons-sharp">upload</span>
-		</span>
-		<span style={extendUpload ? "margin-right: 1rem;" : "visibility: hidden;"} on:click={() => importCSV()}>
-			CSV <span class="material-icons-sharp">upload</span>
-		</span>
-		<span style={extendUpload ? "margin-right: 1rem;" : "visibility: hidden;"} on:click={() => importN26()}>
-			N26 <span class="material-icons-sharp">upload</span>
-		</span>
-		<span style={extendUpload ? "margin-right: 1rem;" : "visibility: hidden;"} on:click={() => importBarclays()}>
-			Barclays <span class="material-icons-sharp">upload</span>
+		<span style={extendUpload ? "" : "visibility: hidden;"}>
+			<input id="upload-file" type="file" on:change={upload}/>
 		</span>
 		<span style={extendDownload ? "margin-right: 1rem;" : "visibility: hidden;"} on:click={() => exportTransactionsJSON()}>
 			JSON <span class="material-icons-sharp">download</span>
-		</span>
-		<span style={extendDownload ? "" : "visibility: hidden;"} on:click={() => exportTransactionsCSV()}>
-			CSV <span class="material-icons-sharp" >download</span>
 		</span>
 		<span style={extendDownload || extendUpload ? "visibility: hidden;" : ""} on:click={() => toggleExtendUpload()}>
 			<span class="material-icons-sharp">upload</span>

@@ -24,6 +24,7 @@ func main() {
 
 	router := gin.New()
 	router.GET("/transactions", GetTransactions)
+	router.POST("/transactions", PostTransactions)
 	router.GET("/lint", Lint)
 	router.GET("/reindex", Reindex)
 	router.GET("/pods", GetPods)

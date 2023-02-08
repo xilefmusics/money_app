@@ -50,6 +50,7 @@ func (data *Data) GetTransactions(user string) []transaction.Transaction {
 	if !ok {
 		return []transaction.Transaction{}
 	}
+	transaction.SortByDate(transactions)
 	return transactions
 }
 
@@ -104,12 +105,16 @@ func (data *Data) AddTransactions(user string, newTransactions []transaction.Tra
 			id = transaction.ID
 		}
 	}
-
-	for _, transaction := range newTransactions {
+	if len(transactions) > 0 {
 		id++
+	}
+
+	transaction.SortByDate(newTransactions)
+	for _, transaction := range newTransactions {
 		transaction.ID = id
 		transactions = append(transactions, transaction)
 		createdTransactions = append(createdTransactions, transaction)
+		id++
 	}
 
 	data.transactions[user] = transactions

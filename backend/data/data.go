@@ -1,6 +1,7 @@
 package data
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -11,6 +12,7 @@ import (
 )
 
 type Data struct {
+	dataPath          string
 	transactions      map[string][]transaction.Transaction
 	transactionsMutex map[string]*sync.Mutex
 }
@@ -34,7 +36,7 @@ func New(dataPath string) (Data, error) {
 		return nil
 	})
 
-	return Data{transactions, transactionsMutex}, err
+	return Data{dataPath, transactions, transactionsMutex}, err
 }
 
 func (data *Data) GetTransactions(user string) []transaction.Transaction {
@@ -52,6 +54,8 @@ func (data *Data) GetTransactions(user string) []transaction.Transaction {
 }
 
 func (data *Data) Reindex(user string) {
+	// todo: error handling
+
 	mutex, ok := data.transactionsMutex[user]
 	if !ok {
 		return
@@ -71,7 +75,43 @@ func (data *Data) Reindex(user string) {
 	}
 
 	data.transactions[user] = transactions
+	transaction.Save(fmt.Sprint("%s/%s.json", data.dataPath, user), transactions)
+}
 
-	// TODO: change loading and add errorhandling
-	transaction.Save("../frontend/static/transactions.json", transactions)
+func (data *Data) AddTransactions(user string, newTransactions []transaction.Transaction) []transaction.Transaction {
+	// todo error handling
+
+	var createdTransactions []transaction.Transaction
+
+	mutex, ok := data.transactionsMutex[user]
+	if !ok {
+		return createdTransactions
+	}
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	transactions, ok := data.transactions[user]
+	if !ok {
+		return createdTransactions
+	}
+
+	var id uint
+	id = 0
+	for _, transaction := range transactions {
+		if transaction.ID > id {
+			id = transaction.ID
+		}
+	}
+
+	for _, transaction := range newTransactions {
+		id++
+		transaction.ID = id
+		transactions = append(transactions, transaction)
+		createdTransactions = append(createdTransactions, transaction)
+	}
+
+	data.transactions[user] = transactions
+	transaction.Save(fmt.Sprintf("%s/%s.json", data.dataPath, user), transactions)
+
+	return createdTransactions
 }

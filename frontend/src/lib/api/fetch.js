@@ -5,6 +5,9 @@ export default async (url, meta) => {
 			headers: {}
 		};
 	}
+	if (!meta.headers) {
+		meta.headers = {}
+	}
 	meta.headers['Token'] = localStorage.getItem('token');
 	return await fetch(url, meta);
 };

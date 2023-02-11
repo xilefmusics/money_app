@@ -1,6 +1,7 @@
 package data
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -121,4 +122,33 @@ func (data *Data) AddTransactions(user string, newTransactions []transaction.Tra
 	transaction.Save(fmt.Sprintf("%s/%s.json", data.dataPath, user), transactions)
 
 	return createdTransactions
+}
+
+func (data *Data) UpdateTransactions(user string, newTransactions []transaction.Transaction) error {
+	// todo error handling
+
+	mutex, ok := data.transactionsMutex[user]
+	if !ok {
+		return errors.New("Mutex not found")
+	}
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	transactions, ok := data.transactions[user]
+	if !ok {
+		return errors.New("Transactions not found")
+	}
+
+	for idx, transaction := range transactions {
+		for _, newTransaction := range newTransactions {
+			if transaction.ID == newTransaction.ID {
+				transactions[idx] = newTransaction
+			}
+		}
+	}
+
+	data.transactions[user] = transactions
+	transaction.Save(fmt.Sprintf("%s/%s.json", data.dataPath, user), transactions)
+
+	return nil
 }

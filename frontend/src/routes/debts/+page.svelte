@@ -7,7 +7,7 @@
 	let debtHistory = null;
 	let debts = null;
 	let datasets = null;
-	onMount(async () => {
+	const reload = async () => {
 		debtHistory = await (await fetch(`/api/history/debt?len=26&month=3&year=0`)).json();
 		debts = Object.keys(debtHistory[debtHistory.length - 1])
 			.filter((key) => key !== 'date')
@@ -22,7 +22,8 @@
 				data: debtHistory.map((item) => item[name].value / 100),
 				borderWidth: 1
 			}));
-	});
+	}
+	onMount(reload);
 </script>
 
 {#if debts}

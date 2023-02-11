@@ -6,7 +6,7 @@
 
 	let budgets = null;
 	let inbudgets = null;
-	onMount(async () => {
+	const reload = async () => {
 		const budgetsResult = (
 			await (await fetch(`/api/history/budget?len=1&month=0&year=1`)).json()
 		).map((item) => {
@@ -33,7 +33,8 @@
 				value: inbudgetsResult[name].value,
 				diff: inbudgetsResult[name].diff
 			}));
-	});
+	}
+	onMount(reload);
 </script>
 
 <div class="main">

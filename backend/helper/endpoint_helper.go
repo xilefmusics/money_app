@@ -18,10 +18,10 @@ func GC2User(gc *gin.Context) (string, error) {
 func ParseNumber(str string, defaultValue int, nonNegative bool) int {
 	number, err := strconv.ParseInt(str, 10, 32)
 	if err != nil {
-		number = 0
+		number = int64(defaultValue)
 	}
 	if number < 0 && nonNegative {
-		number = 0
+		number = int64(defaultValue)
 	}
 	return int(number)
 }

@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import fetch from '../../lib/api/fetch';
     import { page } from '$app/stores';
+	import url2params from '../../lib/url/url2params';
 
 	let transaction = null;
 	let pods = null;
@@ -10,14 +11,11 @@
 	let debts = null;
 	let tags = null;
 	const reload = async () => {
-		// TODO parse args the correct way
-        const id = $page.url.href
-            .split("?")[1]
-            .split("&")
-            .map(arg => ({
-                key: arg.split("=")[0], 
-                value: arg.split("=")[1]
-            })).filter(arg => arg.key === "id")[0].value
+		const id = url2params($page.url.href).id
+		if (!id) {
+			return
+		}
+
 		transaction = (await (await fetch(`/api/transactions?id=${id}`)).json()).map((transaction) => {
 			const d = new Date(transaction.date);
 			const year = `${d.getFullYear()}`;

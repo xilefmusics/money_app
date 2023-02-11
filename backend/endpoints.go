@@ -20,6 +20,8 @@ func GetTransactions(gc *gin.Context) {
 		return
 	}
 
+	yearFilter := helper.ParseNumber(gc.DefaultQuery("year", "*"), -1, false)
+	monthFilter := helper.ParseNumber(gc.DefaultQuery("month", "*"), -1, false)
 	podFilter := gc.DefaultQuery("pod", "*")
 	debtFilter := gc.DefaultQuery("debt", "*")
 	budgetFilter := gc.DefaultQuery("budget", "*")
@@ -27,7 +29,7 @@ func GetTransactions(gc *gin.Context) {
 	typeFilter := gc.DefaultQuery("type", "*")
 	idFilter := gc.DefaultQuery("id", "*")
 
-	transactions := transaction.Filter(globalData.GetTransactions(user), podFilter, debtFilter, budgetFilter, inbudgetFilter, typeFilter, idFilter)
+	transactions := transaction.Filter(globalData.GetTransactions(user), yearFilter, monthFilter, podFilter, debtFilter, budgetFilter, inbudgetFilter, typeFilter, idFilter)
 
 	gc.IndentedJSON(http.StatusOK, transactions)
 }

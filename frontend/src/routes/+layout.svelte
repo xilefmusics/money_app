@@ -3,6 +3,8 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import getUser from '../lib/api/getUser';
+  	import url2params from '../lib/url/url2params';
+	import params2url from '../lib/url/params2url';
 
 	let isOpen = true;
 	let innerWidth = 0;
@@ -41,10 +43,16 @@
 		}
 	];
 
+	let params = {}
+	let year = undefined
+	let month = undefined
 	onMount(async () => {
 		if ($page.url.pathname !== '/login' && !getUser()) {
 			goto('/login');
 		}
+		params = url2params($page.url.href)
+		year = params.year
+		month = params.month
 	});
 </script>
 
@@ -89,7 +97,7 @@
 			<ul>
 				{#each navItems as item}
 					<li class={item.href === $page.url.pathname || item.href === "/dashboard" && $page.url.pathname === "/" ? 'selected' : ''}>
-						<a href={item.href}>
+						<a href={params2url(item.href, {year, month})}>
 							<span class="material-icons-sharp">{item.icon}</span>
 							<span class="text">{item.text}</span>
 						</a>

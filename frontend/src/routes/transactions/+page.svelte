@@ -4,13 +4,19 @@
 	import libExportTransactionsJSON from '../../lib/export/transactions_json'
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
+  	import url2params from '../../lib/url/url2params';
+  	import params2url from '../../lib/url/params2url';
 
 	let transactions = null;
 	const reload = async () => {
-		const filter = $page.url.href.split('?')[1] ? '?' + $page.url.href.split('?')[1] : '';
+		const params = url2params($page.url.href)
+		if (!params.year) {
+			params.year = (new Date()).getFullYear()
+		}
+
 		let lastMonth = null;
 		const today = new Date();
-		transactions = (await (await fetch(`/api/transactions${filter}`)).json())
+		transactions = (await (await fetch(params2url("/api/transactions", params))).json())
 			.map((transaction) => {
 				transaction.date = new Date(transaction.date);
 				return transaction;

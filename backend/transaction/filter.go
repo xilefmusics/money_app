@@ -4,6 +4,14 @@ import (
 	"strconv"
 )
 
+func filterYear(transaction Transaction, yearFilter int) bool {
+	return yearFilter == -1 || transaction.Date.Year() == yearFilter
+}
+
+func filterMonth(transaction Transaction, monthFilter int) bool {
+	return monthFilter == -1 || int(transaction.Date.Month()) == monthFilter
+}
+
 func filterPod(transaction Transaction, podFilter string) bool {
 	return podFilter == "*" || transaction.Sender == podFilter || transaction.Receiver == podFilter
 }
@@ -59,10 +67,10 @@ func filterId(transaction Transaction, idFilter string) bool {
 	return idFilter == "*" || transaction.ID == uint(id)
 }
 
-func Filter(transactions []Transaction, podFilter, debtFilter, budgetFilter, inbudgetFilter, typeFilter, idFilter string) []Transaction {
+func Filter(transactions []Transaction, yearFilter, monthFilter int, podFilter, debtFilter, budgetFilter, inbudgetFilter, typeFilter, idFilter string) []Transaction {
 	result := []Transaction{}
 	for _, t := range transactions {
-		if filterPod(t, podFilter) && filterDebt(t, debtFilter) && filterBudget(t, budgetFilter) && filterInbudget(t, inbudgetFilter) && filterType(t, typeFilter) && filterId(t, idFilter) {
+		if filterPod(t, podFilter) && filterYear(t, yearFilter) && filterMonth(t, monthFilter) && filterDebt(t, debtFilter) && filterBudget(t, budgetFilter) && filterInbudget(t, inbudgetFilter) && filterType(t, typeFilter) && filterId(t, idFilter) {
 			result = append(result, t)
 		}
 	}

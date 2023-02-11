@@ -6,7 +6,7 @@
 	import { page } from '$app/stores';
 
 	let transactions = null;
-	onMount(async () => {
+	const reload = async () => {
 		const filter = $page.url.href.split('?')[1] ? '?' + $page.url.href.split('?')[1] : '';
 		let lastMonth = null;
 		const today = new Date();
@@ -26,7 +26,8 @@
 				lastMonth = transaction.date.getMonth();
 				return transaction;
 			});
-	});
+	}
+	onMount(reload);
 
 	let extendDownload = false;
 	const toggleExtendDownload = () => extendDownload = !extendDownload;
@@ -45,7 +46,7 @@
 					method: 'POST',
 					body: event.target.result
 				})).json()
-				// todo reload
+				await reload()
 			} catch (e) {
     			console.error(e);
 			} finally {

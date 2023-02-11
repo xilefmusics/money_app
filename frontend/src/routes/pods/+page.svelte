@@ -7,7 +7,7 @@
 	let pods = null;
 	let podHistory = null;
 	let datasets = null;
-	onMount(async () => {
+	const reload = async () => {
 		podHistory = await (await fetch(`/api/history/pod?len=26&month=3&year=0`)).json();
 		pods = Object.keys(podHistory[podHistory.length - 1])
 			.filter((key) => key !== 'date')
@@ -22,7 +22,8 @@
 				data: podHistory.map((item) => item[name].value / 100),
 				borderWidth: 1
 			}));
-	});
+	}
+	onMount(reload);
 </script>
 
 {#if pods}

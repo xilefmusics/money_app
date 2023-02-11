@@ -2,16 +2,15 @@
 	import { onMount } from 'svelte';
 	import fetch from '../../lib/api/fetch';
     import { page } from '$app/stores';
-	let editMode = false;
-	const id = 50
+
 	let transaction = null;
 	let pods = null;
 	let budgets = null;
 	let inbudgets = null;
 	let debts = null;
 	let tags = null;
-	onMount(async () => {
-        // TODO parse args the correct way
+	const reload = async () => {
+		// TODO parse args the correct way
         const id = $page.url.href
             .split("?")[1]
             .split("&")
@@ -32,7 +31,10 @@
 		inbudgets = await (await fetch(`/api/inbudgets`)).json();
 		debts = await (await fetch(`/api/debts`)).json();
 		tags = await (await fetch(`/api/tags`)).json();
-	});
+	}
+	onMount(reload);
+
+
 	let newBudgetName = null;
 	let newBudgetAmount = null;
 	const addBudget = () => {
@@ -122,6 +124,7 @@
 					method: 'PUT',
 					body: JSON.stringify([t])
 				})).json()
+			await reload()
 			} catch (e) {
     			console.error(e);
 			}

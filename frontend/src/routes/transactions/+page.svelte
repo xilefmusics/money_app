@@ -92,6 +92,32 @@
 	}
 	const toggleDeleteToggleTransaction = () => transactions.forEach(transaction => deleteToggleTransaction(transaction.id))
 
+	const createTransaction = async () => {
+		const transactions = [{
+			id: 0,
+			type: "out",
+			date: new Date(),
+			amount: 0,
+			sender: 'Bar',
+			receiver: '',
+			budgets: {},
+			inbudgets: {},
+			debts: {},
+			tags: {
+				"manual": "true"
+			}
+		}]
+		try {
+			await (await fetch("/api/transactions", {
+				method: 'POST',
+				body: JSON.stringify(transactions)
+			})).json()
+			await reload()
+		} catch (e) {
+    		console.error(e);
+		}
+	}
+
 </script>
 
 <div class="export">
@@ -111,7 +137,7 @@
 	<span style={extendDownload || extendUpload || deleteMode ? "visibility: hidden;" : ""} on:click={() => toggleExtendDownload()}>
 		<span class="material-icons-sharp">download</span>
 	</span>
-	<span style={extendDownload || extendUpload || deleteMode ? "visibility: hidden;" : ""} on:click={() => add()}>
+	<span style={extendDownload || extendUpload || deleteMode ? "visibility: hidden;" : ""} on:click={() => createTransaction()}>
 		<span class="material-icons-sharp">add</span>
 	</span>
 	<span style={extendDownload || extendUpload ? "visibility: hidden;" : ""} on:click={() => toggleDelete()}>

@@ -26,6 +26,7 @@ func main() {
 	router.GET("/transactions", GetTransactions)
 	router.POST("/transactions", PostTransactions)
 	router.PUT("/transactions", UpdateTransactions)
+	router.DELETE("/transactions", DeleteTransactions)
 	router.GET("/lint", Lint)
 	router.GET("/reindex", Reindex)
 	router.GET("/pods", GetPods)

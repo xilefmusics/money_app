@@ -229,3 +229,30 @@ func UpdateTransactions(gc *gin.Context) {
 
 	gc.IndentedJSON(http.StatusOK, transactions)
 }
+
+func DeleteTransactions(gc *gin.Context) {
+	user, err := helper.GC2User(gc)
+	if err != nil {
+		log.Printf("ERROR: %s\n", err.Error())
+		gc.String(http.StatusInternalServerError, "501 Internal Server Error")
+		return
+	}
+
+	body, err := ioutil.ReadAll(gc.Request.Body)
+	if err != nil {
+		log.Printf("ERROR: %s\n", err.Error())
+		gc.String(http.StatusInternalServerError, "501 Internal Server Error")
+		return
+	}
+
+	transactions, err := import_transactions.Import(string(body))
+	if err != nil {
+		log.Printf("ERROR: %s\n", err.Error())
+		gc.String(http.StatusInternalServerError, "501 Internal Server Error")
+		return
+	}
+
+	deletedTransactions := globalData.DeleteTransactions(user, transactions)
+
+	gc.IndentedJSON(http.StatusOK, deletedTransactions)
+}

@@ -9,7 +9,11 @@
 		{#if item.newBlock}
 			{item.newBlock}
 		{/if}
-		<a href={item.link} class="item">
+		<a
+			href={item.link}
+			class={`item ${item.selected ? "selected": ""}`}
+			on:click={item.onclick}
+		>
 			<div class="left">
 				<CharacterIcon character={item.title[0]} />
 			</div>
@@ -117,5 +121,8 @@
 	}
 	.gray {
 		background-color: #665c54;
+	}
+	.selected {
+		background-color: #5c5856;
 	}
 </style>

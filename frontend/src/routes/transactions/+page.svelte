@@ -62,6 +62,36 @@
     	reader.readAsText(this.files[0]);
 	}
 
+	let deleteMode = false;
+	let transactionsToDelete = [];
+	const toggleDelete = async () => {
+		deleteMode = !deleteMode
+		if (deleteMode) {
+			transactionsToDelete = []
+			return
+		}
+		transactionsToDelete = transactions.filter(transaction => transactionsToDelete.includes(transaction.id))
+		try {
+			await (await fetch("/api/transactions", {
+				method: 'DELETE',
+				body: JSON.stringify(transactionsToDelete)
+			})).json()
+			await reload()
+		} catch (e) {
+    		console.error(e);
+		}
+	}
+	const deleteToggleTransaction = id => {
+		if (transactionsToDelete.includes(id)) {
+			transactionsToDelete.splice(transactionsToDelete.indexOf(id), 1)
+			transactionsToDelete = [...transactionsToDelete]
+
+		} else {
+			transactionsToDelete = [...transactionsToDelete, id]
+		}
+	}
+	const toggleDeleteToggleTransaction = () => transactions.forEach(transaction => deleteToggleTransaction(transaction.id))
+
 </script>
 
 <div class="export">
@@ -69,15 +99,24 @@
 	<span style={extendUpload ? "" : "visibility: hidden;"}>
 		<input id="upload-file" type="file" on:change={upload}/>
 	</span>
+	<span style={deleteMode ? "margin-right: 1rem;" : "visibility: hidden;"} on:click={() => toggleDeleteToggleTransaction()}>
+		<span class="material-icons-sharp">toggle_on</span>
+	</span>
 	<span style={extendDownload ? "margin-right: 1rem;" : "visibility: hidden;"} on:click={() => exportTransactionsJSON()}>
 		JSON <span class="material-icons-sharp">download</span>
 	</span>
-	<span style={extendDownload || extendUpload ? "visibility: hidden;" : ""} on:click={() => toggleExtendUpload()}>
+	<span style={extendDownload || extendUpload || deleteMode ? "visibility: hidden;" : ""} on:click={() => toggleExtendUpload()}>
 		<span class="material-icons-sharp">upload</span>
 	</span>	
-	<span style={extendDownload || extendUpload ? "visibility: hidden;" : ""} on:click={() => toggleExtendDownload()}>
+	<span style={extendDownload || extendUpload || deleteMode ? "visibility: hidden;" : ""} on:click={() => toggleExtendDownload()}>
 		<span class="material-icons-sharp">download</span>
-	</span>	
+	</span>
+	<span style={extendDownload || extendUpload || deleteMode ? "visibility: hidden;" : ""} on:click={() => add()}>
+		<span class="material-icons-sharp">add</span>
+	</span>
+	<span style={extendDownload || extendUpload ? "visibility: hidden;" : ""} on:click={() => toggleDelete()}>
+		<span class="material-icons-sharp">delete</span>
+	</span>
 </div>
 {#if transactions}
 	<List
@@ -94,10 +133,12 @@
 			subtitleIcon: null,
 			amount: transaction.amount,
 			color: transaction.type === 'out' ? 'red' : transaction.type === 'in' ? 'green' : 'gray',
-			link: `/transaction?id=${transaction.id}`,
+			link: deleteMode ? "" : `/transaction?id=${transaction.id}`,
 			link2: null,
 			link3: null,
-			newBlock: transaction.newBlock
+			newBlock: transaction.newBlock,
+			selected: transactionsToDelete.includes(transaction.id) && deleteMode,
+			onclick: deleteMode ? () => deleteToggleTransaction(transaction.id) : null
 		}))}
 	/>
 {/if}

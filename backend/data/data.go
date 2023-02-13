@@ -152,3 +152,36 @@ func (data *Data) UpdateTransactions(user string, newTransactions []transaction.
 
 	return nil
 }
+
+func (data *Data) DeleteTransactions(user string, transactionsToDelete []transaction.Transaction) []transaction.Transaction {
+	// todo error handling
+
+	var deletedTransactions []transaction.Transaction
+
+	mutex, ok := data.transactionsMutex[user]
+	if !ok {
+		return deletedTransactions
+	}
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	transactions, ok := data.transactions[user]
+	if !ok {
+		return deletedTransactions
+	}
+
+	for _, transactionToDelete := range transactionsToDelete {
+		for idx, transaction := range transactions {
+			if transaction.ID == transactionToDelete.ID {
+				transactions = append(transactions[:idx], transactions[idx+1:]...)
+				deletedTransactions = append(deletedTransactions, transaction)
+				break
+			}
+		}
+	}
+
+	data.transactions[user] = transactions
+	transaction.Save(fmt.Sprintf("%s/%s.json", data.dataPath, user), transactions)
+
+	return deletedTransactions
+}

@@ -29,6 +29,7 @@ func main() {
 	router.DELETE("/transactions", DeleteTransactions)
 	router.GET("/lint", Lint)
 	router.GET("/reindex", Reindex)
+	router.GET("/undo", Undo)
 	router.GET("/pods", GetPods)
 	router.GET("/debts", GetDebts)
 	router.GET("/budgets", GetBudgets)

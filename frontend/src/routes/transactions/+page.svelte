@@ -118,6 +118,15 @@
 		}
 	}
 
+	const undo = async () => {
+		try {
+			await fetch("/api/undo")
+			await reload()
+		} catch (e) {
+    		console.error(e);
+		}
+	}
+
 </script>
 
 <div class="export">
@@ -142,6 +151,9 @@
 	</span>
 	<span style={extendDownload || extendUpload ? "visibility: hidden;" : ""} on:click={() => toggleDelete()}>
 		<span class="material-icons-sharp">delete</span>
+	</span>
+	<span style={extendDownload || extendUpload || deleteMode ? "visibility: hidden;" : ""} on:click={() => undo()}>
+		<span class="material-icons-sharp">undo</span>
 	</span>
 </div>
 {#if transactions}

@@ -193,7 +193,7 @@ func PostTransactions(gc *gin.Context) {
 		return
 	}
 
-	newTransactions := globalData.AddTransactions(user, transactions)
+	newTransactions := globalData.AddTransactions(user, transactions, true)
 
 	gc.IndentedJSON(http.StatusOK, newTransactions)
 }
@@ -220,7 +220,7 @@ func UpdateTransactions(gc *gin.Context) {
 		return
 	}
 
-	err = globalData.UpdateTransactions(user, transactions)
+	err = globalData.UpdateTransactions(user, transactions, true)
 	if err != nil {
 		log.Printf("ERROR: %s\n", err.Error())
 		gc.String(http.StatusInternalServerError, "501 Internal Server Error")
@@ -252,7 +252,20 @@ func DeleteTransactions(gc *gin.Context) {
 		return
 	}
 
-	deletedTransactions := globalData.DeleteTransactions(user, transactions)
+	deletedTransactions := globalData.DeleteTransactions(user, transactions, true)
 
 	gc.IndentedJSON(http.StatusOK, deletedTransactions)
+}
+
+func Undo(gc *gin.Context) {
+	user, err := helper.GC2User(gc)
+	if err != nil {
+		log.Printf("ERROR: %s\n", err.Error())
+		gc.String(http.StatusInternalServerError, "501 Internal Server Error")
+		return
+	}
+
+	globalData.Undo(user)
+
+	gc.IndentedJSON(http.StatusOK, "")
 }

@@ -127,6 +127,19 @@
 		}
 	}
 
+	const lint = transaction => {
+		const budgetSum = Object.values(transaction.budgets).reduce((a,b) => a + b, 0)
+		const inbudgetSum = Object.values(transaction.inbudgets).reduce((a,b) => a + b, 0)
+		const debtSum = Object.values(transaction.debts).reduce((a,b) => a + b, 0)
+		if (transaction.type === "in") {
+			return (inbudgetSum + debtSum) === transaction.amount && budgetSum === 0
+		}
+		if (transaction.type === "out") {
+			return (budgetSum + debtSum) === transaction.amount && inbudgetSum === 0
+		}
+		return budgetSum === 0 && inbudgetSum === 0 && debtSum === 0
+	}
+
 </script>
 
 <div class="export">
@@ -175,7 +188,7 @@
 			link2: null,
 			link3: null,
 			newBlock: transaction.newBlock,
-			selected: transactionsToDelete.includes(transaction.id) && deleteMode,
+			selected: transactionsToDelete.includes(transaction.id) && deleteMode || !deleteMode && !lint(transaction),
 			onclick: deleteMode ? () => deleteToggleTransaction(transaction.id) : null
 		}))}
 	/>

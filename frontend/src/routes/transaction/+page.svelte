@@ -24,6 +24,19 @@
 			transaction.date = `${year}-${month}-${day}`;
 			return transaction;
 		})[0];
+		if (!transaction.budgets) {
+			transaction.budgets = {}
+		}
+		if (!transaction.inbudgets) {
+			transaction.inbudgets = {}
+		}
+		if (!transaction.debts) {
+			transaction.debts = {}
+		}
+		if (!transaction.tags) {
+			transaction.tags = {}
+		}
+
 		pods = await (await fetch(`/api/pods`)).json();
 		budgets = await (await fetch(`/api/budgets`)).json();
 		inbudgets = await (await fetch(`/api/inbudgets`)).json();
@@ -112,9 +125,11 @@
 		let t = transaction
 		if (t.type !== "out") {
 			t.budgets = {}
+			t.receiver = ""
 		}
 		if (t.type !== "in") {
 			t.inbudgets = {}
+			t.sender = ""
 		}
 		t.date = new Date(t.date)
 		try {

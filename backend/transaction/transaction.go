@@ -197,3 +197,73 @@ func Save(path string, transactions []Transaction) error {
 	ioutil.WriteFile(path, bytes, 0644)
 	return nil
 }
+
+func GetNextID(transactions []Transaction) (id uint) {
+	id = 0
+	for _, transaction := range transactions {
+		if transaction.ID > id {
+			id = transaction.ID
+		}
+	}
+	if len(transactions) > 0 {
+		id++
+	}
+	return
+}
+
+func Add(current, new []Transaction) ([]Transaction, []Transaction) {
+	created := []Transaction{}
+
+	id := GetNextID(current)
+
+	for _, transaction := range new {
+		transaction.ID = id
+		current = append(current, transaction)
+		created = append(created, transaction)
+		id++
+	}
+
+	return current, created
+}
+
+func Update(current, new []Transaction) ([]Transaction, []Transaction, []Transaction) {
+	updated := []Transaction{}
+	old := []Transaction{}
+
+	for _, newTransaction := range new {
+		for idx, transaction := range current {
+			if transaction.ID == newTransaction.ID {
+				old = append(old, transaction)
+				current[idx] = newTransaction
+				updated = append(updated, newTransaction)
+				break
+			}
+		}
+	}
+
+	return current, updated, old
+}
+
+func Delete(current, toDelete []Transaction) ([]Transaction, []Transaction) {
+	deleted := []Transaction{}
+
+	for _, transactionToDelete := range toDelete {
+		for idx, transaction := range current {
+			if transaction.ID == transactionToDelete.ID {
+				current = append(current[:idx], current[idx+1:]...)
+				deleted = append(deleted, transaction)
+				break
+			}
+		}
+	}
+
+	return current, deleted
+}
+
+func Reindex(transactions []Transaction) []Transaction {
+	SortByDate(transactions)
+	for idx, _ := range transactions {
+		transactions[idx].ID = uint(idx)
+	}
+	return transactions
+}

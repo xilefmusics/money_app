@@ -11,7 +11,7 @@ import (
 	"xilefmusics.de/money-app/data"
 )
 
-var globalData data.Data
+var globalData *data.Data
 
 func main() {
 	c := config.Load()

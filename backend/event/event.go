@@ -55,3 +55,31 @@ func Save(path string, events []Event) error {
 	ioutil.WriteFile(path, bytes, 0644)
 	return nil
 }
+
+func GetNextID(events []Event) (id uint) {
+	id = 0
+	for _, event := range events {
+		if event.ID > id {
+			id = event.ID
+		}
+	}
+	if len(events) > 0 {
+		id++
+	}
+	return
+}
+
+func Add(current []Event, event Event) []Event {
+	event.ID = GetNextID(current)
+	return append(current, event)
+}
+
+func Find(events []Event) int {
+	SortByDateReverse(events)
+	for idx, e := range events {
+		if e.Reason == "default" {
+			return idx
+		}
+	}
+	return -1
+}

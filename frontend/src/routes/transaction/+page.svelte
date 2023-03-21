@@ -123,12 +123,12 @@
 	};
 	const updateTransaction = async () => {
 		let t = transaction
-		if (t.type !== "out") {
-			t.budgets = {}
+		if (t.type === "out") {
+			t.inbudgets = {}
 			t.receiver = ""
 		}
-		if (t.type !== "in") {
-			t.inbudgets = {}
+		if (t.type === "in") {
+			t.budgets = {}
 			t.sender = ""
 		}
 		t.date = new Date(t.date)

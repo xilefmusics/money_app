@@ -5,9 +5,9 @@ import (
 )
 
 func TestParseAmount(t *testing.T) {
-	testCasesIn := []string{"42.00", "-42.00", "+42.00", "42,00", "-42,00", "+42,00", "42.42", "42.02", "0.99", "-0.99", "+0.99", "1,000.00", "1.000,00", "42,00 €", "42", "42.", ".42"}
-	testCasesOut := []int{4200, 4200, 4200, 4200, 4200, 4200, 4242, 4202, 99, 99, 99, 100000, 100000, 4200, 0, 0, 0}
-	testCasesErr := []bool{false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true}
+	testCasesIn := []string{"42.00", "-42.00", "+42.00", "42,00", "-42,00", "+42,00", "42.42", "42.02", "0.99", "-0.99", "+0.99", "1,000.00", "1.000,00", "42,00 €", "42", "42.", ".42", "0.9", "-0.9"}
+	testCasesOut := []int{4200, 4200, 4200, 4200, 4200, 4200, 4242, 4202, 99, 99, 99, 100000, 100000, 4200, 0, 0, 0, 90, 90}
+	testCasesErr := []bool{false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, false, false}
 
 	for idx, _ := range testCasesIn {
 		result, err := ParseAmount(testCasesIn[idx])

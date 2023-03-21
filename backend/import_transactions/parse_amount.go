@@ -38,6 +38,9 @@ func ParseAmount(str string) (int, error) {
 	if err != nil {
 		return 0, err
 	}
+	if len(split[1]) == 1 {
+		after *= 10
+	}
 
 	return before*100 + after, nil
 }

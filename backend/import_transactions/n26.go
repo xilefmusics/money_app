@@ -54,6 +54,10 @@ func parseN26Transaction(line string) (transaction.Transaction, error) {
 	transaction.Tags["receiver"] = columns[1]
 	transaction.Tags["transaction_type"] = columns[3]
 
+	transaction.Budgets = map[string]int{}
+	transaction.Inbudgets = map[string]int{}
+	transaction.Debts = map[string]int{}
+
 	return transaction, nil
 }
 

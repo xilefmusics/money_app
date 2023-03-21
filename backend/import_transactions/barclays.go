@@ -53,6 +53,10 @@ func parseBarclaysTransaction(line string) (transaction.Transaction, error) {
 	transaction.Tags["status"] = columns[6]
 	transaction.Tags["typ"] = columns[5]
 
+	transaction.Budgets = map[string]int{}
+	transaction.Inbudgets = map[string]int{}
+	transaction.Debts = map[string]int{}
+
 	return transaction, nil
 }
 

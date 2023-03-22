@@ -1,6 +1,6 @@
 .DS_Store
-scripts
-data
+/scripts
+/data
 
 frontend/static/pods.json
 frontend/.DS_Store

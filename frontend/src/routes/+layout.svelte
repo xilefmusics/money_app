@@ -38,7 +38,7 @@
 		{
 			icon: 'logout',
 			text: 'Logout',
-			href: '/logout'
+			href: '/logout-redirect'
 		}
 	];
 

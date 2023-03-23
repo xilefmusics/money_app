@@ -1,6 +1,5 @@
 <script>
 	import { onMount } from 'svelte';
-	import fetch from '../../lib/api/fetch';
     import { page } from '$app/stores';
 	import url2params from '../../lib/url/url2params';
 

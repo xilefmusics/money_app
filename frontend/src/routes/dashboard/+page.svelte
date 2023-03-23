@@ -1,7 +1,6 @@
 <script>
 	import Chart from '../../lib/components/Chart.svelte';
 	import { onMount } from 'svelte';
-	import fetch from '../../lib/api/fetch';
 
 	let wealthHistory = null;
 	let wealthHistory2 = null;

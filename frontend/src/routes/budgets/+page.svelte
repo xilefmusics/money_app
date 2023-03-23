@@ -2,7 +2,6 @@
 	import List from '../../lib/components/List.svelte';
 	import Chart from '../../lib/components/Chart.svelte';
 	import { onMount } from 'svelte';
-	import fetch from '../../lib/api/fetch';
 	import { page } from '$app/stores';
   	import url2params from '../../lib/url/url2params';
 	import params2url from '../../lib/url/params2url';

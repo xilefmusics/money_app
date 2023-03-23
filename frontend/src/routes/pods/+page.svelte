@@ -2,7 +2,6 @@
 	import Chart from '../../lib/components/Chart.svelte';
 	import List from '../../lib/components/List.svelte';
 	import { onMount } from 'svelte';
-	import fetch from '../../lib/api/fetch';
 
 	let pods = null;
 	let podHistory = null;

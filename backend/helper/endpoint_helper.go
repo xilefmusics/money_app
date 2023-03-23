@@ -8,7 +8,7 @@ import (
 )
 
 func GC2User(gc *gin.Context) (string, error) {
-	users := gc.Request.Header["User"]
+	users := gc.Request.Header["X-Remote-User"]
 	if len(users) != 1 {
 		return "", errors.New("GC2User: Not exactly one user was given")
 	}

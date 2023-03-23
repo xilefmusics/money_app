@@ -1,6 +1,5 @@
 <script>
 	import List from '../../lib/components/List.svelte';
-	import fetch from '../../lib/api/fetch';
 	import libExportTransactionsJSON from '../../lib/export/transactions_json'
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';

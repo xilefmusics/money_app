@@ -3,7 +3,7 @@
     "name": "Money App",
     "icons": [
         {
-            "src": "%sveltekit.assets%/favicon.png",
+            "src": "/favicon.png",
             "type": "image/png",
             "sizes": "512x512"
         }

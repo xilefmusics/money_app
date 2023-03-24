@@ -1,13 +1,15 @@
 <script>
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
-	import { goto } from '$app/navigation';
   	import url2params from '../lib/url/url2params';
 	import params2url from '../lib/url/params2url';
+
 
 	let isOpen = true;
 	let innerWidth = 0;
 	let innerHeight = 0;
+
+	const isMobile = () => innerHeight > innerWidth;
 
 	const navItems = [
 		{
@@ -49,6 +51,7 @@
 		params = url2params($page.url.href)
 		year = params.year
 		month = params.month
+		isOpen = !isMobile()
 	});
 </script>
 
@@ -65,7 +68,7 @@
 </header>
 
 <main
-	class={innerHeight > innerWidth
+	class={isMobile()
 		? isOpen
 			? 'mobileOpen'
 			: 'mobileClosed'
@@ -77,7 +80,7 @@
 </main>
 
 <aside
-	class={innerHeight > innerWidth
+	class={isMobile()
 		? isOpen
 			? 'mobileOpen'
 			: 'mobileClosed'
@@ -93,7 +96,7 @@
 			<ul>
 				{#each navItems as item}
 					<li class={item.href === $page.url.pathname || item.href === "/dashboard" && $page.url.pathname === "/" ? 'selected' : ''}>
-						<a href={params2url(item.href, {year, month})}>
+						<a href={params2url(item.href, {year, month})} on:click={() => {if (isMobile()){isOpen = !isOpen}}}>
 							<span class="material-icons-sharp">{item.icon}</span>
 							<span class="text">{item.text}</span>
 						</a>
@@ -161,6 +164,7 @@
 	}
 
 	aside .aside-top {
+		padding: 1rem;
 		display: none;
 		width: 100%;
 	}
@@ -179,8 +183,13 @@
 
 	aside .aside-main nav ul li {
 		margin: 2rem 0 2rem 0;
-		padding: 1rem 0 1rem 0;
+		padding: 0.8rem 0 1.4rem 0;
 		border-radius: 1rem;
+	}
+
+	aside.mobileOpen .aside-main nav ul li {
+		margin: 0.5rem 0 0.5rem 0;
+		padding: 0rem 0 0.7rem;
 	}
 
 	aside .aside-main nav ul li:last-child {
@@ -190,7 +199,11 @@
 	}
 
 	aside .aside-main nav ul li:hover {
-		margin-left: 1rem;
+		margin-left: 0.5rem;
+	}
+
+	aside .aside-main nav ul li .material-icons-sharp {
+		transform: translateY(0.5rem);
 	}
 
 	aside .aside-main nav ul li:hover a span {
@@ -198,13 +211,8 @@
 	}
 
 	aside .aside-main nav ul li.selected {
-		margin-left: 1rem;
 		background-color: var(--bg1);
-	}
-
-	aside.desktopClosed .aside-main nav ul li.selected,
-	aside.desktopClosed .aside-main nav ul li:hover {
-		margin-left: 0.5rem;
+		padding-right: 4em;
 	}
 
 	aside .aside-main nav ul li.selected a .text,

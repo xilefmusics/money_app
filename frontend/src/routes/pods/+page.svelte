@@ -3,11 +3,13 @@
 	import List from '../../lib/components/List.svelte';
 	import { onMount } from 'svelte';
 
+	const isMobile = () => innerHeight > innerWidth;
+
 	let pods = null;
 	let podHistory = null;
 	let datasets = null;
 	const reload = async () => {
-		podHistory = await (await fetch(`/api/history/pod?len=26&month=3&year=0`)).json();
+		podHistory = await (await fetch(`/api/history/pod?len=${isMobile()?6:26}&month=3&year=0`)).json();
 		pods = Object.keys(podHistory[podHistory.length - 1])
 			.filter((key) => key !== 'date')
 			.map((key) => ({
@@ -26,15 +28,20 @@
 </script>
 
 {#if pods}
-	<Chart
-		type="line"
-		data={{
-			labels: podHistory.map(
-				(item) => `${new Date(item.date).getMonth() + 1}-${new Date(item.date).getFullYear()}`
-			),
-			datasets: datasets
-		}}
-	/>
+		<Chart
+			type="line"
+			data={{
+				labels: podHistory.map(
+					(item) => `${new Date(item.date).getMonth() + 1}-${new Date(item.date).getFullYear()}`
+				),
+				datasets: datasets
+			}}
+			options={{
+				responsive: true,
+				maintainAspectRatio: true,
+				aspectRatio: isMobile() ? 0.8 : 2,
+			}}
+		/>
 	<List
 		items={pods.map((pod) => ({
 			title: pod.name,

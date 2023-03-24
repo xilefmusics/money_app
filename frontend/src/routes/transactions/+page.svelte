@@ -143,30 +143,42 @@
 
 <div class="export">
 	<div class="flex-fill"></div>
-	<span style={extendUpload ? "" : "visibility: hidden;"}>
-		<input id="upload-file" type="file" on:change={upload}/>
-	</span>
-	<span style={deleteMode ? "margin-right: 1rem;" : "visibility: hidden;"} on:click={() => toggleDeleteToggleTransaction()}>
-		<span class="material-icons-sharp">toggle_on</span>
-	</span>
-	<span style={extendDownload ? "margin-right: 1rem;" : "visibility: hidden;"} on:click={() => exportTransactionsJSON()}>
-		JSON <span class="material-icons-sharp">download</span>
-	</span>
-	<span style={extendDownload || extendUpload || deleteMode ? "visibility: hidden;" : ""} on:click={() => toggleExtendUpload()}>
-		<span class="material-icons-sharp">upload</span>
-	</span>	
-	<span style={extendDownload || extendUpload || deleteMode ? "visibility: hidden;" : ""} on:click={() => toggleExtendDownload()}>
-		<span class="material-icons-sharp">download</span>
-	</span>
-	<span style={extendDownload || extendUpload || deleteMode ? "visibility: hidden;" : ""} on:click={() => createTransaction()}>
-		<span class="material-icons-sharp">add</span>
-	</span>
-	<span style={extendDownload || extendUpload ? "visibility: hidden;" : ""} on:click={() => toggleDelete()}>
-		<span class="material-icons-sharp">delete</span>
-	</span>
-	<span style={extendDownload || extendUpload || deleteMode ? "visibility: hidden;" : ""} on:click={() => undo()}>
-		<span class="material-icons-sharp">undo</span>
-	</span>
+	{#if extendUpload}
+		<span>
+			<input id="upload-file" type="file" on:change={upload}/>
+		</span>
+	{/if}
+	{#if deleteMode}
+		<span on:click={() => toggleDeleteToggleTransaction()}>
+			<span class="material-icons-sharp">toggle_on</span>
+		</span>
+	{/if}
+	{#if extendDownload}
+		<span on:click={() => exportTransactionsJSON()}>
+			JSON <span class="material-icons-sharp">download</span>
+		</span>
+	{/if}
+	{#if !(extendDownload || extendUpload || deleteMode)}
+		<span on:click={() => toggleExtendUpload()}>
+			<span class="material-icons-sharp">upload</span>
+		</span>	
+		<span on:click={() => toggleExtendDownload()}>
+			<span class="material-icons-sharp">download</span>
+		</span>
+		<span on:click={() => createTransaction()}>
+			<span class="material-icons-sharp">add</span>
+		</span>
+	{/if}
+	{#if !(extendDownload || extendUpload)}
+		<span on:click={() => toggleDelete()}>
+			<span class="material-icons-sharp">delete</span>
+		</span>
+	{/if}
+	{#if !(extendDownload || extendUpload || deleteMode)}
+		<span on:click={() => undo()}>
+			<span class="material-icons-sharp">undo</span>
+		</span>
+	{/if}
 </div>
 {#if transactions}
 	<List

@@ -13,7 +13,7 @@
 				return item;
 			}
 		);
-		wealthHistory2 = (await (await fetch(`/api/history/wealth?len=5&month=0&year=1`)).json()).map(
+		wealthHistory2 = (await (await fetch(`/api/history/wealth?len=4&month=0&year=1`)).json()).map(
 			(item) => {
 				item.date = `${new Date(item.date).getFullYear()}`;
 				return item;
@@ -73,17 +73,18 @@
 <h1>Year Balance</h1>
 {#if wealthHistory2}
 	<div class="year-wrapper">
-		<h2>{wealthHistory2[3].date}</h2>
+		{#each wealthHistory2.reverse().slice(1) as historyItem}
+		<h2>{historyItem.date}</h2>
 		<Chart
 			type="doughnut"
 			data={{
-				labels: ['Spending', 'Saving'],
+				labels: ['Spending', historyItem.real.diff>0 ? 'Saving': 'Overspending'],
 				datasets: [
 					{
-						backgroundColor: ['red', 'green'],
+						backgroundColor: ['red', historyItem.real.diff>0 ? 'green' : 'darkred'],
 						data: [
-							(wealthHistory2[3].in.diff - wealthHistory2[3].real.diff) / 100,
-							wealthHistory2[3].real.diff / 100
+							historyItem.real.diff>0 ? (historyItem.in.diff - historyItem.real.diff) / 100 : historyItem.in.diff / 100,
+							historyItem.real.diff>0 ? historyItem.real.diff / 100 : -historyItem.real.diff / 100,
 						],
 						borderWidth: 1
 					}
@@ -91,42 +92,7 @@
 				options: {}
 			}}
 		/>
-		<h2>{wealthHistory2[2].date}</h2>
-		<Chart
-			type="doughnut"
-			data={{
-				labels: ['Spending', 'Saving'],
-				datasets: [
-					{
-						backgroundColor: ['red', 'green'],
-						data: [
-							(wealthHistory2[2].in.diff - wealthHistory2[2].real.diff) / 100,
-							wealthHistory2[2].real.diff / 100
-						],
-						borderWidth: 1
-					}
-				],
-				options: {}
-			}}
-		/>
-		<h2>{wealthHistory2[1].date}</h2>
-		<Chart
-			type="doughnut"
-			data={{
-				labels: ['Spending', 'Saving'],
-				datasets: [
-					{
-						backgroundColor: ['red', 'green'],
-						data: [
-							(wealthHistory2[1].in.diff - wealthHistory2[1].real.diff) / 100,
-							wealthHistory2[1].real.diff / 100
-						],
-						borderWidth: 1
-					}
-				],
-				options: {}
-			}}
-		/>
+		{/each}
 	</div>
 {/if}
 

@@ -44,7 +44,6 @@
 	}
 	onMount(reload);
 
-
 	let newBudgetName = null;
 	let newBudgetAmount = null;
 	const addBudget = () => {
@@ -121,6 +120,10 @@
 		transaction.tags = tags;
 	};
 	const updateTransaction = async () => {
+		addBudget()
+		addInbudget()
+		addDebt()
+		addTag()
 		let t = transaction
 		if (t.type === "out") {
 			t.inbudgets = {}
@@ -141,6 +144,19 @@
     			console.error(e);
 			}
 	}
+
+	const percentToAbsolute = percent => parseInt(percent)/100*transaction.amount
+	const percentBudget = () => newBudgetAmount = newBudgetAmount < 100? percentToAbsolute(newBudgetAmount): newBudgetAmount
+	const percentInbudget = () => newInbudgetAmount = newInbudgetAmount < 100? percentToAbsolute(newInbudgetAmount): newInbudgetAmount
+	const percentDebt = () => newDebtAmount = newDebtAmount < 100? percentToAbsolute(newDebtAmount): newDebtAmount
+	const fractionToAbsolute = fraction => (transaction.amount/fraction).toFixed(0)
+	const fractionBudget = () => newBudgetAmount = fractionToAbsolute(newBudgetAmount)
+	const fractionInbudget = () => newInbudgetAmount = fractionToAbsolute(newInbudgetAmount)
+	const fractionDebt = () => newDebtAmount = fractionToAbsolute(newDebtAmount)
+	const fillAmount = () => transaction.amount - Object.values(transaction.budgets).reduce((a, b) => a + b, 0) - Object.values(transaction.inbudgets).reduce((a, b) => a + b, 0) - Object.values(transaction.debts).reduce((a, b) => a + b, 0)
+	const fillBudget = () => newBudgetAmount = fillAmount()
+	const fillInbudget = () => newInbudgetAmount = fillAmount()
+	const fillDebt = () => newDebtAmount = fillAmount()
 </script>
 
 <div class="main">
@@ -236,6 +252,14 @@
 					</td>
 					<td><span on:click={addBudget} class="material-icons-sharp">add</span></td>
 				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<span on:click={percentBudget} class="material-icons-sharp">percent</span>
+						<span on:click={fractionBudget} class="material-icons-sharp">calculate</span>
+						<span on:click={fillBudget} class="material-icons-sharp">functions</span>
+					</td>
+				</tr>
 			{/if}
 			<!-- Inbudgets -->
 			{#if transaction.type === 'in'}
@@ -274,6 +298,14 @@
 					</td>
 					<td><span on:click={addInbudget} class="material-icons-sharp">add</span></td>
 				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<span on:click={percentInbudget} class="material-icons-sharp">percent</span>
+						<span on:click={fractionInbudget} class="material-icons-sharp">calculate</span>
+						<span on:click={fillInbudget} class="material-icons-sharp">functions</span>
+					</td>
+				</tr>
 			{/if}
 			<!-- Debts -->
 			{#if transaction.type === 'out' || transaction.type === 'in'}
@@ -311,6 +343,14 @@
 						/>
 					</td>
 					<td><span on:click={addDebt} class="material-icons-sharp">add</span></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<span on:click={percentDebt} class="material-icons-sharp">percent</span>
+						<span on:click={fractionDebt} class="material-icons-sharp">calculate</span>
+						<span on:click={fillDebt} class="material-icons-sharp">functions</span>
+					</td>
 				</tr>
 			{/if}
 			<!-- Tags -->

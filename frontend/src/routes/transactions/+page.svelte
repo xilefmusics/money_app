@@ -7,8 +7,9 @@
   	import params2url from '../../lib/url/params2url';
 
 	let transactions = null;
+	let params = null;
 	const reload = async () => {
-		const params = url2params($page.url.href)
+		params = url2params($page.url.href)
 		if (!params.year) {
 			params.year = (new Date()).getFullYear()
 		}

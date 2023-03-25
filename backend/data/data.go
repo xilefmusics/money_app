@@ -93,7 +93,13 @@ func New(dataPath string) (*Data, error) {
 func (self *Data) getUserData(user string) (*UserData, error) {
 	userData, ok := self.data[user]
 	if !ok {
-		userData, err := new(user, self.transactionsPath, self.eventsPath, self.filesPath)
+		var err error
+		userData, err = new(
+			user,
+			filepath.Join(self.transactionsPath, user+".json"),
+			filepath.Join(self.eventsPath, user+".json"),
+			filepath.Join(self.filesPath, user),
+		)
 		if err != nil {
 			return nil, err
 		}

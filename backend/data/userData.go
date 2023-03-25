@@ -39,6 +39,8 @@ func new(username, transactionsPath, eventsPath, filesPath string) (*UserData, e
 			return nil, err
 		}
 		transaction.SortByDate(transactions)
+	} else {
+		transactions = []transaction.Transaction{}
 	}
 
 	events := []event.Event{}
@@ -51,6 +53,8 @@ func new(username, transactionsPath, eventsPath, filesPath string) (*UserData, e
 		if err != nil {
 			return nil, err
 		}
+	} else {
+		events = []event.Event{}
 	}
 
 	filesPathExists, err := helper.OsPathExists(filesPath)

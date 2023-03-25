@@ -15,6 +15,7 @@ type Data struct {
 	data             map[string]*UserData
 	transactionsPath string
 	eventsPath       string
+	filesPath        string
 }
 
 func getListOfUsers(path string) ([]string, error) {
@@ -56,6 +57,17 @@ func New(dataPath string) (*Data, error) {
 		}
 	}
 
+	filesPath := filepath.Join(dataPath, "files")
+	filesPathExists, err := helper.OsPathExists(filesPath)
+	if err != nil {
+		return nil, err
+	}
+	if !filesPathExists {
+		if err := os.Mkdir(filesPath, os.ModePerm); err != nil {
+			return nil, err
+		}
+	}
+
 	transactionsUsers, err := getListOfUsers(transactionsPath)
 	if err != nil {
 		return nil, err
@@ -68,20 +80,20 @@ func New(dataPath string) (*Data, error) {
 
 	data := map[string]*UserData{}
 	for _, user := range helper.StringUniqueMergeSlices(transactionsUsers, eventsUsers) {
-		userData, err := new(user, filepath.Join(transactionsPath, fmt.Sprintf("%s.json", user)), filepath.Join(eventsPath, fmt.Sprintf("%s.json", user)))
+		userData, err := new(user, filepath.Join(transactionsPath, fmt.Sprintf("%s.json", user)), filepath.Join(eventsPath, fmt.Sprintf("%s.json", user)), filepath.Join(filesPath, user))
 		if err != nil {
 			return nil, err
 		}
 		data[user] = userData
 	}
 
-	return &Data{data, transactionsPath, eventsPath}, nil
+	return &Data{data, transactionsPath, eventsPath, filesPath}, nil
 }
 
 func (self *Data) getUserData(user string) (*UserData, error) {
 	userData, ok := self.data[user]
 	if !ok {
-		userData, err := new(user, self.transactionsPath, self.eventsPath)
+		userData, err := new(user, self.transactionsPath, self.eventsPath, self.filesPath)
 		if err != nil {
 			return nil, err
 		}
@@ -136,4 +148,20 @@ func (self *Data) Undo(user string) (event.Event, error) {
 		return event.Event{}, err
 	}
 	return userData.undo()
+}
+
+func (self *Data) GetAttachment(user, fileName string) ([]byte, error) {
+	userData, err := self.getUserData(user)
+	if err != nil {
+		return nil, err
+	}
+	return userData.getAttachment(fileName)
+}
+
+func (self *Data) AddAttachment(user string, bytes []byte, ext string) (string, error) {
+	userData, err := self.getUserData(user)
+	if err != nil {
+		return "", err
+	}
+	return userData.addAttachment(bytes, ext)
 }

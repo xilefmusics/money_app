@@ -11,16 +11,17 @@ import (
 )
 
 type Transaction struct {
-	ID        uint              `json:"id"`
-	Type      string            `json:"type"`
-	Date      time.Time         `json:"date"`
-	Amount    int               `json:"amount"`
-	Sender    string            `json:"sender"`
-	Receiver  string            `json:"receiver"`
-	Budgets   map[string]int    `json:"budgets"`
-	Inbudgets map[string]int    `json:"inbudgets"`
-	Debts     map[string]int    `json:"debts"`
-	Tags      map[string]string `json:"tags"`
+	ID         uint              `json:"id"`
+	Type       string            `json:"type"`
+	Date       time.Time         `json:"date"`
+	Amount     int               `json:"amount"`
+	Sender     string            `json:"sender"`
+	Receiver   string            `json:"receiver"`
+	Budgets    map[string]int    `json:"budgets"`
+	Inbudgets  map[string]int    `json:"inbudgets"`
+	Debts      map[string]int    `json:"debts"`
+	Tags       map[string]string `json:"tags"`
+	Attachment string            `json:"attachment"`
 }
 
 func (self Transaction) In() bool {
@@ -193,9 +194,7 @@ func Save(path string, transactions []Transaction) error {
 	if err != nil {
 		return err
 	}
-
-	ioutil.WriteFile(path, bytes, 0644)
-	return nil
+	return ioutil.WriteFile(path, bytes, 0644)
 }
 
 func GetNextID(transactions []Transaction) (id uint) {

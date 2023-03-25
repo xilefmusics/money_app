@@ -36,7 +36,7 @@
 				<div class="flex-fill" />
 				<div class="middle2inner">
 					{#if item.link2}
-						<a href={item.link2} class="material-icons-sharp">list_alt</a>
+						<a href={item.link2} class="material-icons-sharp">{item.link2icon ? item.link2icon : "list_alt"}</a>
 					{/if}
 					{#if item.link3}
 						<a href={item.link3} class="material-icons-sharp">equalizer</a>

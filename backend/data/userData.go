@@ -1,7 +1,12 @@
 package data
 
 import (
+	"crypto/sha256"
 	"errors"
+	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 	"sync"
 	"time"
 
@@ -17,9 +22,10 @@ type UserData struct {
 	transactionsPath string
 	events           []event.Event
 	eventsPath       string
+	filesPath        string
 }
 
-func new(username, transactionsPath, eventsPath string) (*UserData, error) {
+func new(username, transactionsPath, eventsPath, filesPath string) (*UserData, error) {
 	mutex := sync.Mutex{}
 
 	transactions := []transaction.Transaction{}
@@ -47,7 +53,17 @@ func new(username, transactionsPath, eventsPath string) (*UserData, error) {
 		}
 	}
 
-	return &UserData{username, mutex, transactions, transactionsPath, events, eventsPath}, nil
+	filesPathExists, err := helper.OsPathExists(filesPath)
+	if err != nil {
+		return nil, err
+	}
+	if !filesPathExists {
+		if err := os.Mkdir(filesPath, os.ModePerm); err != nil {
+			return nil, err
+		}
+	}
+
+	return &UserData{username, mutex, transactions, transactionsPath, events, eventsPath, filesPath}, nil
 }
 
 func (self *UserData) lock() {
@@ -163,4 +179,25 @@ func (self *UserData) undo() (event.Event, error) {
 	self.events[idx].Reason = "rolledBack"
 
 	return self.events[idx], self.save()
+}
+
+func (self *UserData) getAttachment(fileName string) ([]byte, error) {
+	file, err := os.Open(filepath.Join(self.filesPath, fileName))
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	bytes, err := ioutil.ReadAll(file)
+	if err != nil {
+		return nil, err
+	}
+
+	return bytes, err
+}
+
+func (self *UserData) addAttachment(bytes []byte, ext string) (string, error) {
+	hash := sha256.Sum256(bytes)
+	fileName := fmt.Sprintf("%x%s", hash[:10], ext)
+	return fileName, ioutil.WriteFile(filepath.Join(self.filesPath, fileName), bytes, 0644)
 }

@@ -51,9 +51,7 @@ func Save(path string, events []Event) error {
 	if err != nil {
 		return err
 	}
-
-	ioutil.WriteFile(path, bytes, 0644)
-	return nil
+	return ioutil.WriteFile(path, bytes, 0644)
 }
 
 func GetNextID(events []Event) (id uint) {

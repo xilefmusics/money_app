@@ -36,5 +36,7 @@ func main() {
 	router.GET("/inbudgets", GetInbudgets)
 	router.GET("/tags", GetTags)
 	router.GET("/history/:kind", GetHistory)
+	router.GET("/attachment/:name", GetAttachment)
+	router.POST("/attachment", PostAttachment)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", c.Port), router))
 }

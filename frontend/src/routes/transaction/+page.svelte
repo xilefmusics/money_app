@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
     import { page } from '$app/stores';
 	import url2params from '../../lib/url/url2params';
+  import { select_option } from 'svelte/internal';
 
 	let transaction = null;
 	let pods = null;
@@ -119,7 +120,31 @@
 		delete tags[name];
 		transaction.tags = tags;
 	};
+
+	let attachmentElement = null;
+	const handleAttachment = async () => {
+		if (attachmentElement.files.length > 0) {
+			try {
+				const response = await fetch("/api/attachment", {
+					method: 'POST',
+					body: attachmentElement.files[0],
+					headers: {
+      					"Content-Type": attachmentElement.files[0].type,
+    				},
+
+				})
+				const json = await response.json()
+				if (response.status === 201) {
+					transaction.attachment = json
+				}
+			} catch (e) {
+    			console.error(e);
+			}
+		}
+	}
+
 	const updateTransaction = async () => {
+		await handleAttachment()
 		addBudget()
 		addInbudget()
 		addDebt()
@@ -383,13 +408,22 @@
 				</td>
 				<td><span on:click={addTag} class="material-icons-sharp">add</span></td>
 			</tr>
+			<tr><td><br></td></tr>
+			<tr>
+				<td>Attachment</td>
+				<td colspan=2><input id="add-attachment" type="file" bind:this={attachmentElement}/></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td colspan=2>{transaction.attachment}</td>
+			</tr>
+			<tr><td><br></td></tr>
+			<tr>
+				<td colspan=3><div class="btn" on:click={updateTransaction}>Update</div></td>
+			</tr>
 		</table>
 	{/if}
-	<tr>
-		<td colspan=3>
-			<div class="btn" on:click={updateTransaction}>Update</div>
-		</td>
-	</tr>
+	
 </div>
 
 <style>

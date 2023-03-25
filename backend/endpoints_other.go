@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -153,4 +154,47 @@ func GetHistory(gc *gin.Context) {
 	default:
 		gc.IndentedJSON(http.StatusNotFound, "404 page not found")
 	}
+}
+
+func GetAttachment(gc *gin.Context) {
+	user, err := helper.GC2User(gc)
+	if err != nil {
+		log.Printf("ERROR in GetTransactions: %s\n", err.Error())
+		gc.String(http.StatusInternalServerError, "501 Internal Server Error")
+		return
+	}
+
+	attachment, err := globalData.GetAttachment(user, gc.Param("name"))
+	if err != nil {
+		log.Printf("ERROR: %s\n", err.Error())
+		gc.String(http.StatusNotFound, "404 File Not Found")
+		return
+	}
+
+	gc.Data(http.StatusOK, helper.FileName2MimeType(gc.Param("name")), attachment)
+}
+
+func PostAttachment(gc *gin.Context) {
+	user, err := helper.GC2User(gc)
+	if err != nil {
+		log.Printf("ERROR in GetTransactions: %s\n", err.Error())
+		gc.String(http.StatusInternalServerError, "501 Internal Server Error")
+		return
+	}
+
+	body, err := ioutil.ReadAll(gc.Request.Body)
+	if err != nil {
+		log.Printf("ERROR: %s\n", err.Error())
+		gc.String(http.StatusInternalServerError, "501 Internal Server Error")
+		return
+	}
+
+	name, err := globalData.AddAttachment(user, body, helper.MimeType2Extension(gc.Request.Header["Content-Type"][0]))
+	if err != nil {
+		log.Printf("ERROR: %s\n", err.Error())
+		gc.String(http.StatusNotFound, "404 File Not Found")
+		return
+	}
+
+	gc.IndentedJSON(http.StatusCreated, name)
 }

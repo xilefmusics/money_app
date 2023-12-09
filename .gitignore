@@ -11,3 +11,5 @@ frontend/package
 
 backend/go.sum
 
+money_app/target
+

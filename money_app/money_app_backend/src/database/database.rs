@@ -1,10 +1,8 @@
-use super::IdGetter;
 use super::Select;
 
 use crate::error::AppError;
 use crate::settings::Settings;
 
-use futures::future::join_all;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 use surrealdb::engine::remote::ws::{Client, Ws};
@@ -40,29 +38,15 @@ impl Database {
         Self { client }
     }
 
-    pub async fn create<T: Serialize + DeserializeOwned + Clone + std::fmt::Debug + IdGetter>(
+    pub async fn create<I: Serialize, O: DeserializeOwned>(
         &self,
         table: &str,
-        data: T,
-    ) -> Result<T, AppError> {
+        content: Vec<I>,
+    ) -> Result<Vec<O>, AppError> {
         self.client
-            .create((table, data.get_id_second()))
-            .content(data)
+            .create(table)
+            .content(content.get(0))
             .await
-            .map_err(|err| AppError::Database(format!("{}", err)))?
-            .ok_or(AppError::Database("record is none".into()))
-    }
-
-    pub async fn create_vec<
-        T: Serialize + DeserializeOwned + Clone + std::fmt::Debug + IdGetter,
-    >(
-        &self,
-        table: &str,
-        data: Vec<T>,
-    ) -> Result<Vec<T>, AppError> {
-        join_all(data.into_iter().map(|data| self.create(table, data)))
-            .await
-            .into_iter()
-            .collect()
+            .map_err(|err| AppError::Database(format!("{}", err)))
     }
 }

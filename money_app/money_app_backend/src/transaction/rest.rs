@@ -4,7 +4,7 @@ use crate::database::Database;
 use crate::error::AppError;
 use crate::rest::parse_user_header;
 
-use actix_web::{get, post, web::Data, web::Json, web::Path, HttpRequest, HttpResponse};
+use actix_web::{delete, get, post, web::Data, web::Json, web::Path, HttpRequest, HttpResponse};
 
 #[get("/api/transactions")]
 pub async fn get(req: HttpRequest, db: Data<Database>) -> Result<HttpResponse, AppError> {
@@ -25,6 +25,14 @@ pub async fn get_id(
         )
         .await?,
     ))
+}
+
+#[delete("/api/transactions")]
+pub async fn delete(
+    transactions: Json<Vec<Transaction>>,
+    db: Data<Database>,
+) -> Result<HttpResponse, AppError> {
+    Ok(HttpResponse::NoContent().json(model::delete(&db, transactions.into_inner()).await?))
 }
 
 #[post("/api/transactions")]

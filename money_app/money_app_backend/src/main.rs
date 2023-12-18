@@ -30,6 +30,7 @@ async fn main() {
             .service(transaction::rest::get_id)
             .service(transaction::rest::get)
             .service(transaction::rest::post)
+            .service(transaction::rest::delete)
             .service(pod::rest::get)
             .service(budget::rest::get)
             .service(inbudget::rest::get)

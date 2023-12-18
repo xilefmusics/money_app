@@ -1,3 +1,4 @@
+use super::id::string2record;
 use super::Select;
 
 use crate::error::AppError;
@@ -82,5 +83,29 @@ impl Database {
                 Ok(acc)
             })
         })
+    }
+
+    async fn delete_one<O: DeserializeOwned>(&self, id: String) -> Result<Option<O>, AppError> {
+        let record = string2record(&id)?;
+        self.client
+            .delete((record.tb, record.id.to_string()))
+            .await
+            .map_err(|err| AppError::Database(format!("{}", err)))
+    }
+
+    pub async fn delete<O: DeserializeOwned>(
+        &self,
+        ids: Vec<String>,
+    ) -> Result<Vec<Option<O>>, AppError> {
+        join_all(ids.into_iter().map(|id| self.delete_one(id)))
+            .await
+            .into_iter()
+            .try_fold(Vec::new(), |acc, result| {
+                result.and_then(|inner_vec| {
+                    let mut acc = acc;
+                    acc.extend(inner_vec);
+                    Ok(acc)
+                })
+            })
     }
 }

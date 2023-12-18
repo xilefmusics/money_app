@@ -1,6 +1,6 @@
 use super::{Transaction, Type};
 
-use crate::database::{id::record2string, Database, Select};
+use crate::database::{id::record2string, id::string2record, Database, Select};
 use crate::error::AppError;
 
 use chrono::{DateTime, Local};
@@ -106,5 +106,22 @@ pub async fn select<'a>(select: Select<'a>) -> Result<Vec<Transaction>, AppError
         .await?
         .into_iter()
         .map(|get_data| get_data.to_transaction())
+        .collect())
+}
+
+pub async fn delete(
+    db: &Database,
+    transactions: Vec<Transaction>,
+) -> Result<Vec<Option<Transaction>>, AppError> {
+    Ok(db
+        .delete::<GetData>(
+            transactions
+                .into_iter()
+                .map(|transaction| transaction.id.ok_or(AppError::Other("No id given".into())))
+                .collect::<Result<Vec<String>, AppError>>()?,
+        )
+        .await?
+        .into_iter()
+        .map(|get_data| get_data.map(|value| value.to_transaction()))
         .collect())
 }

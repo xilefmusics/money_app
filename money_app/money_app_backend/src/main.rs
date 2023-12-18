@@ -27,6 +27,7 @@ async fn main() {
         let database = database.clone();
         App::new()
             .app_data(database)
+            .service(transaction::rest::get_id)
             .service(transaction::rest::get)
             .service(transaction::rest::post)
             .service(pod::rest::get)

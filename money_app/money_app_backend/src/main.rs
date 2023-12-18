@@ -4,6 +4,7 @@ mod debt;
 mod error;
 mod inbudget;
 mod pod;
+mod rest;
 mod settings;
 mod tag;
 mod transaction;

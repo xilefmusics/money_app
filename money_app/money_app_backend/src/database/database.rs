@@ -20,6 +20,18 @@ impl Database {
         Select::new(&self.client)
     }
 
+    pub async fn query<T: Serialize + DeserializeOwned + Clone + std::fmt::Debug>(
+        &self,
+        query: &str,
+    ) -> Result<Vec<T>, AppError> {
+        self.client
+            .query(query)
+            .await
+            .map_err(|err| AppError::Database(format!("{}", err)))?
+            .take(0)
+            .map_err(|err| AppError::Database(format!("{}", err)))
+    }
+
     pub async fn new(settings: Settings) -> Self {
         let client = Surreal::new::<Ws>(format!("{}:{}", settings.db_host, settings.db_port))
             .await

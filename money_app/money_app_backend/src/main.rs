@@ -1,5 +1,6 @@
 mod database;
 mod error;
+mod pod;
 mod settings;
 mod transaction;
 
@@ -23,6 +24,7 @@ async fn main() {
             .app_data(database)
             .service(transaction::rest::get)
             .service(transaction::rest::post)
+            .service(pod::rest::get)
     })
     .bind((settings.host, settings.port))
     .unwrap()

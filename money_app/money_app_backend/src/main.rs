@@ -1,5 +1,6 @@
 mod budget;
 mod database;
+mod debt;
 mod error;
 mod inbudget;
 mod pod;
@@ -29,6 +30,7 @@ async fn main() {
             .service(pod::rest::get)
             .service(budget::rest::get)
             .service(inbudget::rest::get)
+            .service(debt::rest::get)
     })
     .bind((settings.host, settings.port))
     .unwrap()

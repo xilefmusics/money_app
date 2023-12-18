@@ -1,4 +1,4 @@
-pub mod model;
+mod model;
 mod pod;
 pub mod rest;
 

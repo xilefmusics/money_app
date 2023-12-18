@@ -5,6 +5,7 @@ use crate::error::AppError;
 
 use serde::{Deserialize, Serialize};
 
+// TODO: If surreal version 1.1.0 is available, directly query a list of string
 #[derive(Debug, Serialize, Deserialize, Clone)]
 struct GetData {
     pod: String,

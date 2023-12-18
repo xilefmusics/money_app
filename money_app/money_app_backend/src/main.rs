@@ -5,6 +5,7 @@ mod error;
 mod inbudget;
 mod pod;
 mod settings;
+mod tag;
 mod transaction;
 
 use database::Database;
@@ -31,6 +32,7 @@ async fn main() {
             .service(budget::rest::get)
             .service(inbudget::rest::get)
             .service(debt::rest::get)
+            .service(tag::rest::get)
     })
     .bind((settings.host, settings.port))
     .unwrap()

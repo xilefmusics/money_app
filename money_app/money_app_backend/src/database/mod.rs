@@ -1,6 +1,5 @@
 mod database;
-mod id;
-pub mod model;
+pub mod id;
 mod select;
 
 pub use database::Database;

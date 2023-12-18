@@ -52,8 +52,7 @@ impl<'a> Select<'a> {
     }
 
     pub fn user(mut self, user: &str) -> Self {
-        self.where_conditions
-            .push(format!("group in user:{}.groups", user));
+        self.where_conditions.push(format!("user == \"{}\"", user));
         self
     }
 

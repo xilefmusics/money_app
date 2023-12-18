@@ -3,29 +3,12 @@ mod error;
 mod settings;
 mod transaction;
 
-use database::{model, Database};
-use error::AppError;
+use database::Database;
 use settings::Settings;
-use transaction::Transaction;
 
-use actix_web::{get, post, web::Data, web::Json, App, HttpRequest, HttpResponse, HttpServer};
+use actix_web::{web::Data, App, HttpServer};
 
 use env_logger::Env;
-
-#[get("/")]
-pub async fn index() -> Result<HttpResponse, AppError> {
-    Ok(HttpResponse::Ok().json("Hello World"))
-}
-
-#[post("/api/transaction")]
-pub async fn post_transaction(
-    req: HttpRequest,
-    transactions: Json<Vec<Transaction>>,
-    db: Data<Database>,
-) -> Result<HttpResponse, AppError> {
-    Ok(HttpResponse::Ok()
-        .json(model::add_transactions(&db, "xilef".into(), dbg!(transactions.into_inner())).await?))
-}
 
 #[actix_web::main]
 async fn main() {
@@ -38,8 +21,8 @@ async fn main() {
         let database = database.clone();
         App::new()
             .app_data(database)
-            .service(index)
-            .service(post_transaction)
+            .service(transaction::rest::get)
+            .service(transaction::rest::post)
     })
     .bind((settings.host, settings.port))
     .unwrap()

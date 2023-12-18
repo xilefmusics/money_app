@@ -1,6 +1,7 @@
-use crate::database::{id::record2string, Database};
+use super::{Transaction, Type};
+
+use crate::database::{id::record2string, Database, Select};
 use crate::error::AppError;
-use crate::transaction::{Transaction, Type};
 
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
@@ -8,7 +9,7 @@ use std::collections::HashMap;
 use surrealdb::opt::RecordId;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-struct AddData {
+struct CreateData {
     user: String,
     #[serde(rename = "type")]
     ttype: Type,
@@ -23,9 +24,9 @@ struct AddData {
     attachment: Option<String>,
 }
 
-impl AddData {
-    pub fn from_transaction(transaction: Transaction, user: String) -> AddData {
-        AddData {
+impl CreateData {
+    pub fn from_transaction(transaction: Transaction, user: String) -> CreateData {
+        CreateData {
             user: user.clone(),
             ttype: transaction.ttype,
             date: transaction.date,
@@ -76,7 +77,7 @@ impl GetData {
     }
 }
 
-pub async fn add_transactions(
+pub async fn create(
     db: &Database,
     user: String,
     transactions: Vec<Transaction>,
@@ -85,13 +86,23 @@ pub async fn add_transactions(
         return Ok(vec![]);
     }
     Ok(db
-        .create::<AddData, GetData>(
+        .create::<CreateData, GetData>(
             "transaction",
             transactions
                 .into_iter()
-                .map(|transaction| AddData::from_transaction(transaction, user.clone()))
-                .collect::<Vec<AddData>>(),
+                .map(|transaction| CreateData::from_transaction(transaction, user.clone()))
+                .collect::<Vec<CreateData>>(),
         )
+        .await?
+        .into_iter()
+        .map(|get_data| get_data.to_transaction())
+        .collect())
+}
+
+pub async fn select<'a>(select: Select<'a>) -> Result<Vec<Transaction>, AppError> {
+    Ok(select
+        .table("transaction")
+        .query::<GetData>()
         .await?
         .into_iter()
         .map(|get_data| get_data.to_transaction())

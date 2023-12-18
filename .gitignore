@@ -13,3 +13,5 @@ backend/go.sum
 
 money_app/target
 
+money_app/01-transactions.json
+money_app/01-transactions-back.json

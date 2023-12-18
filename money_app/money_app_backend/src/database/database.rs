@@ -3,6 +3,7 @@ use super::Select;
 use crate::error::AppError;
 use crate::settings::Settings;
 
+use futures::future::join_all;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 use surrealdb::engine::remote::ws::{Client, Ws};
@@ -38,15 +39,36 @@ impl Database {
         Self { client }
     }
 
+    async fn create_one<I: Serialize, O: DeserializeOwned>(
+        &self,
+        table: &str,
+        content: I,
+    ) -> Result<Vec<O>, AppError> {
+        self.client
+            .create(table)
+            .content(content)
+            .await
+            .map_err(|err| AppError::Database(format!("{}", err)))
+    }
+
     pub async fn create<I: Serialize, O: DeserializeOwned>(
         &self,
         table: &str,
         content: Vec<I>,
     ) -> Result<Vec<O>, AppError> {
-        self.client
-            .create(table)
-            .content(content.get(0))
-            .await
-            .map_err(|err| AppError::Database(format!("{}", err)))
+        join_all(
+            content
+                .into_iter()
+                .map(|content| self.create_one(table, content)),
+        )
+        .await
+        .into_iter()
+        .try_fold(Vec::new(), |acc, result| {
+            result.and_then(|inner_vec| {
+                let mut acc = acc;
+                acc.extend(inner_vec);
+                Ok(acc)
+            })
+        })
     }
 }

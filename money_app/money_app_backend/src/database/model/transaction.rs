@@ -1,6 +1,6 @@
 use crate::database::{id::record2string, Database};
 use crate::error::AppError;
-use crate::transaction::{Amount, Inner, Transaction};
+use crate::transaction::{Transaction, Type};
 
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
@@ -10,46 +10,68 @@ use surrealdb::opt::RecordId;
 #[derive(Debug, Serialize, Deserialize, Clone)]
 struct AddData {
     user: String,
+    #[serde(rename = "type")]
+    ttype: Type,
     date: DateTime<Local>,
-    amount: Amount,
-    inner: Inner,
-    attachment: Option<String>,
+    amount: usize,
+    sender: Option<String>,
+    receiver: Option<String>,
+    budgets: HashMap<String, usize>,
+    inbudgets: HashMap<String, usize>,
+    debts: HashMap<String, usize>,
     tags: HashMap<String, String>,
+    attachment: Option<String>,
 }
 
 impl AddData {
     pub fn from_transaction(transaction: Transaction, user: String) -> AddData {
         AddData {
             user: user.clone(),
+            ttype: transaction.ttype,
             date: transaction.date,
             amount: transaction.amount,
-            inner: transaction.inner,
-            attachment: transaction.attachment,
+            sender: transaction.sender,
+            receiver: transaction.receiver,
+            budgets: transaction.budgets,
+            inbudgets: transaction.inbudgets,
+            debts: transaction.debts,
             tags: transaction.tags,
+            attachment: transaction.attachment,
         }
     }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 struct GetData {
-    id: RecordId,
     user: String,
+    id: RecordId,
+    #[serde(rename = "type")]
+    ttype: Type,
     date: DateTime<Local>,
-    amount: Amount,
-    inner: Inner,
-    attachment: Option<String>,
+    amount: usize,
+    sender: Option<String>,
+    receiver: Option<String>,
+    budgets: HashMap<String, usize>,
+    inbudgets: HashMap<String, usize>,
+    debts: HashMap<String, usize>,
     tags: HashMap<String, String>,
+    attachment: Option<String>,
 }
 
 impl GetData {
     pub fn to_transaction(self) -> Transaction {
         Transaction {
             id: Some(record2string(&self.id)),
+            ttype: self.ttype,
             date: self.date,
             amount: self.amount,
-            inner: self.inner,
-            attachment: self.attachment,
+            sender: self.sender,
+            receiver: self.receiver,
+            budgets: self.budgets,
+            inbudgets: self.inbudgets,
+            debts: self.debts,
             tags: self.tags,
+            attachment: self.attachment,
         }
     }
 }
@@ -59,6 +81,9 @@ pub async fn add_transactions(
     user: String,
     transactions: Vec<Transaction>,
 ) -> Result<Vec<Transaction>, AppError> {
+    if transactions.len() == 0 {
+        return Ok(vec![]);
+    }
     Ok(db
         .create::<AddData, GetData>(
             "transaction",

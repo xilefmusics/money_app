@@ -24,7 +24,7 @@ pub async fn post_transaction(
     db: Data<Database>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok()
-        .json(model::add_transactions(&db, "xilef".into(), transactions.into_inner()).await?))
+        .json(model::add_transactions(&db, "xilef".into(), dbg!(transactions.into_inner())).await?))
 }
 
 #[actix_web::main]

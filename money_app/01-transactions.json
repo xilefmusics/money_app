@@ -1,17 +1,23 @@
 [
   {
     "date": "2023-12-04T00:00:00.000Z",
-    "amount": {
-      "amount": 1000
+    "type": "in",
+    "amount": 1000,
+    "sender": "A",
+    "receiver": "B",
+    "budgets": {
+      "B1": 1000
     },
-    "inner": {
-      "Move": {
-        "from": "Konto 1",
-        "to": "Konto 2"
-      }
+    "inbudgets": {
+      "I1": 1000
+    },
+    "debts": {
+      "D1": 10000
     },
     "tags": {
-      "Key": "Value"
-    }
+      "T1": "Hello World"
+    },
+    "attachment": null
   }
 ]
+

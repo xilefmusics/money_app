@@ -77,3 +77,81 @@ pub async fn post(
             .await?,
     ))
 }
+
+#[get("/api/pods")]
+pub async fn get_pods(req: HttpRequest, db: Data<Client>) -> Result<HttpResponse, AppError> {
+    Ok(HttpResponse::Ok().json(
+        db.table("transactions")
+            .owner(&parse_user_header(req)?)
+            .select()?
+            .field("content.receiver as item")
+            .wrapper_js_map("element.item")
+            .wrapper_fn("array::group")
+            .wrapper_fn("array::sort")
+            .query_direct::<String>()
+            .await?
+            .into_iter()
+            .filter(|pod| pod.len() > 0)
+            .collect::<Vec<String>>(),
+    ))
+}
+
+#[get("/api/budgets")]
+pub async fn get_budgets(req: HttpRequest, db: Data<Client>) -> Result<HttpResponse, AppError> {
+    Ok(HttpResponse::Ok().json(
+        db.table("transactions")
+            .owner(&parse_user_header(req)?)
+            .select()?
+            .field("content.budgets as item")
+            .wrapper_js_map("Object.keys(element.item)")
+            .wrapper_fn("array::group")
+            .wrapper_fn("array::sort")
+            .query_direct::<String>()
+            .await?,
+    ))
+}
+
+#[get("/api/inbudgets")]
+pub async fn get_inbudgets(req: HttpRequest, db: Data<Client>) -> Result<HttpResponse, AppError> {
+    Ok(HttpResponse::Ok().json(
+        db.table("transactions")
+            .owner(&parse_user_header(req)?)
+            .select()?
+            .field("content.inbudgets as item")
+            .wrapper_js_map("Object.keys(element.item)")
+            .wrapper_fn("array::group")
+            .wrapper_fn("array::sort")
+            .query_direct::<String>()
+            .await?,
+    ))
+}
+
+#[get("/api/debts")]
+pub async fn get_debts(req: HttpRequest, db: Data<Client>) -> Result<HttpResponse, AppError> {
+    Ok(HttpResponse::Ok().json(
+        db.table("transactions")
+            .owner(&parse_user_header(req)?)
+            .select()?
+            .field("content.debts as item")
+            .wrapper_js_map("Object.keys(element.item)")
+            .wrapper_fn("array::group")
+            .wrapper_fn("array::sort")
+            .query_direct::<String>()
+            .await?,
+    ))
+}
+
+#[get("/api/tags")]
+pub async fn get_tags(req: HttpRequest, db: Data<Client>) -> Result<HttpResponse, AppError> {
+    Ok(HttpResponse::Ok().json(
+        db.table("transactions")
+            .owner(&parse_user_header(req)?)
+            .select()?
+            .field("content.tags as item")
+            .wrapper_js_map("Object.keys(element.item)")
+            .wrapper_fn("array::group")
+            .wrapper_fn("array::sort")
+            .query_direct::<String>()
+            .await?,
+    ))
+}

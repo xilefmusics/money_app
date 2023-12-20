@@ -1,5 +1,7 @@
 use actix_web::http::StatusCode;
 use actix_web::{HttpResponse, ResponseError};
+use fancy_surreal;
+use std::error;
 use std::fmt;
 
 #[derive(Debug)]
@@ -22,6 +24,14 @@ impl fmt::Display for AppError {
             Self::NotFound(message) => write!(f, "NotFoundError ({})", message),
             Self::Other(message) => write!(f, "OtherError ({})", message),
         }
+    }
+}
+
+impl error::Error for AppError {}
+
+impl From<fancy_surreal::Error> for AppError {
+    fn from(err: fancy_surreal::Error) -> Self {
+        Self::Database(err.to_string())
     }
 }
 

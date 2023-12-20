@@ -6,5 +6,5 @@ curl \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
   -d @01-transactions.json \
-  "http://localhost:8082/api/transaction" \
+  "http://localhost:8082/api/transactions" \
   --fail

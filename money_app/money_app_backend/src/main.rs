@@ -1,15 +1,9 @@
-mod budget;
-mod database;
-mod debt;
 mod error;
-mod inbudget;
-mod pod;
 mod rest;
 mod settings;
-mod tag;
 mod transaction;
 
-use database::Database;
+use fancy_surreal::Client;
 use settings::Settings;
 
 use actix_web::{web::Data, App, HttpServer};
@@ -21,7 +15,18 @@ async fn main() {
     env_logger::init_from_env(Env::default().default_filter_or("debug"));
 
     let settings = Settings::new();
-    let database = Data::new(Database::new(settings.clone()).await);
+    let database = Data::new(
+        Client::new(
+            &settings.db_host,
+            settings.db_port,
+            &settings.db_user,
+            &settings.db_password,
+            &settings.db_database,
+            &settings.db_namespace,
+        )
+        .await
+        .unwrap(),
+    );
 
     HttpServer::new(move || {
         let database = database.clone();
@@ -31,11 +36,6 @@ async fn main() {
             .service(transaction::rest::get)
             .service(transaction::rest::post)
             .service(transaction::rest::delete)
-            .service(pod::rest::get)
-            .service(budget::rest::get)
-            .service(inbudget::rest::get)
-            .service(debt::rest::get)
-            .service(tag::rest::get)
     })
     .bind((settings.host, settings.port))
     .unwrap()

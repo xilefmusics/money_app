@@ -1,4 +1,5 @@
 use chrono::{DateTime, Local};
+use fancy_surreal::Databasable;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -24,4 +25,14 @@ pub struct Transaction {
     pub debts: HashMap<String, usize>,
     pub tags: HashMap<String, String>,
     pub attachment: Option<String>,
+}
+
+impl Databasable for Transaction {
+    fn get_id(&self) -> Option<String> {
+        self.id.clone()
+    }
+
+    fn set_id(&mut self, id: Option<String>) {
+        self.id = id;
+    }
 }

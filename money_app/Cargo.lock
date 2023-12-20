@@ -1067,6 +1067,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "fancy_surreal"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "futures",
+ "serde",
+ "serde_json",
+ "surrealdb",
+ "tokio",
+]
+
+[[package]]
 name = "fastrand"
 version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1859,11 +1871,11 @@ dependencies = [
  "actix-web",
  "chrono",
  "env_logger",
+ "fancy_surreal",
  "futures",
  "log",
  "serde",
  "serde_json",
- "surrealdb",
 ]
 
 [[package]]

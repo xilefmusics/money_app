@@ -11,13 +11,7 @@ use actix_web::{
 
 #[get("/api/transactions")]
 pub async fn get(req: HttpRequest, db: Data<Client>) -> Result<HttpResponse, AppError> {
-    Ok(HttpResponse::Ok().json(
-        db.table("transactions")
-            .owner(&parse_user_header(req)?)
-            .select()?
-            .query::<Transaction>()
-            .await?,
-    ))
+    Ok(HttpResponse::Ok().json(Transaction::get(db.into_inner(), &parse_user_header(req)?).await?))
 }
 
 #[get("/api/transactions/{id:transaction.*}")]
@@ -27,12 +21,7 @@ pub async fn get_id(
     id: Path<String>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
-        db.table("transactions")
-            .owner(&parse_user_header(req)?)
-            .select()?
-            .id(&id.into_inner())
-            .query_one::<Transaction>()
-            .await?,
+        Transaction::get_one(db.into_inner(), &parse_user_header(req)?, &id.into_inner()).await?,
     ))
 }
 
@@ -43,10 +32,12 @@ pub async fn put(
     db: Data<Client>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Created().json(
-        db.table("transactions")
-            .owner(&parse_user_header(req)?)
-            .update(transactions.into_inner())
-            .await?,
+        Transaction::put(
+            db.into_inner(),
+            &parse_user_header(req)?,
+            transactions.into_inner(),
+        )
+        .await?,
     ))
 }
 
@@ -57,10 +48,12 @@ pub async fn delete(
     db: Data<Client>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::NoContent().json(
-        db.table("transactions")
-            .owner(&parse_user_header(req)?)
-            .delete(transactions.into_inner())
-            .await?,
+        Transaction::delete(
+            db.into_inner(),
+            &parse_user_header(req)?,
+            transactions.into_inner(),
+        )
+        .await?,
     ))
 }
 
@@ -71,42 +64,26 @@ pub async fn post(
     db: Data<Client>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Created().json(
-        db.table("transactions")
-            .owner(&parse_user_header(req)?)
-            .create(transactions.into_inner())
-            .await?,
+        Transaction::create(
+            db.into_inner(),
+            &parse_user_header(req)?,
+            transactions.into_inner(),
+        )
+        .await?,
     ))
 }
 
 #[get("/api/pods")]
 pub async fn get_pods(req: HttpRequest, db: Data<Client>) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
-        db.table("transactions")
-            .owner(&parse_user_header(req)?)
-            .select()?
-            .field("content.receiver as item")
-            .wrapper_js_map("element.item")
-            .wrapper_fn("array::group")
-            .wrapper_fn("array::sort")
-            .query_direct::<String>()
-            .await?
-            .into_iter()
-            .filter(|pod| pod.len() > 0)
-            .collect::<Vec<String>>(),
+        Transaction::get_assiciated_type(db.into_inner(), &parse_user_header(req)?, "pods").await?,
     ))
 }
 
 #[get("/api/budgets")]
 pub async fn get_budgets(req: HttpRequest, db: Data<Client>) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
-        db.table("transactions")
-            .owner(&parse_user_header(req)?)
-            .select()?
-            .field("content.budgets as item")
-            .wrapper_js_map("Object.keys(element.item)")
-            .wrapper_fn("array::group")
-            .wrapper_fn("array::sort")
-            .query_direct::<String>()
+        Transaction::get_assiciated_type(db.into_inner(), &parse_user_header(req)?, "budgets")
             .await?,
     ))
 }
@@ -114,14 +91,7 @@ pub async fn get_budgets(req: HttpRequest, db: Data<Client>) -> Result<HttpRespo
 #[get("/api/inbudgets")]
 pub async fn get_inbudgets(req: HttpRequest, db: Data<Client>) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
-        db.table("transactions")
-            .owner(&parse_user_header(req)?)
-            .select()?
-            .field("content.inbudgets as item")
-            .wrapper_js_map("Object.keys(element.item)")
-            .wrapper_fn("array::group")
-            .wrapper_fn("array::sort")
-            .query_direct::<String>()
+        Transaction::get_assiciated_type(db.into_inner(), &parse_user_header(req)?, "inbudgets")
             .await?,
     ))
 }
@@ -129,14 +99,7 @@ pub async fn get_inbudgets(req: HttpRequest, db: Data<Client>) -> Result<HttpRes
 #[get("/api/debts")]
 pub async fn get_debts(req: HttpRequest, db: Data<Client>) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
-        db.table("transactions")
-            .owner(&parse_user_header(req)?)
-            .select()?
-            .field("content.debts as item")
-            .wrapper_js_map("Object.keys(element.item)")
-            .wrapper_fn("array::group")
-            .wrapper_fn("array::sort")
-            .query_direct::<String>()
+        Transaction::get_assiciated_type(db.into_inner(), &parse_user_header(req)?, "debts")
             .await?,
     ))
 }
@@ -144,14 +107,6 @@ pub async fn get_debts(req: HttpRequest, db: Data<Client>) -> Result<HttpRespons
 #[get("/api/tags")]
 pub async fn get_tags(req: HttpRequest, db: Data<Client>) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
-        db.table("transactions")
-            .owner(&parse_user_header(req)?)
-            .select()?
-            .field("content.tags as item")
-            .wrapper_js_map("Object.keys(element.item)")
-            .wrapper_fn("array::group")
-            .wrapper_fn("array::sort")
-            .query_direct::<String>()
-            .await?,
+        Transaction::get_assiciated_type(db.into_inner(), &parse_user_header(req)?, "tags").await?,
     ))
 }

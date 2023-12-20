@@ -125,3 +125,25 @@ pub async fn delete(
         .map(|get_data| get_data.map(|value| value.to_transaction()))
         .collect())
 }
+
+pub async fn create(
+    db: &Database,
+    user: String,
+    transactions: Vec<Transaction>,
+) -> Result<Vec<Transaction>, AppError> {
+    if transactions.len() == 0 {
+        return Ok(vec![]);
+    }
+    Ok(db
+        .create::<CreateData, GetData>(
+            "transaction",
+            transactions
+                .into_iter()
+                .map(|transaction| CreateData::from_transaction(transaction, user.clone()))
+                .collect::<Vec<CreateData>>(),
+        )
+        .await?
+        .into_iter()
+        .map(|get_data| get_data.to_transaction())
+        .collect())
+}

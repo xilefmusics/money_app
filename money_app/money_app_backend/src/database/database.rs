@@ -1,4 +1,4 @@
-use super::id::string2record;
+use super::id::{string2record, IdGetter};
 use super::Select;
 
 use crate::error::AppError;
@@ -17,22 +17,6 @@ pub struct Database {
 }
 
 impl Database {
-    pub fn select(&self) -> Select {
-        Select::new(&self.client)
-    }
-
-    pub async fn query<T: Serialize + DeserializeOwned + Clone + std::fmt::Debug>(
-        &self,
-        query: &str,
-    ) -> Result<Vec<T>, AppError> {
-        self.client
-            .query(query)
-            .await
-            .map_err(|err| AppError::Database(format!("{}", err)))?
-            .take(0)
-            .map_err(|err| AppError::Database(format!("{}", err)))
-    }
-
     pub async fn new(settings: Settings) -> Self {
         let client = Surreal::new::<Ws>(format!("{}:{}", settings.db_host, settings.db_port))
             .await
@@ -50,6 +34,22 @@ impl Database {
             .await
             .unwrap();
         Self { client }
+    }
+
+    pub fn select(&self) -> Select {
+        Select::new(&self.client)
+    }
+
+    pub async fn query<T: Serialize + DeserializeOwned + Clone + std::fmt::Debug>(
+        &self,
+        query: &str,
+    ) -> Result<Vec<T>, AppError> {
+        self.client
+            .query(query)
+            .await
+            .map_err(|err| AppError::Database(format!("{}", err)))?
+            .take(0)
+            .map_err(|err| AppError::Database(format!("{}", err)))
     }
 
     async fn create_one<I: Serialize, O: DeserializeOwned>(
@@ -83,6 +83,18 @@ impl Database {
                 Ok(acc)
             })
         })
+    }
+
+    async fn put_one<I: Serialize + IdGetter, O: DeserializeOwned>(
+        &self,
+        content: I,
+    ) -> Result<Vec<O>, AppError> {
+        self.client
+            .create((content.get_id_first(), content.get_id_second()))
+            .content(content)
+            .await
+            .map_err(|err| AppError::Database(format!("{}", err)))?
+            .ok_or(AppError::Database("record is none".into()))
     }
 
     async fn delete_one<O: DeserializeOwned>(&self, id: String) -> Result<Option<O>, AppError> {

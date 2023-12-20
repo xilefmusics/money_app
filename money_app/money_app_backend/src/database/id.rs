@@ -21,3 +21,9 @@ pub fn string2record(str_id: &str) -> Result<RecordId, AppError> {
 pub fn record2string(record: &RecordId) -> String {
     format!("{}:{}", record.tb, record.id.to_string())
 }
+
+pub trait IdGetter {
+    fn get_id_first(&self) -> String;
+    fn get_id_second(&self) -> String;
+    fn get_id_full(&self) -> String;
+}

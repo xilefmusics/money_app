@@ -7,4 +7,4 @@ curl \
   -H "Accept: application/json" \
   -d @04-transactions.json \
   "http://localhost:8082/api/transactions" \
-  --fail -v
+  --fail

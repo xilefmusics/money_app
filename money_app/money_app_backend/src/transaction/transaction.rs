@@ -1,3 +1,5 @@
+use super::Filter;
+
 use crate::error::AppError;
 
 use chrono::{DateTime, Local};
@@ -41,13 +43,17 @@ impl Databasable for Transaction {
 }
 
 impl Transaction {
-    pub async fn get(db: Arc<Client>, user: &str) -> Result<Vec<Self>, AppError> {
-        Ok(db
-            .table("transactions")
-            .owner(user)
-            .select()?
-            .query::<Self>()
-            .await?)
+    pub async fn get<'a>(
+        db: Arc<Client>,
+        user: &str,
+        filter: Filter<'a>,
+    ) -> Result<Vec<Self>, AppError> {
+        let mut select = db.table("transactions").owner(user).select()?;
+        for condition in &filter.conditions() {
+            select = select.condition(condition);
+        }
+
+        Ok(select.order_by("content.date").query::<Self>().await?)
     }
 
     pub async fn get_one(db: Arc<Client>, user: &str, id: &str) -> Result<Self, AppError> {
@@ -96,15 +102,19 @@ impl Transaction {
             .await?)
     }
 
-    pub async fn get_assiciated_type(
+    pub async fn get_assiciated_type<'a>(
         db: Arc<Client>,
         user: &str,
+        filter: &Filter<'a>,
         associated_type: &str,
     ) -> Result<Vec<String>, AppError> {
+        let mut select = db.table("transactions").owner(user).select()?;
+        for condition in &filter.conditions() {
+            select = select.condition(condition);
+        }
+
         Ok(if associated_type == "pods" {
-            db.table("transactions")
-                .owner(user)
-                .select()?
+            select
                 .field("content.receiver as item")
                 .wrapper_js_map("element.item")
                 .wrapper_fn("array::group")
@@ -115,9 +125,7 @@ impl Transaction {
                 .filter(|pod| pod.len() > 0)
                 .collect::<Vec<String>>()
         } else {
-            db.table("transactions")
-                .owner(user)
-                .select()?
+            select
                 .field(&format!("content.{} as item", associated_type))
                 .wrapper_js_map("Object.keys(element.item)")
                 .wrapper_fn("array::group")

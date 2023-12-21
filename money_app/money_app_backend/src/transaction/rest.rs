@@ -1,4 +1,4 @@
-use super::Transaction;
+use super::{Filter, QueryParams, Transaction};
 
 use crate::error::AppError;
 use crate::rest::parse_user_header;
@@ -6,12 +6,31 @@ use crate::rest::parse_user_header;
 use fancy_surreal::Client;
 
 use actix_web::{
-    delete, get, post, put, web::Data, web::Json, web::Path, HttpRequest, HttpResponse,
+    delete, get, post, put, web::Data, web::Json, web::Path, web::Query, HttpRequest, HttpResponse,
 };
 
 #[get("/api/transactions")]
-pub async fn get(req: HttpRequest, db: Data<Client>) -> Result<HttpResponse, AppError> {
-    Ok(HttpResponse::Ok().json(Transaction::get(db.into_inner(), &parse_user_header(req)?).await?))
+pub async fn get(
+    req: HttpRequest,
+    db: Data<Client>,
+    q: Query<QueryParams>,
+) -> Result<HttpResponse, AppError> {
+    Ok(HttpResponse::Ok().json(
+        Transaction::get(
+            db.into_inner(),
+            &parse_user_header(req)?,
+            Filter::new(
+                q.year,
+                q.month,
+                q.pod.as_deref(),
+                q.debt.as_deref(),
+                q.budget.as_deref(),
+                q.inbudget.as_deref(),
+                q.ttype.as_deref(),
+            ),
+        )
+        .await?,
+    ))
 }
 
 #[get("/api/transactions/{id:transaction.*}")]
@@ -74,39 +93,86 @@ pub async fn post(
 }
 
 #[get("/api/pods")]
-pub async fn get_pods(req: HttpRequest, db: Data<Client>) -> Result<HttpResponse, AppError> {
+pub async fn get_pods(
+    req: HttpRequest,
+    db: Data<Client>,
+    q: Query<QueryParams>,
+) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
-        Transaction::get_assiciated_type(db.into_inner(), &parse_user_header(req)?, "pods").await?,
+        Transaction::get_assiciated_type(
+            db.into_inner(),
+            &parse_user_header(req)?,
+            &q.into_inner().to_filter(),
+            "pods",
+        )
+        .await?,
     ))
 }
 
 #[get("/api/budgets")]
-pub async fn get_budgets(req: HttpRequest, db: Data<Client>) -> Result<HttpResponse, AppError> {
+pub async fn get_budgets(
+    req: HttpRequest,
+    db: Data<Client>,
+    q: Query<QueryParams>,
+) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
-        Transaction::get_assiciated_type(db.into_inner(), &parse_user_header(req)?, "budgets")
-            .await?,
+        Transaction::get_assiciated_type(
+            db.into_inner(),
+            &parse_user_header(req)?,
+            &q.into_inner().to_filter(),
+            "budgets",
+        )
+        .await?,
     ))
 }
 
 #[get("/api/inbudgets")]
-pub async fn get_inbudgets(req: HttpRequest, db: Data<Client>) -> Result<HttpResponse, AppError> {
+pub async fn get_inbudgets(
+    req: HttpRequest,
+    db: Data<Client>,
+    q: Query<QueryParams>,
+) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
-        Transaction::get_assiciated_type(db.into_inner(), &parse_user_header(req)?, "inbudgets")
-            .await?,
+        Transaction::get_assiciated_type(
+            db.into_inner(),
+            &parse_user_header(req)?,
+            &q.into_inner().to_filter(),
+            "inbudgets",
+        )
+        .await?,
     ))
 }
 
 #[get("/api/debts")]
-pub async fn get_debts(req: HttpRequest, db: Data<Client>) -> Result<HttpResponse, AppError> {
+pub async fn get_debts(
+    req: HttpRequest,
+    db: Data<Client>,
+    q: Query<QueryParams>,
+) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
-        Transaction::get_assiciated_type(db.into_inner(), &parse_user_header(req)?, "debts")
-            .await?,
+        Transaction::get_assiciated_type(
+            db.into_inner(),
+            &parse_user_header(req)?,
+            &q.into_inner().to_filter(),
+            "debts",
+        )
+        .await?,
     ))
 }
 
 #[get("/api/tags")]
-pub async fn get_tags(req: HttpRequest, db: Data<Client>) -> Result<HttpResponse, AppError> {
+pub async fn get_tags(
+    req: HttpRequest,
+    db: Data<Client>,
+    q: Query<QueryParams>,
+) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
-        Transaction::get_assiciated_type(db.into_inner(), &parse_user_header(req)?, "tags").await?,
+        Transaction::get_assiciated_type(
+            db.into_inner(),
+            &parse_user_header(req)?,
+            &q.into_inner().to_filter(),
+            "tags",
+        )
+        .await?,
     ))
 }

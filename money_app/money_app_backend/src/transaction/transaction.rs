@@ -9,6 +9,32 @@ use std::collections::HashMap;
 use std::sync::Arc;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct AssociatedTypeValues {
+    pub date: DateTime<Local>,
+    pub data: HashMap<String, i64>,
+}
+
+impl AssociatedTypeValues {
+    pub fn from_transaction(transaction: Transaction) -> AssociatedTypeValues {
+        let mut data = HashMap::<String, i64>::new();
+        let amount = transaction.amount as i64;
+
+        if let Some(receiver) = transaction.receiver {
+            data.insert(receiver, amount);
+        }
+
+        if let Some(sender) = transaction.sender {
+            data.insert(sender, -amount);
+        }
+
+        AssociatedTypeValues {
+            date: transaction.date,
+            data,
+        }
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "lowercase")]
 pub enum Type {
     In,
@@ -46,7 +72,7 @@ impl Transaction {
     pub async fn get<'a>(
         db: Arc<Client>,
         user: &str,
-        filter: Filter<'a>,
+        filter: &Filter<'a>,
     ) -> Result<Vec<Self>, AppError> {
         let mut select = db.table("transactions").owner(user).select()?;
         for condition in &filter.conditions() {
@@ -131,6 +157,32 @@ impl Transaction {
                 .wrapper_fn("array::group")
                 .wrapper_fn("array::sort")
                 .query_direct::<String>()
+                .await?
+        })
+    }
+
+    pub async fn get_assiciated_type_values<'a>(
+        db: Arc<Client>,
+        user: &str,
+        filter: &Filter<'a>,
+        associated_type: &str,
+    ) -> Result<Vec<AssociatedTypeValues>, AppError> {
+        let mut select = db.table("transactions").owner(user).select()?;
+        for condition in &filter.conditions() {
+            select = select.condition(condition);
+        }
+
+        Ok(if associated_type == "pods" {
+            Self::get(db, user, filter)
+                .await?
+                .into_iter()
+                .map(|t| AssociatedTypeValues::from_transaction(t))
+                .collect()
+        } else {
+            select
+                .field("content.date as date")
+                .field(&format!("content.{} as data", associated_type))
+                .query_direct::<AssociatedTypeValues>()
                 .await?
         })
     }

@@ -5,4 +5,4 @@ mod transaction;
 
 pub use filter::Filter;
 pub use query_params::QueryParams;
-pub use transaction::{Transaction, Type};
+pub use transaction::{AssociatedTypeValues, Transaction, Type};

@@ -19,7 +19,7 @@ pub async fn get(
         Transaction::get(
             db.into_inner(),
             &parse_user_header(req)?,
-            Filter::new(
+            &Filter::new(
                 q.year,
                 q.month,
                 q.pod.as_deref(),

@@ -1,4 +1,4 @@
-use super::{QueryParams, Wealth};
+use super::{AssociatedTypeDiffValues, QueryParams, Wealth};
 
 use crate::error::AppError;
 use crate::rest::parse_user_header;
@@ -37,14 +37,25 @@ pub async fn get_pods(
     db: Data<Client>,
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
+    let user = parse_user_header(req)?;
+    let db = db.into_inner();
     Ok(HttpResponse::Ok().json(
-        Transaction::get_assiciated_type_values(
-            db.into_inner(),
-            &parse_user_header(req)?,
-            &Filter::default(),
-            "pods",
-        )
-        .await?,
+        q.into_inner()
+            .into_date_iter()
+            .into_associated_type_values_iter(
+                &Transaction::get_assiciated_type_values(
+                    db.clone(),
+                    &user,
+                    &Filter::default(),
+                    "pods",
+                )
+                .await?,
+            )
+            .accumulate(
+                &Transaction::get_assiciated_type(db, &user, &Filter::default(), "pods").await?,
+            )
+            .diff()
+            .collect::<Vec<AssociatedTypeDiffValues>>(),
     ))
 }
 
@@ -54,14 +65,25 @@ pub async fn get_budgets(
     db: Data<Client>,
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
+    let user = parse_user_header(req)?;
+    let db = db.into_inner();
     Ok(HttpResponse::Ok().json(
-        Transaction::get_assiciated_type_values(
-            db.into_inner(),
-            &parse_user_header(req)?,
-            &Filter::default(),
-            "budgets",
-        )
-        .await?,
+        q.into_inner()
+            .into_date_iter()
+            .into_associated_type_values_iter(
+                &Transaction::get_assiciated_type_values(
+                    db.clone(),
+                    &user,
+                    &Filter::default(),
+                    "budgets",
+                )
+                .await?,
+            )
+            .accumulate(
+                &Transaction::get_assiciated_type(db, &user, &Filter::default(), "budgets").await?,
+            )
+            .diff()
+            .collect::<Vec<AssociatedTypeDiffValues>>(),
     ))
 }
 
@@ -71,14 +93,26 @@ pub async fn get_inbudgets(
     db: Data<Client>,
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
+    let user = parse_user_header(req)?;
+    let db = db.into_inner();
     Ok(HttpResponse::Ok().json(
-        Transaction::get_assiciated_type_values(
-            db.into_inner(),
-            &parse_user_header(req)?,
-            &Filter::default(),
-            "inbudgets",
-        )
-        .await?,
+        q.into_inner()
+            .into_date_iter()
+            .into_associated_type_values_iter(
+                &Transaction::get_assiciated_type_values(
+                    db.clone(),
+                    &user,
+                    &Filter::default(),
+                    "inbudgets",
+                )
+                .await?,
+            )
+            .accumulate(
+                &Transaction::get_assiciated_type(db, &user, &Filter::default(), "inbudgets")
+                    .await?,
+            )
+            .diff()
+            .collect::<Vec<AssociatedTypeDiffValues>>(),
     ))
 }
 
@@ -88,13 +122,24 @@ pub async fn get_debts(
     db: Data<Client>,
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
+    let user = parse_user_header(req)?;
+    let db = db.into_inner();
     Ok(HttpResponse::Ok().json(
-        Transaction::get_assiciated_type_values(
-            db.into_inner(),
-            &parse_user_header(req)?,
-            &Filter::default(),
-            "debts",
-        )
-        .await?,
+        q.into_inner()
+            .into_date_iter()
+            .into_associated_type_values_iter(
+                &Transaction::get_assiciated_type_values(
+                    db.clone(),
+                    &user,
+                    &Filter::default(),
+                    "debts",
+                )
+                .await?,
+            )
+            .accumulate(
+                &Transaction::get_assiciated_type(db, &user, &Filter::default(), "debts").await?,
+            )
+            .diff()
+            .collect::<Vec<AssociatedTypeDiffValues>>(),
     ))
 }

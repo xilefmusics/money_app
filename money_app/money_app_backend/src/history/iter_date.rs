@@ -1,6 +1,6 @@
-use super::TransactionsIterator;
+use super::{TransactionsIterator, AssociatedTypeValuesIterator};
 
-use crate::transaction::Transaction;
+use crate::transaction::{Transaction, AssociatedTypeValues};
 
 use chrono::{DateTime, Datelike, Days, Local, Months, TimeZone};
 
@@ -42,6 +42,13 @@ impl DateIterator {
         transactions: &'a [Transaction],
     ) -> TransactionsIterator<'a> {
         TransactionsIterator::new(self, transactions)
+    }
+
+    pub fn into_associated_type_values_iter<'a>(
+        self,
+        associated_type_values: &'a [AssociatedTypeValues],
+    ) -> AssociatedTypeValuesIterator<'a> {
+        AssociatedTypeValuesIterator::new(self, associated_type_values)
     }
 }
 

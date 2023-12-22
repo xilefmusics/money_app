@@ -22,6 +22,7 @@ pub async fn get_wealth(
                     .await?,
             )
             .into_wealth_iter()
+            .into_shift_in_out_iter()
             .collect::<Vec<Wealth>>(),
     ))
 }

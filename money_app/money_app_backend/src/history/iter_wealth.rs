@@ -12,6 +12,10 @@ impl<'a> WealthIterator<'a> {
             last: Wealth::default(),
         }
     }
+
+    pub fn into_shift_in_out_iter(self) -> ShiftInOutIterator<'a> {
+        ShiftInOutIterator::new(self)
+    }
 }
 
 impl<'a> Iterator for WealthIterator<'a> {
@@ -44,5 +48,48 @@ impl<'a> Iterator for WealthIterator<'a> {
         .diff(&self.last);
 
         Some(self.last.clone())
+    }
+}
+
+pub struct ShiftInOutIterator<'a> {
+    wealth_iterator: WealthIterator<'a>,
+    last: Option<Wealth>,
+}
+
+impl<'a> ShiftInOutIterator<'a> {
+    pub fn new(mut wealth_iterator: WealthIterator<'a>) -> Self {
+        let last = wealth_iterator.next().map(|mut last| {
+            last.income = 0.into();
+            last.out = 0.into();
+            last.change = 0.into();
+            last
+        });
+        Self {
+            wealth_iterator,
+            last,
+        }
+    }
+}
+
+impl<'a> Iterator for ShiftInOutIterator<'a> {
+    type Item = Wealth;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let next = self.wealth_iterator.next();
+        if next.is_none() {
+            return self.last.take();
+        }
+        let mut next = next.unwrap();
+        let mut result = self.last.take().unwrap();
+
+        result.income = next.income.clone();
+        next.income = 0.into();
+        result.out = next.out.clone();
+        next.out = 0.into();
+        result.change = next.change.clone();
+        next.change = 0.into();
+
+        self.last = Some(next);
+        Some(result)
     }
 }

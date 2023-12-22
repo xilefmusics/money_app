@@ -8,7 +8,7 @@ mod wealth;
 
 pub use iter_date::DateIterator;
 pub use iter_transactions::TransactionsIterator;
-pub use iter_wealth::WealthIterator;
+pub use iter_wealth::{ShiftInOutIterator, WealthIterator};
 pub use query_params::QueryParams;
 pub use value_diff::{Diff, ValueDiff};
 pub use wealth::Wealth;

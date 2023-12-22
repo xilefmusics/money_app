@@ -1,4 +1,5 @@
 mod error;
+mod history;
 mod rest;
 mod settings;
 mod transaction;
@@ -41,6 +42,7 @@ async fn main() {
             .service(transaction::rest::get_inbudgets)
             .service(transaction::rest::get_debts)
             .service(transaction::rest::get_tags)
+            .service(history::rest::get_wealth)
     })
     .bind((settings.host, settings.port))
     .unwrap()

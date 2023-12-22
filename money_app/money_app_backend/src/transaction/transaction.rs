@@ -134,4 +134,40 @@ impl Transaction {
                 .await?
         })
     }
+
+    pub fn income(&self) -> i64 {
+        match self.ttype {
+            Type::In => self.amount as i64,
+            Type::Out => 0,
+            Type::Move => 0,
+        }
+    }
+
+    pub fn out(&self) -> i64 {
+        match self.ttype {
+            Type::In => 0,
+            Type::Out => self.amount as i64,
+            Type::Move => 0,
+        }
+    }
+
+    pub fn signed_amount(&self) -> i64 {
+        match self.ttype {
+            Type::In => self.amount as i64,
+            Type::Out => -(self.amount as i64),
+            Type::Move => 0,
+        }
+    }
+
+    pub fn debt_sum(&self) -> i64 {
+        self.debts.values().sum::<usize>() as i64
+    }
+
+    pub fn signed_debt_sum(&self) -> i64 {
+        match self.ttype {
+            Type::In => self.debt_sum(),
+            Type::Out => -self.debt_sum(),
+            Type::Move => 0,
+        }
+    }
 }

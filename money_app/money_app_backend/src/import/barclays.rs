@@ -124,7 +124,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_from_str() {
+    fn test_parse_transactions() {
         let input = "
 ,,,,,,,,,,,,,
 Transaktionsansicht,,,,,,,,,,,,,
@@ -143,6 +143,5 @@ Referenznummer,Buchungsdatum,Buchungsdatum,Betrag,Beschreibung,Typ,Status,Karten
 123457,02.12.2023,03.12.2023,\"-1,23 €\",Transaction2,Belastung,noch nicht abgerechnet,5432,\"-1,23 €\",Nein,DE,Name,Visa,Nein
 ";
         dbg!(Barclays::parse_transactions(input));
-        panic!("Hello World")
     }
 }

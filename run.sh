@@ -18,6 +18,13 @@ elif [ "${1}" = "add-transactions" ]; then
     -d @transactions.json \
     "http://localhost:8082/api/transactions" \
     --fail
+elif [ "${1}" = "get" ]; then
+  if [ -z "${2}" ]; then
+    echo "usage: run.sh get <endpoint>"
+    exit 1
+  fi
+  curl -X GET "http://localhost:8082/api/${2}" -H "X-Remote-User: xilef"
 else
   echo "usage: run.sh <command>"
+    exit 1
 fi

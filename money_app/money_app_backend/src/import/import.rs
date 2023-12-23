@@ -5,7 +5,6 @@ use super::Barclays;
 use super::N26;
 
 pub fn import(s: &str) -> Result<Vec<Transaction>, AppError> {
-    dbg!(s.lines().count());
     if let Some(_) = s.find("Referenznummer,Buchungsdatum,Buchungsdatum,Betrag,Beschreibung,Typ,Status,Kartennummer,Originalbetrag,Mögliche Zahlpläne,Land,Name des Karteninhabers,Kartennetzwerk,Kontaktlose Bezahlung") {
         Barclays::parse_transactions(s)
     } else {

@@ -16,3 +16,5 @@ money_app/target
 money_app/01-transactions.json
 money_app/01-transactions-back.json
 money_app/04-transactions.json
+money_app/05-import-barclays.csv
+money_app/06-import-n26.csv

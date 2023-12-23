@@ -24,7 +24,7 @@ impl fmt::Display for AppError {
             Self::TypeConvertError(message) => write!(f, "TypeConvertError ({})", message),
             Self::Filesystem(message) => write!(f, "FilesystemError ({})", message),
             Self::NotFound(message) => write!(f, "NotFoundError ({})", message),
-            Self::Import(message) => write!(f, "OtherError ({})", message),
+            Self::Import(message) => write!(f, "Import ({})", message),
             Self::Other(message) => write!(f, "OtherError ({})", message),
         }
     }

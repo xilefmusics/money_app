@@ -48,6 +48,7 @@ async fn main() {
             .service(history::rest::get_budgets)
             .service(history::rest::get_inbudgets)
             .service(history::rest::get_debts)
+            .service(import::rest::import)
     })
     .bind((settings.host, settings.port))
     .unwrap()

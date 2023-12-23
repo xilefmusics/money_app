@@ -1,7 +1,7 @@
 <script>
-	import Chart from '../../lib/components/Chart.svelte';
-	import List from '../../lib/components/List.svelte';
-	import { onMount } from 'svelte';
+	import Chart from "../../lib/components/Chart.svelte";
+	import List from "../../lib/components/List.svelte";
+	import { onMount } from "svelte";
 
 	const isMobile = () => innerHeight > innerWidth;
 
@@ -9,21 +9,29 @@
 	let debts = null;
 	let datasets = null;
 	const reload = async () => {
-		debtHistory = await (await fetch(`/api/history/debt?len=${isMobile()?6:26}&month=3&year=0`)).json();
-		debts = Object.keys(debtHistory[debtHistory.length - 1])
-			.filter((key) => key !== 'date')
-			.map((key) => ({
+		debtHistory = await (
+			await fetch(
+				`/api/history/debts?len=${isMobile() ? 6 : 26}&month=3&year=0`,
+			)
+		).json();
+
+		debts = Object.entries(debtHistory[debtHistory.length - 1].data)
+			.map(([key, value]) => ({
 				name: key,
-				amount: debtHistory[debtHistory.length - 1][key].value
-			}));
-		datasets = debts
-			.map((item) => item.name)
-			.map((name) => ({
-				label: name,
-				data: debtHistory.map((item) => item[name].value / 100),
-				borderWidth: 1
-			}));
-	}
+				amount: value.value,
+			}))
+			.sort((a, b) => {
+				if (a.name < b.name) return -1;
+				if (a.name > b.name) return 1;
+				return 0;
+			});
+
+		datasets = debts.map((debt) => ({
+			label: debt.name,
+			data: debtHistory.map((item) => item.data[debt.name].value / 100),
+			borderWidth: 1,
+		}));
+	};
 	onMount(reload);
 </script>
 
@@ -32,9 +40,12 @@
 		type="line"
 		data={{
 			labels: debtHistory.map(
-				(item) => `${new Date(item.date).getMonth() + 1}-${new Date(item.date).getFullYear()}`
+				(item) =>
+					`${new Date(item.date).getMonth() + 1}-${new Date(
+						item.date,
+					).getFullYear()}`,
 			),
-			datasets: datasets
+			datasets: datasets,
 		}}
 		options={{
 			responsive: true,
@@ -48,11 +59,11 @@
 			subtitle: null,
 			subtitleIcon: null,
 			amount: debt.amount,
-			color: debt.amount < 0 ? 'green' : debt.amount > 0 ? 'red' : 'gray',
+			color: debt.amount < 0 ? "green" : debt.amount > 0 ? "red" : "gray",
 			link: null,
 			link2: `/transactions?debt=${debt.name}`,
 			link3: null,
-			newBlock: null
+			newBlock: null,
 		}))}
 	/>
 {/if}

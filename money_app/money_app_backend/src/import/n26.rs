@@ -7,52 +7,6 @@ use chrono::{DateTime, Local};
 use csv;
 use serde::Deserialize;
 
-mod yyyy_mm_dd {
-    use chrono::{DateTime, Local, NaiveDateTime};
-    use serde::{self, Deserialize, Deserializer, Serializer};
-
-    const FORMAT: &'static str = "%Y-%m-%d %H:%M:%S";
-    pub fn serialize<S>(date: &DateTime<Local>, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        let s = format!("{}", date.format(FORMAT));
-        serializer.serialize_str(&s)
-    }
-    pub fn deserialize<'de, D>(deserializer: D) -> Result<DateTime<Local>, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        let s = format!("{} 0:0:0", String::deserialize(deserializer)?);
-        let dt = NaiveDateTime::parse_from_str(&s, FORMAT).map_err(serde::de::Error::custom)?;
-        Ok(DateTime::<Local>::from_naive_utc_and_offset(
-            dt,
-            Local::now().offset().clone(),
-        ))
-    }
-}
-
-mod amount {
-    use serde::{self, Deserialize, Deserializer, Serializer};
-
-    pub fn serialize<S>(amount: usize, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        serializer.serialize_str(&format!("{}.{}", (amount / 100) as usize, amount % 100))
-    }
-    pub fn deserialize<'de, D>(deserializer: D) -> Result<usize, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        let s = String::deserialize(deserializer)?;
-        let mut iter = s.split(".");
-        let before = iter.next().unwrap().parse::<i64>().unwrap();
-        let after = iter.next().unwrap().parse::<i64>().unwrap();
-        Ok((before.abs() * 100 + after) as usize)
-    }
-}
-
 #[derive(Deserialize, Debug)]
 pub enum Type {
     #[serde(rename = "Überweisung")]
@@ -67,7 +21,7 @@ pub enum Type {
 
 #[derive(Deserialize, Debug)]
 pub struct N26 {
-    #[serde(rename = "Datum", with = "yyyy_mm_dd")]
+    #[serde(rename = "Datum", with = "super::serde_custom::yyyy_mm_dd")]
     date: DateTime<Local>,
     #[serde(rename = "Empfänger")]
     receiver: String,
@@ -77,7 +31,7 @@ pub struct N26 {
     ttype: Type,
     #[serde(rename = "Verwendungszweck")]
     purpose: String,
-    #[serde(rename = "Betrag (EUR)", with = "amount")]
+    #[serde(rename = "Betrag (EUR)", with = "super::serde_custom::amount")]
     amount: usize,
     #[serde(rename = "Betrag (Fremdwährung)")]
     foreign_amount: Option<f64>,

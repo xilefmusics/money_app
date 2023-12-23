@@ -117,7 +117,7 @@ impl N26 {
         })
     }
 
-    fn parse_transactions(s: &str) -> Result<Vec<Transaction>, AppError> {
+    pub fn parse_transactions(s: &str) -> Result<Vec<Transaction>, AppError> {
         Self::from_str(s)?
             .into_iter()
             .map(|n26| n26.to_transaction())
@@ -133,7 +133,8 @@ mod tests {
     fn test_from_str() {
         let input = "\"Datum\",\"Empfänger\",\"Kontonummer\",\"Transaktionstyp\",\"Verwendungszweck\",\"Betrag (EUR)\",\"Betrag (Fremdwährung)\",\"Fremdwährung\",\"Wechselkurs\"
 \"2023-12-01\",\"Receiver 1\",\"DE123...456\",\"Überweisung\",\"Transaction 1\",\"-123.4\",\"\",\"\",\"\"
-\"2023-12-02\",\"Receiver 2\",\"DE123...456\",\"Lastschrift\",\"Transaction 2\",\"-8.99\",\"\",\"\",\"\"";
+\"2023-12-02\",\"Receiver 2\",\"DE123...456\",\"Lastschrift\",\"Transaction 2\",\"-8.99\",\"\",\"\",\"\"
+";
         dbg!(N26::parse_transactions(input));
     }
 }

@@ -1,5 +1,6 @@
 mod error;
 mod history;
+mod import;
 mod rest;
 mod settings;
 mod transaction;

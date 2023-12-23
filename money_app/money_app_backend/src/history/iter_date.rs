@@ -1,6 +1,6 @@
-use super::{TransactionsIterator, AssociatedTypeValuesIterator};
+use super::{AssociatedTypeValuesIterator, TransactionsIterator};
 
-use crate::transaction::{Transaction, AssociatedTypeValues};
+use crate::transaction::{AssociatedTypeValues, Transaction};
 
 use chrono::{DateTime, Datelike, Days, Local, Months, TimeZone};
 
@@ -86,7 +86,7 @@ mod tests {
         );
         assert_eq!(
             dates.next(),
-            Some(Local.with_ymd_and_hms(year, 1, 1, 0, 0, 0).unwrap(),),
+            Some(Local.with_ymd_and_hms(year + 1, 1, 1, 0, 0, 0).unwrap(),),
         );
     }
 }

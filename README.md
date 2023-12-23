@@ -29,7 +29,6 @@ Returns a list of transactions.
 | budget   | \*      |
 | inbudget | \*      |
 | type     | \*      |
-| id       | \*      |
 
 ### POST /transactions
 
@@ -115,11 +114,3 @@ The current list of rules is:
 | 3    | If the transaction type is `out` the inbudget sum has to be empty.                             |
 | 4    | If the transaction type is `in` the budget sum plus the debt sum has to be equal the amount.   |
 
-### GET /reindex
-
-Sorts transactions by date and overwrites the ID with the index.
-This schould only be used if you know, what your doing.
-
-### GET /undo
-
-Undoos the last action and returns the applied event. 

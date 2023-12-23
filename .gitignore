@@ -8,3 +8,6 @@ frontend/build
 frontend/.svelte-kit
 frontend/package
 
+backend/target
+backend/Cargo.lock
+transactions.json

@@ -13,12 +13,16 @@
 			await fetch(`/api/history/pods?len=${isMobile() ? 6 : 26}&month=3&year=0`)
 		).json();
 
-		pods = Object.entries(podHistory[podHistory.length - 1].data).map(
-			([key, value]) => ({
+		pods = Object.entries(podHistory[podHistory.length - 1].data)
+			.map(([key, value]) => ({
 				name: key,
 				amount: value.value,
-			}),
-		);
+			}))
+			.sort((a, b) => {
+				if (a.name < b.name) return -1;
+				if (a.name > b.name) return 1;
+				return 0;
+			});
 
 		datasets = pods.map((pod) => ({
 			label: pod.name,

@@ -43,7 +43,7 @@ pub async fn get_pods(
         q.into_inner()
             .into_date_iter()
             .into_associated_type_values_iter(
-                &Transaction::get_assiciated_type_values(
+                &Transaction::get_associated_type_values(
                     db.clone(),
                     &user,
                     &Filter::default(),
@@ -52,7 +52,7 @@ pub async fn get_pods(
                 .await?,
             )
             .accumulate(
-                &Transaction::get_assiciated_type(db, &user, &Filter::default(), "pods").await?,
+                &Transaction::get_associated_type(db, &user, &Filter::default(), "pods").await?,
             )
             .diff()
             .collect::<Vec<AssociatedTypeDiffValues>>(),
@@ -71,7 +71,7 @@ pub async fn get_budgets(
         q.into_inner()
             .into_date_iter()
             .into_associated_type_values_iter(
-                &Transaction::get_assiciated_type_values(
+                &Transaction::get_associated_type_values(
                     db.clone(),
                     &user,
                     &Filter::default(),
@@ -80,7 +80,7 @@ pub async fn get_budgets(
                 .await?,
             )
             .accumulate(
-                &Transaction::get_assiciated_type(db, &user, &Filter::default(), "budgets").await?,
+                &Transaction::get_associated_type(db, &user, &Filter::default(), "budgets").await?,
             )
             .diff()
             .collect::<Vec<AssociatedTypeDiffValues>>(),
@@ -99,7 +99,7 @@ pub async fn get_inbudgets(
         q.into_inner()
             .into_date_iter()
             .into_associated_type_values_iter(
-                &Transaction::get_assiciated_type_values(
+                &Transaction::get_associated_type_values(
                     db.clone(),
                     &user,
                     &Filter::default(),
@@ -108,7 +108,7 @@ pub async fn get_inbudgets(
                 .await?,
             )
             .accumulate(
-                &Transaction::get_assiciated_type(db, &user, &Filter::default(), "inbudgets")
+                &Transaction::get_associated_type(db, &user, &Filter::default(), "inbudgets")
                     .await?,
             )
             .diff()
@@ -128,7 +128,7 @@ pub async fn get_debts(
         q.into_inner()
             .into_date_iter()
             .into_associated_type_values_iter(
-                &Transaction::get_assiciated_type_values(
+                &Transaction::get_associated_type_values(
                     db.clone(),
                     &user,
                     &Filter::default(),
@@ -137,7 +137,7 @@ pub async fn get_debts(
                 .await?,
             )
             .accumulate(
-                &Transaction::get_assiciated_type(db, &user, &Filter::default(), "debts").await?,
+                &Transaction::get_associated_type(db, &user, &Filter::default(), "debts").await?,
             )
             .diff()
             .collect::<Vec<AssociatedTypeDiffValues>>(),

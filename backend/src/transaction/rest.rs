@@ -99,7 +99,7 @@ pub async fn get_pods(
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
-        Transaction::get_assiciated_type(
+        Transaction::get_associated_type(
             db.into_inner(),
             &parse_user_header(req)?,
             &q.into_inner().to_filter(),
@@ -116,7 +116,7 @@ pub async fn get_budgets(
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
-        Transaction::get_assiciated_type(
+        Transaction::get_associated_type(
             db.into_inner(),
             &parse_user_header(req)?,
             &q.into_inner().to_filter(),
@@ -133,7 +133,7 @@ pub async fn get_inbudgets(
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
-        Transaction::get_assiciated_type(
+        Transaction::get_associated_type(
             db.into_inner(),
             &parse_user_header(req)?,
             &q.into_inner().to_filter(),
@@ -150,7 +150,7 @@ pub async fn get_debts(
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
-        Transaction::get_assiciated_type(
+        Transaction::get_associated_type(
             db.into_inner(),
             &parse_user_header(req)?,
             &q.into_inner().to_filter(),
@@ -167,7 +167,7 @@ pub async fn get_tags(
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
-        Transaction::get_assiciated_type(
+        Transaction::get_associated_type(
             db.into_inner(),
             &parse_user_header(req)?,
             &q.into_inner().to_filter(),

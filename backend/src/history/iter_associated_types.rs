@@ -1,4 +1,4 @@
-use super::{DateIterator, Diff, ValueDiff};
+use super::{DateIterator, ValueDiff};
 
 use crate::transaction::AssociatedTypeValues;
 

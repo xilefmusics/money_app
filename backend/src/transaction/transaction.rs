@@ -128,7 +128,7 @@ impl Transaction {
             .await?)
     }
 
-    pub async fn get_assiciated_type<'a>(
+    pub async fn get_associated_type<'a>(
         db: Arc<Client>,
         user: &str,
         filter: &Filter<'a>,
@@ -161,13 +161,17 @@ impl Transaction {
         })
     }
 
-    pub async fn get_assiciated_type_values<'a>(
+    pub async fn get_associated_type_values<'a>(
         db: Arc<Client>,
         user: &str,
         filter: &Filter<'a>,
         associated_type: &str,
     ) -> Result<Vec<AssociatedTypeValues>, AppError> {
-        let mut select = db.table("transactions").owner(user).select()?;
+        let mut select = db
+            .table("transactions")
+            .owner(user)
+            .select()?
+            .order_by("date");
         for condition in &filter.conditions() {
             select = select.condition(condition);
         }

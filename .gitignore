@@ -1,6 +1,5 @@
 .DS_Store
-/scripts
-/data
+tmp
 
 frontend/static/pods.json
 frontend/.DS_Store
@@ -9,12 +8,3 @@ frontend/build
 frontend/.svelte-kit
 frontend/package
 
-backend/go.sum
-
-money_app/target
-
-money_app/01-transactions.json
-money_app/01-transactions-back.json
-money_app/04-transactions.json
-money_app/05-import-barclays.csv
-money_app/06-import-n26.csv

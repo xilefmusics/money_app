@@ -36,6 +36,7 @@ async fn main() {
             .app_data(database)
             .service(transaction::rest::get_id)
             .service(transaction::rest::get)
+            .service(transaction::rest::put)
             .service(transaction::rest::post)
             .service(transaction::rest::delete)
             .service(transaction::rest::get_pods)

@@ -33,7 +33,7 @@ pub async fn get(
     ))
 }
 
-#[get("/api/transactions/{id:transaction.*}")]
+#[get("/api/transactions/{id}")]
 pub async fn get_id(
     req: HttpRequest,
     db: Data<Client>,

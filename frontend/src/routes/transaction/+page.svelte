@@ -1,8 +1,7 @@
 <script>
-	import { onMount } from 'svelte';
-    import { page } from '$app/stores';
-	import url2params from '../../lib/url/url2params';
-  import { select_option } from 'svelte/internal';
+	import { onMount } from "svelte";
+	import { page } from "$app/stores";
+	import url2params from "../../lib/url/url2params";
 
 	let transaction = null;
 	let pods = null;
@@ -11,30 +10,30 @@
 	let debts = null;
 	let tags = null;
 	const reload = async () => {
-		const id = url2params($page.url.href).id
+		const id = url2params($page.url.href).id;
 		if (!id) {
-			return
+			return;
 		}
 
-		transaction = (await (await fetch(`/api/transactions?id=${id}`)).json()).map((transaction) => {
-			const d = new Date(transaction.date);
-			const year = `${d.getFullYear()}`;
-			const month = d.getMonth() < 9 ? `0${d.getMonth() + 1}` : `${d.getMonth() + 1}`;
-			const day = d.getDate() < 9 ? `0${d.getDate()}` : `${d.getDate()}`;
-			transaction.date = `${year}-${month}-${day}`;
-			return transaction;
-		})[0];
+		transaction = await (await fetch(`/api/transactions/${id}`)).json();
+		const d = new Date(transaction.date);
+		const year = `${d.getFullYear()}`;
+		const month =
+			d.getMonth() < 9 ? `0${d.getMonth() + 1}` : `${d.getMonth() + 1}`;
+		const day = d.getDate() < 9 ? `0${d.getDate()}` : `${d.getDate()}`;
+		transaction.date = `${year}-${month}-${day}`;
+
 		if (!transaction.budgets) {
-			transaction.budgets = {}
+			transaction.budgets = {};
 		}
 		if (!transaction.inbudgets) {
-			transaction.inbudgets = {}
+			transaction.inbudgets = {};
 		}
 		if (!transaction.debts) {
-			transaction.debts = {}
+			transaction.debts = {};
 		}
 		if (!transaction.tags) {
-			transaction.tags = {}
+			transaction.tags = {};
 		}
 
 		pods = await (await fetch(`/api/pods`)).json();
@@ -42,7 +41,7 @@
 		inbudgets = await (await fetch(`/api/inbudgets`)).json();
 		debts = await (await fetch(`/api/debts`)).json();
 		tags = await (await fetch(`/api/tags`)).json();
-	}
+	};
 	onMount(reload);
 
 	let newBudgetName = null;
@@ -52,7 +51,7 @@
 			newBudgetAmount === null ||
 			newBudgetAmount === 0 ||
 			newBudgetName === null ||
-			newBudgetName === ''
+			newBudgetName === ""
 		) {
 			return;
 		}
@@ -72,7 +71,7 @@
 			newInbudgetAmount === null ||
 			newInbudgetAmount === 0 ||
 			newInbudgetName === null ||
-			newInbudgetName === ''
+			newInbudgetName === ""
 		) {
 			return;
 		}
@@ -92,7 +91,7 @@
 			newDebtAmount === null ||
 			newDebtAmount === 0 ||
 			newDebtName === null ||
-			newDebtName === ''
+			newDebtName === ""
 		) {
 			return;
 		}
@@ -108,7 +107,12 @@
 	let newTagName = null;
 	let newTagValue = null;
 	const addTag = () => {
-		if (newTagValue === null || newTagValue === '' || newTagName === null || newTagName === '') {
+		if (
+			newTagValue === null ||
+			newTagValue === "" ||
+			newTagName === null ||
+			newTagName === ""
+		) {
 			return;
 		}
 		transaction.tags[newTagName] = newTagValue;
@@ -126,62 +130,85 @@
 		if (attachmentElement.files.length > 0) {
 			try {
 				const response = await fetch("/api/attachment", {
-					method: 'POST',
+					method: "POST",
 					body: attachmentElement.files[0],
 					headers: {
-      					"Content-Type": attachmentElement.files[0].type,
-    				},
-
-				})
-				const json = await response.json()
+						"Content-Type": attachmentElement.files[0].type,
+					},
+				});
+				const json = await response.json();
 				if (response.status === 201) {
-					transaction.attachment = json
+					transaction.attachment = json;
 				}
 			} catch (e) {
-    			console.error(e);
+				console.error(e);
 			}
 		}
-	}
+	};
 
 	const updateTransaction = async () => {
-		await handleAttachment()
-		addBudget()
-		addInbudget()
-		addDebt()
-		addTag()
-		let t = transaction
+		await handleAttachment();
+		addBudget();
+		addInbudget();
+		addDebt();
+		addTag();
+		let t = transaction;
 		if (t.type === "out") {
-			t.inbudgets = {}
-			t.receiver = ""
+			t.inbudgets = {};
+			t.receiver = "";
 		}
 		if (t.type === "in") {
-			t.budgets = {}
-			t.sender = ""
+			t.budgets = {};
+			t.sender = "";
 		}
-		t.date = new Date(t.date)
+		t.date = new Date(t.date);
 		try {
-			await (await fetch("/api/transactions", {
-					method: 'PUT',
-					body: JSON.stringify([t])
-				})).json()
-			await reload()
-			} catch (e) {
-    			console.error(e);
-			}
-	}
+			await (
+				await fetch("/api/transactions", {
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify([t]),
+				})
+			).json();
+			await reload();
+		} catch (e) {
+			console.error(e);
+		}
+	};
 
-	const percentToAbsolute = percent => parseInt(percent)/100*transaction.amount
-	const percentBudget = () => newBudgetAmount = newBudgetAmount < 100? percentToAbsolute(newBudgetAmount): newBudgetAmount
-	const percentInbudget = () => newInbudgetAmount = newInbudgetAmount < 100? percentToAbsolute(newInbudgetAmount): newInbudgetAmount
-	const percentDebt = () => newDebtAmount = newDebtAmount < 100? percentToAbsolute(newDebtAmount): newDebtAmount
-	const fractionToAbsolute = fraction => (transaction.amount/fraction).toFixed(0)
-	const fractionBudget = () => newBudgetAmount = fractionToAbsolute(newBudgetAmount)
-	const fractionInbudget = () => newInbudgetAmount = fractionToAbsolute(newInbudgetAmount)
-	const fractionDebt = () => newDebtAmount = fractionToAbsolute(newDebtAmount)
-	const fillAmount = () => transaction.amount - Object.values(transaction.budgets).reduce((a, b) => a + b, 0) - Object.values(transaction.inbudgets).reduce((a, b) => a + b, 0) - Object.values(transaction.debts).reduce((a, b) => a + b, 0)
-	const fillBudget = () => newBudgetAmount = fillAmount()
-	const fillInbudget = () => newInbudgetAmount = fillAmount()
-	const fillDebt = () => newDebtAmount = fillAmount()
+	const percentToAbsolute = (percent) =>
+		(parseInt(percent) / 100) * transaction.amount;
+	const percentBudget = () =>
+		(newBudgetAmount =
+			newBudgetAmount < 100
+				? percentToAbsolute(newBudgetAmount)
+				: newBudgetAmount);
+	const percentInbudget = () =>
+		(newInbudgetAmount =
+			newInbudgetAmount < 100
+				? percentToAbsolute(newInbudgetAmount)
+				: newInbudgetAmount);
+	const percentDebt = () =>
+		(newDebtAmount =
+			newDebtAmount < 100 ? percentToAbsolute(newDebtAmount) : newDebtAmount);
+	const fractionToAbsolute = (fraction) =>
+		(transaction.amount / fraction).toFixed(0);
+	const fractionBudget = () =>
+		(newBudgetAmount = fractionToAbsolute(newBudgetAmount));
+	const fractionInbudget = () =>
+		(newInbudgetAmount = fractionToAbsolute(newInbudgetAmount));
+	const fractionDebt = () =>
+		(newDebtAmount = fractionToAbsolute(newDebtAmount));
+	const fillAmount = () =>
+		transaction.amount -
+		Object.values(transaction.budgets).reduce((a, b) => a + b, 0) -
+		Object.values(transaction.inbudgets).reduce((a, b) => a + b, 0) -
+		Object.values(transaction.debts).reduce((a, b) => a + b, 0);
+	const fillBudget = () => (newBudgetAmount = fillAmount());
+	const fillInbudget = () => (newInbudgetAmount = fillAmount());
+	const fillDebt = () => (newDebtAmount = fillAmount());
 </script>
 
 <div class="main">
@@ -199,7 +226,11 @@
 					</select></td
 				></tr
 			>
-			<tr><td>Date</td><td><input type="date" bind:value={transaction.date} /></td></tr>
+			<tr
+				><td>Date</td><td
+					><input type="date" bind:value={transaction.date} /></td
+				></tr
+			>
 			<tr
 				><td>Amount</td><td
 					><input
@@ -210,7 +241,7 @@
 					/></td
 				></tr
 			>
-			{#if transaction.type === 'out' || transaction.type === 'move'}
+			{#if transaction.type === "out" || transaction.type === "move"}
 				<tr>
 					<td>Sender</td>
 					<td>
@@ -225,7 +256,7 @@
 					</td>
 				</tr>
 			{/if}
-			{#if transaction.type === 'in' || transaction.type === 'move'}
+			{#if transaction.type === "in" || transaction.type === "move"}
 				<tr>
 					<td>Receiver</td>
 					<td>
@@ -241,7 +272,7 @@
 				</tr>
 			{/if}
 			<!-- Budgets -->
-			{#if transaction.type === 'out'}
+			{#if transaction.type === "out"}
 				<tr>
 					<td colspan="3">&nbsp;</td>
 				</tr>
@@ -252,12 +283,21 @@
 					<tr>
 						<td>{budget}</td>
 						<td>{transaction.budgets[budget]}</td>
-						<td><span on:click={removeBudget(budget)} class="material-icons-sharp">delete</span></td>
+						<td
+							><span
+								on:click={removeBudget(budget)}
+								class="material-icons-sharp">delete</span
+							></td
+						>
 					</tr>
 				{/each}
 				<tr>
 					<td>
-						<input list="budget" bind:value={newBudgetName} placeholder="name" />
+						<input
+							list="budget"
+							bind:value={newBudgetName}
+							placeholder="name"
+						/>
 						<datalist id="budget">
 							{#if budgets}
 								{#each budgets as budget, idx}
@@ -275,19 +315,28 @@
 							oninput="validity.valid||(value='');"
 						/>
 					</td>
-					<td><span on:click={addBudget} class="material-icons-sharp">add</span></td>
+					<td
+						><span on:click={addBudget} class="material-icons-sharp">add</span
+						></td
+					>
 				</tr>
 				<tr>
 					<td></td>
 					<td>
-						<span on:click={percentBudget} class="material-icons-sharp">percent</span>
-						<span on:click={fractionBudget} class="material-icons-sharp">calculate</span>
-						<span on:click={fillBudget} class="material-icons-sharp">functions</span>
+						<span on:click={percentBudget} class="material-icons-sharp"
+							>percent</span
+						>
+						<span on:click={fractionBudget} class="material-icons-sharp"
+							>calculate</span
+						>
+						<span on:click={fillBudget} class="material-icons-sharp"
+							>functions</span
+						>
 					</td>
 				</tr>
 			{/if}
 			<!-- Inbudgets -->
-			{#if transaction.type === 'in'}
+			{#if transaction.type === "in"}
 				<tr>
 					<td colspan="3">&nbsp;</td>
 				</tr>
@@ -298,12 +347,21 @@
 					<tr>
 						<td>{inbudget}</td>
 						<td>{transaction.inbudgets[inbudget]}</td>
-						<td><span on:click={removeInbudget(inbudget)} class="material-icons-sharp">delete</span></td>
+						<td
+							><span
+								on:click={removeInbudget(inbudget)}
+								class="material-icons-sharp">delete</span
+							></td
+						>
 					</tr>
 				{/each}
 				<tr>
 					<td>
-						<input list="inbudget" bind:value={newInbudgetName} placeholder="name" />
+						<input
+							list="inbudget"
+							bind:value={newInbudgetName}
+							placeholder="name"
+						/>
 						<datalist id="inbudget">
 							{#if inbudgets}
 								{#each inbudgets as inbudget, idx}
@@ -321,19 +379,28 @@
 							oninput="validity.valid||(value='');"
 						/>
 					</td>
-					<td><span on:click={addInbudget} class="material-icons-sharp">add</span></td>
+					<td
+						><span on:click={addInbudget} class="material-icons-sharp">add</span
+						></td
+					>
 				</tr>
 				<tr>
 					<td></td>
 					<td>
-						<span on:click={percentInbudget} class="material-icons-sharp">percent</span>
-						<span on:click={fractionInbudget} class="material-icons-sharp">calculate</span>
-						<span on:click={fillInbudget} class="material-icons-sharp">functions</span>
+						<span on:click={percentInbudget} class="material-icons-sharp"
+							>percent</span
+						>
+						<span on:click={fractionInbudget} class="material-icons-sharp"
+							>calculate</span
+						>
+						<span on:click={fillInbudget} class="material-icons-sharp"
+							>functions</span
+						>
 					</td>
 				</tr>
 			{/if}
 			<!-- Debts -->
-			{#if transaction.type === 'out' || transaction.type === 'in'}
+			{#if transaction.type === "out" || transaction.type === "in"}
 				<tr>
 					<td colspan="3">&nbsp;</td>
 				</tr>
@@ -344,7 +411,11 @@
 					<tr>
 						<td>{debt}</td>
 						<td>{transaction.debts[debt]}</td>
-						<td><span on:click={removeDebt(debt)} class="material-icons-sharp">delete</span></td>
+						<td
+							><span on:click={removeDebt(debt)} class="material-icons-sharp"
+								>delete</span
+							></td
+						>
 					</tr>
 				{/each}
 				<tr>
@@ -367,14 +438,23 @@
 							oninput="validity.valid||(value='');"
 						/>
 					</td>
-					<td><span on:click={addDebt} class="material-icons-sharp">add</span></td>
+					<td
+						><span on:click={addDebt} class="material-icons-sharp">add</span
+						></td
+					>
 				</tr>
 				<tr>
 					<td></td>
 					<td>
-						<span on:click={percentDebt} class="material-icons-sharp">percent</span>
-						<span on:click={fractionDebt} class="material-icons-sharp">calculate</span>
-						<span on:click={fillDebt} class="material-icons-sharp">functions</span>
+						<span on:click={percentDebt} class="material-icons-sharp"
+							>percent</span
+						>
+						<span on:click={fractionDebt} class="material-icons-sharp"
+							>calculate</span
+						>
+						<span on:click={fillDebt} class="material-icons-sharp"
+							>functions</span
+						>
 					</td>
 				</tr>
 			{/if}
@@ -389,7 +469,11 @@
 				<tr>
 					<td>{tag}</td>
 					<td>{transaction.tags[tag]}</td>
-					<td><span on:click={removeTag(tag)} class="material-icons-sharp">delete</span></td>
+					<td
+						><span on:click={removeTag(tag)} class="material-icons-sharp"
+							>delete</span
+						></td
+					>
 				</tr>
 			{/each}
 			<tr>
@@ -408,22 +492,29 @@
 				</td>
 				<td><span on:click={addTag} class="material-icons-sharp">add</span></td>
 			</tr>
-			<tr><td><br></td></tr>
+			<tr><td><br /></td></tr>
 			<tr>
 				<td>Attachment</td>
-				<td colspan=2><input id="add-attachment" type="file" bind:this={attachmentElement}/></td>
+				<td colspan="2"
+					><input
+						id="add-attachment"
+						type="file"
+						bind:this={attachmentElement}
+					/></td
+				>
 			</tr>
 			<tr>
 				<td></td>
-				<td colspan=2>{transaction.attachment}</td>
+				<td colspan="2">{transaction.attachment}</td>
 			</tr>
-			<tr><td><br></td></tr>
+			<tr><td><br /></td></tr>
 			<tr>
-				<td colspan=3><div class="btn" on:click={updateTransaction}>Update</div></td>
+				<td colspan="3"
+					><div class="btn" on:click={updateTransaction}>Update</div></td
+				>
 			</tr>
 		</table>
 	{/if}
-	
 </div>
 
 <style>
@@ -431,7 +522,8 @@
 		font-weight: bold;
 		text-align: center;
 	}
-	input, select {
+	input,
+	select {
 		background-color: var(--fg1);
 		color: var(--bg2);
 	}
@@ -447,3 +539,4 @@
 		color: var(--fg1);
 	}
 </style>
+

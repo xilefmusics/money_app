@@ -15,7 +15,7 @@ pub struct AssociatedTypeValues {
 }
 
 impl AssociatedTypeValues {
-    pub fn from_transaction(transaction: Transaction) -> AssociatedTypeValues {
+    pub fn from_transaction_pod(transaction: Transaction) -> AssociatedTypeValues {
         let mut data = HashMap::<String, i64>::new();
         let amount = transaction.amount as i64;
 
@@ -30,6 +30,23 @@ impl AssociatedTypeValues {
         AssociatedTypeValues {
             date: transaction.date,
             data,
+        }
+    }
+
+    pub fn from_transaction_debt(transaction: Transaction) -> AssociatedTypeValues {
+        let multiplier = match transaction.ttype {
+            Type::In => -1,
+            Type::Out => 1,
+            Type::Move => 0,
+        };
+
+        AssociatedTypeValues {
+            date: transaction.date,
+            data: transaction
+                .debts
+                .into_iter()
+                .map(|(key, value)| (key, value as i64 * multiplier))
+                .collect(),
         }
     }
 }
@@ -180,7 +197,13 @@ impl Transaction {
             Self::get(db, user, filter)
                 .await?
                 .into_iter()
-                .map(|t| AssociatedTypeValues::from_transaction(t))
+                .map(|t| AssociatedTypeValues::from_transaction_pod(t))
+                .collect()
+        } else if associated_type == "debts" {
+            Self::get(db, user, filter)
+                .await?
+                .into_iter()
+                .map(|t| AssociatedTypeValues::from_transaction_debt(t))
                 .collect()
         } else {
             select

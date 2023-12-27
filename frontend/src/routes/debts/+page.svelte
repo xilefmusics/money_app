@@ -54,17 +54,19 @@
 		}}
 	/>
 	<List
-		items={debts.map((debt) => ({
-			title: debt.name,
-			subtitle: null,
-			subtitleIcon: null,
-			amount: debt.amount,
-			color: debt.amount < 0 ? "green" : debt.amount > 0 ? "red" : "gray",
-			link: null,
-			link2: `/transactions?debt=${debt.name}`,
-			link3: null,
-			newBlock: null,
-		}))}
+		items={debts
+			.filter((debt) => debt.amount !== 0)
+			.map((debt) => ({
+				title: debt.name,
+				subtitle: null,
+				subtitleIcon: null,
+				amount: debt.amount,
+				color: debt.amount < 0 ? "green" : debt.amount > 0 ? "red" : "gray",
+				link: null,
+				link2: `/transactions?debt=${debt.name}`,
+				link3: null,
+				newBlock: null,
+			}))}
 	/>
 {/if}
 

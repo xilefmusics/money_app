@@ -35,8 +35,8 @@ impl AssociatedTypeValues {
 
     pub fn from_transaction_debt(transaction: Transaction) -> AssociatedTypeValues {
         let multiplier = match transaction.ttype {
-            Type::In => -1,
-            Type::Out => 1,
+            Type::In => 1,
+            Type::Out => -1,
             Type::Move => 0,
         };
 

@@ -109,7 +109,6 @@
 	const createTransaction = async () => {
 		const transactions = [
 			{
-				id: 0,
 				type: "out",
 				date: new Date(),
 				amount: 0,
@@ -124,12 +123,13 @@
 			},
 		];
 		try {
-			await (
-				await fetch("/api/transactions", {
-					method: "POST",
-					body: JSON.stringify(transactions),
-				})
-			).json();
+			await fetch("/api/transactions", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(transactions),
+			});
 			await reload();
 		} catch (e) {
 			console.error(e);
@@ -215,7 +215,7 @@
 						: "gray",
 			link: deleteMode ? "" : `/transaction?id=${transaction.id}`,
 			link2:
-				transaction.attachment.length > 0
+				transaction.attachment && transaction.attachment.length > 0
 					? `/attachment?name=${transaction.attachment}`
 					: null,
 			link2icon: "attach_file",

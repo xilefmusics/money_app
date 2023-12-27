@@ -81,12 +81,13 @@
 			transactionsToDelete.includes(transaction.id),
 		);
 		try {
-			await (
-				await fetch("/api/transactions", {
-					method: "DELETE",
-					body: JSON.stringify(transactionsToDelete),
-				})
-			).json();
+			await fetch("/api/transactions", {
+				method: "DELETE",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(transactionsToDelete),
+			});
 			await reload();
 		} catch (e) {
 			console.error(e);

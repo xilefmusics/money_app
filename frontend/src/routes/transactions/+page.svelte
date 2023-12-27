@@ -216,7 +216,7 @@
 			link: deleteMode ? "" : `/transaction?id=${transaction.id}`,
 			link2:
 				transaction.attachment && transaction.attachment.length > 0
-					? `/attachment?name=${transaction.attachment}`
+					? `/api/attachments/${transaction.attachment}`
 					: null,
 			link2icon: "attach_file",
 			link3: null,

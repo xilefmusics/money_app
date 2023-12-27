@@ -18,7 +18,7 @@ pub async fn get(
     Ok(HttpResponse::Ok().json(
         Transaction::get(
             db.into_inner(),
-            &parse_user_header(req)?,
+            &parse_user_header(&req)?,
             &Filter::new(
                 q.year,
                 q.month,
@@ -40,7 +40,7 @@ pub async fn get_id(
     id: Path<String>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
-        Transaction::get_one(db.into_inner(), &parse_user_header(req)?, &id.into_inner()).await?,
+        Transaction::get_one(db.into_inner(), &parse_user_header(&req)?, &id.into_inner()).await?,
     ))
 }
 
@@ -53,7 +53,7 @@ pub async fn put(
     Ok(HttpResponse::Created().json(
         Transaction::put(
             db.into_inner(),
-            &parse_user_header(req)?,
+            &parse_user_header(&req)?,
             transactions.into_inner(),
         )
         .await?,
@@ -69,7 +69,7 @@ pub async fn delete(
     Ok(HttpResponse::NoContent().json(
         Transaction::delete(
             db.into_inner(),
-            &parse_user_header(req)?,
+            &parse_user_header(&req)?,
             transactions.into_inner(),
         )
         .await?,
@@ -85,7 +85,7 @@ pub async fn post(
     Ok(HttpResponse::Created().json(
         Transaction::create(
             db.into_inner(),
-            &parse_user_header(req)?,
+            &parse_user_header(&req)?,
             transactions.into_inner(),
         )
         .await?,
@@ -101,7 +101,7 @@ pub async fn get_pods(
     Ok(HttpResponse::Ok().json(
         Transaction::get_associated_type(
             db.into_inner(),
-            &parse_user_header(req)?,
+            &parse_user_header(&req)?,
             &q.into_inner().to_filter(),
             "pods",
         )
@@ -118,7 +118,7 @@ pub async fn get_budgets(
     Ok(HttpResponse::Ok().json(
         Transaction::get_associated_type(
             db.into_inner(),
-            &parse_user_header(req)?,
+            &parse_user_header(&req)?,
             &q.into_inner().to_filter(),
             "budgets",
         )
@@ -135,7 +135,7 @@ pub async fn get_inbudgets(
     Ok(HttpResponse::Ok().json(
         Transaction::get_associated_type(
             db.into_inner(),
-            &parse_user_header(req)?,
+            &parse_user_header(&req)?,
             &q.into_inner().to_filter(),
             "inbudgets",
         )
@@ -152,7 +152,7 @@ pub async fn get_debts(
     Ok(HttpResponse::Ok().json(
         Transaction::get_associated_type(
             db.into_inner(),
-            &parse_user_header(req)?,
+            &parse_user_header(&req)?,
             &q.into_inner().to_filter(),
             "debts",
         )
@@ -169,7 +169,7 @@ pub async fn get_tags(
     Ok(HttpResponse::Ok().json(
         Transaction::get_associated_type(
             db.into_inner(),
-            &parse_user_header(req)?,
+            &parse_user_header(&req)?,
             &q.into_inner().to_filter(),
             "tags",
         )

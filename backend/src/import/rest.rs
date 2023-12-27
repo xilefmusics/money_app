@@ -17,7 +17,7 @@ pub async fn import(
     Ok(HttpResponse::Created().json(
         Transaction::create(
             db.into_inner(),
-            &parse_user_header(req)?,
+            &parse_user_header(&req)?,
             import_fn(&payload)?,
         )
         .await?,

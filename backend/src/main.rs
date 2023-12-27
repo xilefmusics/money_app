@@ -1,3 +1,4 @@
+mod attachment;
 mod error;
 mod history;
 mod import;
@@ -50,6 +51,8 @@ async fn main() {
             .service(history::rest::get_inbudgets)
             .service(history::rest::get_debts)
             .service(import::rest::import)
+            .service(attachment::rest::get_id)
+            .service(attachment::rest::post)
     })
     .bind((settings.host, settings.port))
     .unwrap()

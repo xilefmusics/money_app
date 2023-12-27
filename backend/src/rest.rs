@@ -2,7 +2,7 @@ use crate::error::AppError;
 
 use actix_web::HttpRequest;
 
-pub fn parse_user_header(req: HttpRequest) -> Result<String, AppError> {
+pub fn parse_user_header(req: &HttpRequest) -> Result<String, AppError> {
     Ok(req
         .headers()
         .get("X-Remote-User")

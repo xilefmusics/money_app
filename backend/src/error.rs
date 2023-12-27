@@ -4,6 +4,7 @@ use csv;
 use fancy_surreal;
 use std::error;
 use std::fmt;
+use std::io;
 
 #[derive(Debug)]
 pub enum AppError {
@@ -41,6 +42,12 @@ impl From<fancy_surreal::Error> for AppError {
 impl From<csv::Error> for AppError {
     fn from(err: csv::Error) -> Self {
         Self::Import(err.to_string())
+    }
+}
+
+impl From<io::Error> for AppError {
+    fn from(err: io::Error) -> Self {
+        Self::Filesystem(err.to_string())
     }
 }
 

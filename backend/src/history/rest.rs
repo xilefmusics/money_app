@@ -20,7 +20,7 @@ pub async fn get_wealth(
             .into_transactions_iter(
                 &Transaction::get(
                     db.into_inner(),
-                    &parse_user_header(req)?,
+                    &parse_user_header(&req)?,
                     &Filter::default(),
                 )
                 .await?,
@@ -37,7 +37,7 @@ pub async fn get_pods(
     db: Data<Client>,
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
-    let user = parse_user_header(req)?;
+    let user = parse_user_header(&req)?;
     let db = db.into_inner();
     Ok(HttpResponse::Ok().json(
         q.into_inner()
@@ -65,7 +65,7 @@ pub async fn get_budgets(
     db: Data<Client>,
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
-    let user = parse_user_header(req)?;
+    let user = parse_user_header(&req)?;
     let db = db.into_inner();
     Ok(HttpResponse::Ok().json(
         q.into_inner()
@@ -93,7 +93,7 @@ pub async fn get_inbudgets(
     db: Data<Client>,
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
-    let user = parse_user_header(req)?;
+    let user = parse_user_header(&req)?;
     let db = db.into_inner();
     Ok(HttpResponse::Ok().json(
         q.into_inner()
@@ -122,7 +122,7 @@ pub async fn get_debts(
     db: Data<Client>,
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
-    let user = parse_user_header(req)?;
+    let user = parse_user_header(&req)?;
     let db = db.into_inner();
     Ok(HttpResponse::Ok().json(
         q.into_inner()

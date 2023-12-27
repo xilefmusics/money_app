@@ -129,7 +129,7 @@
 	const handleAttachment = async () => {
 		if (attachmentElement.files.length > 0) {
 			try {
-				const response = await fetch("/api/attachment", {
+				const response = await fetch("/api/attachments", {
 					method: "POST",
 					body: attachmentElement.files[0],
 					headers: {
@@ -138,7 +138,7 @@
 				});
 				const json = await response.json();
 				if (response.status === 201) {
-					transaction.attachment = json;
+					transaction.attachment = json.id;
 				}
 			} catch (e) {
 				console.error(e);
@@ -539,4 +539,3 @@
 		color: var(--fg1);
 	}
 </style>
-

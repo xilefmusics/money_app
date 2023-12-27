@@ -8,6 +8,7 @@ use std::ops::Add;
 #[derive(Debug, Serialize, Deserialize, Default, Clone)]
 pub struct Wealth {
     pub date: DateTime<Local>,
+    #[serde(rename = "in")]
     pub income: ValueDiff,
     pub out: ValueDiff,
     pub change: ValueDiff,

@@ -1,4 +1,4 @@
-use chrono::{Duration, Local, TimeZone};
+use chrono::{Local, TimeZone};
 
 #[derive(Default)]
 pub struct Filter<'a> {
@@ -30,41 +30,6 @@ impl<'a> Filter<'a> {
             inbudget,
             ttype,
         }
-    }
-
-    pub fn year(mut self, year: i32) -> Self {
-        self.year = Some(year);
-        self
-    }
-
-    pub fn month(mut self, month: u32) -> Self {
-        self.month = Some(month);
-        self
-    }
-
-    pub fn pod(mut self, pod: &'a str) -> Self {
-        self.pod = Some(pod);
-        self
-    }
-
-    pub fn debt(mut self, debt: &'a str) -> Self {
-        self.debt = Some(debt);
-        self
-    }
-
-    pub fn budget(mut self, budget: &'a str) -> Self {
-        self.budget = Some(budget);
-        self
-    }
-
-    pub fn inbudget(mut self, inbudget: &'a str) -> Self {
-        self.inbudget = Some(inbudget);
-        self
-    }
-
-    pub fn ttype(mut self, ttype: &'a str) -> Self {
-        self.ttype = Some(ttype);
-        self
     }
 
     pub fn conditions(&self) -> Vec<String> {

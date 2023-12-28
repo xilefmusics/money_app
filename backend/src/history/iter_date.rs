@@ -60,7 +60,6 @@ impl Iterator for DateIterator {
             None
         } else {
             self.left -= 1;
-            let last = self.current;
             self.current =
                 self.current + Months::new(self.month + 12 * self.year) + Days::new(self.day);
             Some(self.current)

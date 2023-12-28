@@ -10,7 +10,6 @@ use std::io;
 pub enum AppError {
     Database(String),
     Unauthorized(String),
-    TypeConvertError(String),
     Filesystem(String),
     NotFound(String),
     Import(String),
@@ -22,7 +21,6 @@ impl fmt::Display for AppError {
         match self {
             Self::Database(message) => write!(f, "DatabaseError ({})", message),
             Self::Unauthorized(message) => write!(f, "UnauthorizedError ({})", message),
-            Self::TypeConvertError(message) => write!(f, "TypeConvertError ({})", message),
             Self::Filesystem(message) => write!(f, "FilesystemError ({})", message),
             Self::NotFound(message) => write!(f, "NotFoundError ({})", message),
             Self::Import(message) => write!(f, "Import ({})", message),
@@ -56,7 +54,6 @@ impl ResponseError for AppError {
         match self {
             Self::Database(_) => StatusCode::INTERNAL_SERVER_ERROR,
             Self::Unauthorized(_) => StatusCode::UNAUTHORIZED,
-            Self::TypeConvertError(_) => StatusCode::INTERNAL_SERVER_ERROR,
             Self::Filesystem(_) => StatusCode::INTERNAL_SERVER_ERROR,
             Self::NotFound(_) => StatusCode::NOT_FOUND,
             Self::Import(_) => StatusCode::INTERNAL_SERVER_ERROR,
@@ -72,9 +69,6 @@ impl ResponseError for AppError {
             }
             Self::Unauthorized(_) => {
                 HttpResponse::build(self.status_code()).body("401 Unauthorized")
-            }
-            Self::TypeConvertError(_) => {
-                HttpResponse::build(self.status_code()).body("500 Internal Server Error")
             }
             Self::Filesystem(_) => {
                 HttpResponse::build(self.status_code()).body("500 Internal Server Error")

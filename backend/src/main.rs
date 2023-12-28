@@ -6,6 +6,7 @@ mod rest;
 mod settings;
 mod transaction;
 
+use actix_files::Files;
 use error::AppError;
 use fancy_surreal::Client;
 use settings::Settings;
@@ -56,6 +57,10 @@ async fn main() -> Result<(), AppError> {
             .service(attachment::rest::post)
             .service(rest::get_index)
             .service(rest::get_static_files)
+            .service(
+                Files::new("/", std::env::var("STATIC_DIR").unwrap_or("static".into()))
+                    .show_files_listing(),
+            )
     })
     .bind((settings.host, settings.port))
     .map_err(|err| AppError::Other(format!("Couldn't bind port ({})", err)))?

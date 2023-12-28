@@ -17,7 +17,7 @@ pub fn parse_user_header(req: &HttpRequest) -> Result<String, AppError> {
 #[get("/")]
 pub async fn get_index() -> Result<NamedFile, AppError> {
     let root_path = PathBuf::from(std::env::var("STATIC_DIR").unwrap_or("static".into()));
-    let file_path = PathBuf::from("index.html");
+    let file_path = PathBuf::from("dashboard.html");
     NamedFile::open(root_path.join(file_path)).map_err(|err| AppError::NotFound(err.to_string()))
 }
 
@@ -26,10 +26,9 @@ pub async fn get_static_files(path: Path<String>) -> Result<NamedFile, AppError>
     let root_path = PathBuf::from(std::env::var("STATIC_DIR").unwrap_or("static".into()));
     let file_path = PathBuf::from(path.into_inner());
     let path = root_path.join(file_path);
-    if path.extension().is_some() {
-        NamedFile::open(path).map_err(|err| AppError::NotFound(err.to_string()))
-    } else {
-        NamedFile::open(root_path.join("index.html"))
-            .map_err(|err| AppError::NotFound(err.to_string()))
-    }
+    let path = match path.extension() {
+        Some(_) => path,
+        None => path.with_extension("html"),
+    };
+    NamedFile::open(path).map_err(|err| AppError::NotFound(err.to_string()))
 }

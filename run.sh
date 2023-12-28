@@ -24,6 +24,8 @@ elif [ "${1}" = "get" ]; then
     exit 1
   fi
   curl -X GET "http://localhost:8082/api/${2}" -H "X-Remote-User: xilef"
+elif [ "${1}" = "docker-build" ]; then
+  docker build -t money-app .
 else
   echo "usage: run.sh <command>"
     exit 1

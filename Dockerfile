@@ -20,7 +20,7 @@ FROM ubuntu:22.04
 
 COPY --from=FrontendBuilder money_app/frontend/build /app/static
 COPY --from=BackendBuilder money_app/backend/target/release/backend /app/worship_viewer
-#
+
 ENV PORT="8000" \
     DB_HOST="db" \
     DB_PORT="8000" \

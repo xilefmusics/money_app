@@ -54,6 +54,8 @@ async fn main() -> Result<(), AppError> {
             .service(import::rest::import)
             .service(attachment::rest::get_id)
             .service(attachment::rest::post)
+            .service(rest::get_index)
+            .service(rest::get_static_files)
     })
     .bind((settings.host, settings.port))
     .map_err(|err| AppError::Other(format!("Couldn't bind port ({})", err)))?

@@ -59,14 +59,14 @@
 				},
 				{
 					label: "In",
-					data: wealthHistory.map((item) => item.in.diff / 100),
+					data: wealthHistory.map((item) => item.in.value / 100),
 					borderWidth: 1,
 					borderColor: "green",
 					backgroundColor: "green",
 				},
 				{
 					label: "Out",
-					data: wealthHistory.map((item) => item.out.diff / 100),
+					data: wealthHistory.map((item) => item.out.value / 100),
 					borderWidth: 1,
 					borderColor: "red",
 					backgroundColor: "red",

@@ -6,6 +6,7 @@ mod rest;
 mod settings;
 mod transaction;
 
+use error::AppError;
 use fancy_surreal::Client;
 use settings::Settings;
 
@@ -14,7 +15,7 @@ use actix_web::{web::Data, App, HttpServer};
 use env_logger::Env;
 
 #[actix_web::main]
-async fn main() {
+async fn main() -> Result<(), AppError> {
     env_logger::init_from_env(Env::default().default_filter_or("debug"));
 
     let settings = Settings::new();
@@ -28,7 +29,7 @@ async fn main() {
             &settings.db_namespace,
         )
         .await
-        .unwrap(),
+        .map_err(|err| AppError::Other(format!("Couldn't connect to database ({})", err)))?,
     );
 
     HttpServer::new(move || {
@@ -55,8 +56,8 @@ async fn main() {
             .service(attachment::rest::post)
     })
     .bind((settings.host, settings.port))
-    .unwrap()
+    .map_err(|err| AppError::Other(format!("Couldn't bind port ({})", err)))?
     .run()
     .await
-    .unwrap()
+    .map_err(|err| AppError::Other(format!("Server crashed ({})", err)))
 }

@@ -76,13 +76,13 @@ impl N26 {
     pub fn to_transaction(self) -> Result<Transaction, AppError> {
         let (ttype, sender, receiver) = if self.receiver.starts_with("Von") {
             let mut iter = self.receiver.split(" ");
-            let von = iter
+            let _von = iter
                 .next()
                 .ok_or(AppError::Import("Parse N26: no Von".to_string()))?;
             let sender = iter
                 .next()
                 .ok_or(AppError::Import("Parse N26: no sender".to_string()))?;
-            let nach = iter
+            let _nach = iter
                 .next()
                 .ok_or(AppError::Import("Parse N26: no nach".to_string()))?;
 

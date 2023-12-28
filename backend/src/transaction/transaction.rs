@@ -162,10 +162,14 @@ impl Transaction {
                 .wrapper_js_map("element.item")
                 .wrapper_fn("array::group")
                 .wrapper_fn("array::sort")
-                .query_direct::<String>()
+                .query_direct::<Option<String>>()
                 .await?
                 .into_iter()
-                .filter(|pod| pod.len() > 0)
+                .filter(|opod| match opod {
+                    Some(pod) => pod.len() > 0,
+                    None => false,
+                })
+                .map(|pod| pod.unwrap())
                 .collect::<Vec<String>>()
         } else {
             select

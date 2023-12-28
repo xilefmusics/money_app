@@ -1,7 +1,7 @@
 use crate::error::AppError;
 
 use std::fs::File;
-use std::io::{Read, Write};
+use std::io::Write;
 use std::sync::Arc;
 
 use fancy_surreal::{Client, Databasable};

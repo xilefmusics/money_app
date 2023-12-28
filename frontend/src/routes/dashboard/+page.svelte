@@ -20,7 +20,7 @@
 			return item;
 		});
 		wealthHistory2 = (
-			await (await fetch(`/api/history/wealth?len=4&month=0&year=1`)).json()
+			await (await fetch(`/api/history/wealth?len=4&year=1`)).json()
 		).map((item) => {
 			item.date = `${new Date(item.date).getFullYear()}`;
 			return item;
@@ -96,8 +96,8 @@
 							],
 							data: [
 								historyItem.real.diff > 0
-									? (historyItem.in.diff - historyItem.real.diff) / 100
-									: historyItem.in.diff / 100,
+									? (historyItem.in.value - historyItem.real.diff) / 100
+									: historyItem.in.value / 100,
 								historyItem.real.diff > 0
 									? historyItem.real.diff / 100
 									: -historyItem.real.diff / 100,

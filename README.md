@@ -29,7 +29,6 @@ Returns a list of transactions.
 | budget   | \*      |
 | inbudget | \*      |
 | type     | \*      |
-| id       | \*      |
 
 ### POST /transactions
 
@@ -102,24 +101,3 @@ The supported params to change the dataseries are:
 | day   | The amount of days between the datapoints.   | 0       |
 | len   | The amount of datapoints                     | 1       |
 
-### GET /lint
-
-Returns a list of anomalies inside the transactions.
-This is not yet a full list, but some lint rules.
-The current list of rules is:
-
-| Rule | Description                                                                                    |
-| ---- | ---------------------------------------------------------------------------------------------- |
-| 1    | If the transaction type is `in` the budget sum has to be empty.                                |
-| 2    | If the transaction type is `in` the inbudget sum plus the debt sum has to be equal the amount. |
-| 3    | If the transaction type is `out` the inbudget sum has to be empty.                             |
-| 4    | If the transaction type is `in` the budget sum plus the debt sum has to be equal the amount.   |
-
-### GET /reindex
-
-Sorts transactions by date and overwrites the ID with the index.
-This schould only be used if you know, what your doing.
-
-### GET /undo
-
-Undoos the last action and returns the applied event. 

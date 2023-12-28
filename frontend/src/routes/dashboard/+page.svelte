@@ -1,25 +1,31 @@
 <script>
-	import Chart from '../../lib/components/Chart.svelte';
-	import { onMount } from 'svelte';
-	
+	import Chart from "../../lib/components/Chart.svelte";
+	import { onMount } from "svelte";
+
 	const isMobile = () => innerHeight > innerWidth;
 
 	let wealthHistory = null;
 	let wealthHistory2 = null;
 	const reload = async () => {
-		wealthHistory = (await (await fetch(`/api/history/wealth?len=${isMobile()?6:26}&month=1&year=0`)).json()).map(
-			(item) => {
-				item.date = `${new Date(item.date).getMonth() + 1}-${new Date(item.date).getFullYear()}`;
-				return item;
-			}
-		);
-		wealthHistory2 = (await (await fetch(`/api/history/wealth?len=4&month=0&year=1`)).json()).map(
-			(item) => {
-				item.date = `${new Date(item.date).getFullYear()}`;
-				return item;
-			}
-		);
-	}
+		wealthHistory = (
+			await (
+				await fetch(
+					`/api/history/wealth?len=${isMobile() ? 6 : 26}&month=1&year=0`,
+				)
+			).json()
+		).map((item) => {
+			item.date = `${new Date(item.date).getMonth() + 1}-${new Date(
+				item.date,
+			).getFullYear()}`;
+			return item;
+		});
+		wealthHistory2 = (
+			await (await fetch(`/api/history/wealth?len=4&month=0&year=1`)).json()
+		).map((item) => {
+			item.date = `${new Date(item.date).getFullYear()}`;
+			return item;
+		});
+	};
 	onMount(reload);
 </script>
 
@@ -31,42 +37,42 @@
 			labels: wealthHistory.map((item) => item.date),
 			datasets: [
 				{
-					label: 'Sum',
+					label: "Sum",
 					data: wealthHistory.map((item) => item.sum.value / 100),
 					borderWidth: 1,
-					borderColor: 'blue',
-					backgroundColor: 'blue'
+					borderColor: "blue",
+					backgroundColor: "blue",
 				},
 				{
-					label: 'Real',
+					label: "Real",
 					data: wealthHistory.map((item) => item.real.value / 100),
 					borderWidth: 1,
-					borderColor: 'lightgreen',
-					backgroundColor: 'lightgreen'
+					borderColor: "lightgreen",
+					backgroundColor: "lightgreen",
 				},
 				{
-					label: 'Debt',
+					label: "Debt",
 					data: wealthHistory.map((item) => item.debt.value / 100),
 					borderWidth: 1,
-					borderColor: 'purple',
-					backgroundColor: 'purple'
+					borderColor: "purple",
+					backgroundColor: "purple",
 				},
 				{
-					label: 'In',
+					label: "In",
 					data: wealthHistory.map((item) => item.in.diff / 100),
 					borderWidth: 1,
-					borderColor: 'green',
-					backgroundColor: 'green'
+					borderColor: "green",
+					backgroundColor: "green",
 				},
 				{
-					label: 'Out',
+					label: "Out",
 					data: wealthHistory.map((item) => item.out.diff / 100),
 					borderWidth: 1,
-					borderColor: 'red',
-					backgroundColor: 'red'
-				}
+					borderColor: "red",
+					backgroundColor: "red",
+				},
 			],
-			options: {}
+			options: {},
 		}}
 	/>
 {/if}
@@ -74,24 +80,34 @@
 {#if wealthHistory2}
 	<div class="year-wrapper">
 		{#each wealthHistory2.reverse().slice(1) as historyItem}
-		<h2>{historyItem.date}</h2>
-		<Chart
-			type="doughnut"
-			data={{
-				labels: ['Spending', historyItem.real.diff>0 ? 'Saving': 'Overspending'],
-				datasets: [
-					{
-						backgroundColor: ['red', historyItem.real.diff>0 ? 'green' : 'darkred'],
-						data: [
-							historyItem.real.diff>0 ? (historyItem.in.diff - historyItem.real.diff) / 100 : historyItem.in.diff / 100,
-							historyItem.real.diff>0 ? historyItem.real.diff / 100 : -historyItem.real.diff / 100,
-						],
-						borderWidth: 1
-					}
-				],
-				options: {}
-			}}
-		/>
+			<h2>{historyItem.date}</h2>
+			<Chart
+				type="doughnut"
+				data={{
+					labels: [
+						"Spending",
+						historyItem.real.diff > 0 ? "Saving" : "Overspending",
+					],
+					datasets: [
+						{
+							backgroundColor: [
+								"red",
+								historyItem.real.diff > 0 ? "green" : "darkred",
+							],
+							data: [
+								historyItem.real.diff > 0
+									? (historyItem.in.diff - historyItem.real.diff) / 100
+									: historyItem.in.diff / 100,
+								historyItem.real.diff > 0
+									? historyItem.real.diff / 100
+									: -historyItem.real.diff / 100,
+							],
+							borderWidth: 1,
+						},
+					],
+					options: {},
+				}}
+			/>
 		{/each}
 	</div>
 {/if}

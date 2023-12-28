@@ -11,3 +11,7 @@ frontend/package
 backend/target
 backend/Cargo.lock
 transactions.json
+LICENSE
+README.md
+run.sh
+proxauth-config.yaml

@@ -77,7 +77,11 @@ impl<'a> Filter<'a> {
                 Local.with_ymd_and_hms(year, 1, 1, 0, 0, 0).unwrap()
             };
             let to = if let Some(month) = self.month {
-                Local.with_ymd_and_hms(year, month + 1, 1, 0, 0, 0).unwrap()
+                if month == 12 {
+                    Local.with_ymd_and_hms(year + 1, 1, 1, 0, 0, 0).unwrap()
+                } else {
+                    Local.with_ymd_and_hms(year, month + 1, 1, 0, 0, 0).unwrap()
+                }
             } else {
                 Local.with_ymd_and_hms(year + 1, 1, 1, 0, 0, 0).unwrap()
             };

@@ -28,18 +28,22 @@ pub struct Payment {
     pub cycle: u32, // in months
     pub kind: PaymentKind,
     pub pod: String,
-    pub debts: HashMap<String, usize>,
+    pub debts: HashMap<String, u32>,
 }
 
 impl Payment {
+    pub fn debt_sum(&self) -> u32 {
+        self.debts.values().cloned().sum()
+    }
+
     pub fn amount(&self) -> u32 {
-        self.amount
+        self.amount - self.debt_sum()
     }
 
     pub fn signed_amount(&self) -> i64 {
         match self.kind {
-            PaymentKind::Credit => self.amount as i64,
-            _ => -(self.amount as i64),
+            PaymentKind::Credit => self.amount() as i64,
+            _ => -(self.amount() as i64),
         }
     }
 

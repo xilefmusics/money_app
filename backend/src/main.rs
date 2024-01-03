@@ -1,4 +1,5 @@
 mod attachment;
+mod contract;
 mod error;
 mod history;
 mod import;
@@ -55,6 +56,11 @@ async fn main() -> Result<(), AppError> {
             .service(import::rest::import)
             .service(attachment::rest::get_id)
             .service(attachment::rest::post)
+            .service(contract::rest::get_id)
+            .service(contract::rest::get)
+            .service(contract::rest::put)
+            .service(contract::rest::post)
+            .service(contract::rest::delete)
             .service(rest::get_index)
             .service(rest::get_static_files)
             .service(

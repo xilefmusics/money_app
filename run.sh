@@ -9,21 +9,25 @@ elif [ "${1}" = "frontend-install" ]; then
   cd frontend && npm install
 elif [ "${1}" = "proxauth" ]; then
   CONFIG_FILE="./proxauth-config.yaml" proxauth
-elif [ "${1}" = "add-transactions" ]; then
+elif [ "${1}" = "add" ]; then
+  if [ -z "${2}" ]; then
+    echo "usage: run.sh add <endpoint>"
+    exit 1
+  fi
   curl \
     -X POST \
     -H "X-Remote-User: xilef" \
     -H "Content-Type: application/json" \
     -H "Accept: application/json" \
-    -d @transactions.json \
-    "http://localhost:8082/api/transactions" \
+    -d @${2}.json \
+    "http://localhost:8083/api/${2}" \
     --fail
 elif [ "${1}" = "get" ]; then
   if [ -z "${2}" ]; then
     echo "usage: run.sh get <endpoint>"
     exit 1
   fi
-  curl -X GET "http://localhost:8082/api/${2}" -H "X-Remote-User: xilef"
+  curl -X GET "http://localhost:8083/api/${2}" -H "X-Remote-User: xilef"
 elif [ "${1}" = "docker-build" ]; then
   docker build -t money-app .
 else

@@ -12,6 +12,12 @@ rules:
   textColor: "#ebdbb2"
   primaryColor: "#cc241d"
   title: "Money-App"
+- toPort: 8080
+  allowedUsers: [xilef]
+  backgroundColor: "#3c3836"
+  textColor: "#ebdbb2"
+  primaryColor: "#cc241d"
+  title: "Money-App"
 - toPort: 5173
   allowedUsers: [xilef]
   backgroundColor: "#3c3836"

@@ -1,4 +1,4 @@
-use super::Contract;
+use super::{Contract, ContractModel};
 
 use crate::error::AppError;
 use crate::rest::parse_user_header;
@@ -11,7 +11,7 @@ use actix_web::{
 
 #[get("/api/contracts")]
 pub async fn get(req: HttpRequest, db: Data<Client>) -> Result<HttpResponse, AppError> {
-    Ok(HttpResponse::Ok().json(Contract::get(db.into_inner(), &parse_user_header(&req)?).await?))
+    Ok(HttpResponse::Ok().json(ContractModel::get(db.into_inner(), &parse_user_header(&req)?).await?))
 }
 
 #[get("/api/contracts/{id}")]
@@ -21,7 +21,7 @@ pub async fn get_id(
     id: Path<String>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
-        Contract::get_one(db.into_inner(), &parse_user_header(&req)?, &id.into_inner()).await?,
+        ContractModel::get_one(db.into_inner(), &parse_user_header(&req)?, &id.into_inner()).await?,
     ))
 }
 
@@ -32,7 +32,7 @@ pub async fn put(
     db: Data<Client>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Created().json(
-        Contract::put(
+        ContractModel::put(
             db.into_inner(),
             &parse_user_header(&req)?,
             contracts.into_inner(),
@@ -48,7 +48,7 @@ pub async fn delete(
     db: Data<Client>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::NoContent().json(
-        Contract::delete(
+        ContractModel::delete(
             db.into_inner(),
             &parse_user_header(&req)?,
             contracts.into_inner(),
@@ -64,7 +64,7 @@ pub async fn post(
     db: Data<Client>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Created().json(
-        Contract::create(
+        ContractModel::create(
             db.into_inner(),
             &parse_user_header(&req)?,
             contracts.into_inner(),

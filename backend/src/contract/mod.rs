@@ -1,4 +1,4 @@
 mod contract;
 pub mod rest;
 
-pub use contract::Contract;
+pub use contract::{Contract, ContractModel};

@@ -15,3 +15,6 @@ frontend2/dist
 wrk
 contracts.json
 frontend2/target
+frontend/dist
+frontend/target
+shared/target

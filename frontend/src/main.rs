@@ -1,4 +1,5 @@
 mod pages;
+mod tmp_fancy_yew;
 
 use pages::{Contracts, Dashboard};
 

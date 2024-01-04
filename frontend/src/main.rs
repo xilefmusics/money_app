@@ -1,3 +1,4 @@
+mod charts;
 mod pages;
 mod tmp_fancy_yew;
 

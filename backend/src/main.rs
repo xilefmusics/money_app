@@ -2,6 +2,7 @@ mod attachment;
 mod contract;
 mod error;
 mod extrapolation;
+mod goal;
 mod history;
 mod import;
 mod rest;
@@ -62,6 +63,11 @@ async fn main() -> Result<(), AppError> {
             .service(contract::rest::put)
             .service(contract::rest::post)
             .service(contract::rest::delete)
+            .service(goal::rest::get_id)
+            .service(goal::rest::get)
+            .service(goal::rest::put)
+            .service(goal::rest::post)
+            .service(goal::rest::delete)
             .service(extrapolation::rest::get)
             .service(rest::get_index)
             .service(rest::get_static_files)

@@ -2,7 +2,7 @@ use super::DateIterator;
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default)]
 pub struct QueryParams {
     pub year: Option<u32>,
     pub month: Option<u32>,

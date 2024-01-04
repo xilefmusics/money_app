@@ -1,3 +1,4 @@
+mod history;
 mod iter_associated_types;
 mod iter_date;
 mod iter_transactions;
@@ -7,13 +8,11 @@ pub mod rest;
 mod value_diff;
 mod wealth;
 
-pub use iter_associated_types::{
-    AssociatedTypeDiffValues, AssociatedTypeValuesAccumulatorIterator,
-    AssociatedTypeValuesDifferIterator, AssociatedTypeValuesIterator,
-};
-pub use iter_date::DateIterator;
-pub use iter_transactions::TransactionsIterator;
-pub use iter_wealth::{ShiftInOutIterator, WealthIterator};
+pub use history::History;
+use iter_associated_types::{AssociatedTypeDiffValues, AssociatedTypeValuesIterator};
+use iter_date::DateIterator;
+use iter_transactions::TransactionsIterator;
+use iter_wealth::WealthIterator;
 pub use query_params::QueryParams;
-pub use value_diff::{Diff, ValueDiff};
+use value_diff::{Diff, ValueDiff};
 pub use wealth::Wealth;

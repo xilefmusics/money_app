@@ -1,8 +1,7 @@
-use super::{AssociatedTypeDiffValues, QueryParams, Wealth};
+use super::{History, QueryParams};
 
 use crate::error::AppError;
 use crate::rest::parse_user_header;
-use crate::transaction::{Filter, Transaction};
 
 use fancy_surreal::Client;
 
@@ -14,21 +13,8 @@ pub async fn get_wealth(
     db: Data<Client>,
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
-    Ok(HttpResponse::Ok().json(
-        q.into_inner()
-            .into_date_iter()
-            .into_transactions_iter(
-                &Transaction::get(
-                    db.into_inner(),
-                    &parse_user_header(&req)?,
-                    &Filter::default(),
-                )
-                .await?,
-            )
-            .into_wealth_iter()
-            .into_shift_in_out_iter()
-            .collect::<Vec<Wealth>>(),
-    ))
+    Ok(HttpResponse::Ok()
+        .json(History::wealth(db.into_inner(), &parse_user_header(&req)?, q.into_inner()).await?))
 }
 
 #[get("/api/history/pods")]
@@ -37,26 +23,8 @@ pub async fn get_pods(
     db: Data<Client>,
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
-    let user = parse_user_header(&req)?;
-    let db = db.into_inner();
-    Ok(HttpResponse::Ok().json(
-        q.into_inner()
-            .into_date_iter()
-            .into_associated_type_values_iter(
-                &Transaction::get_associated_type_values(
-                    db.clone(),
-                    &user,
-                    &Filter::default(),
-                    "pods",
-                )
-                .await?,
-            )
-            .accumulate(
-                &Transaction::get_associated_type(db, &user, &Filter::default(), "pods").await?,
-            )
-            .diff()
-            .collect::<Vec<AssociatedTypeDiffValues>>(),
-    ))
+    Ok(HttpResponse::Ok()
+        .json(History::pod(db.into_inner(), &parse_user_header(&req)?, q.into_inner()).await?))
 }
 
 #[get("/api/history/budgets")]
@@ -65,26 +33,8 @@ pub async fn get_budgets(
     db: Data<Client>,
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
-    let user = parse_user_header(&req)?;
-    let db = db.into_inner();
-    Ok(HttpResponse::Ok().json(
-        q.into_inner()
-            .into_date_iter()
-            .into_associated_type_values_iter(
-                &Transaction::get_associated_type_values(
-                    db.clone(),
-                    &user,
-                    &Filter::default(),
-                    "budgets",
-                )
-                .await?,
-            )
-            .accumulate(
-                &Transaction::get_associated_type(db, &user, &Filter::default(), "budgets").await?,
-            )
-            .diff()
-            .collect::<Vec<AssociatedTypeDiffValues>>(),
-    ))
+    Ok(HttpResponse::Ok()
+        .json(History::budget(db.into_inner(), &parse_user_header(&req)?, q.into_inner()).await?))
 }
 
 #[get("/api/history/inbudgets")]
@@ -93,27 +43,8 @@ pub async fn get_inbudgets(
     db: Data<Client>,
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
-    let user = parse_user_header(&req)?;
-    let db = db.into_inner();
-    Ok(HttpResponse::Ok().json(
-        q.into_inner()
-            .into_date_iter()
-            .into_associated_type_values_iter(
-                &Transaction::get_associated_type_values(
-                    db.clone(),
-                    &user,
-                    &Filter::default(),
-                    "inbudgets",
-                )
-                .await?,
-            )
-            .accumulate(
-                &Transaction::get_associated_type(db, &user, &Filter::default(), "inbudgets")
-                    .await?,
-            )
-            .diff()
-            .collect::<Vec<AssociatedTypeDiffValues>>(),
-    ))
+    Ok(HttpResponse::Ok()
+        .json(History::inbudget(db.into_inner(), &parse_user_header(&req)?, q.into_inner()).await?))
 }
 
 #[get("/api/history/debts")]
@@ -122,24 +53,6 @@ pub async fn get_debts(
     db: Data<Client>,
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
-    let user = parse_user_header(&req)?;
-    let db = db.into_inner();
-    Ok(HttpResponse::Ok().json(
-        q.into_inner()
-            .into_date_iter()
-            .into_associated_type_values_iter(
-                &Transaction::get_associated_type_values(
-                    db.clone(),
-                    &user,
-                    &Filter::default(),
-                    "debts",
-                )
-                .await?,
-            )
-            .accumulate(
-                &Transaction::get_associated_type(db, &user, &Filter::default(), "debts").await?,
-            )
-            .diff()
-            .collect::<Vec<AssociatedTypeDiffValues>>(),
-    ))
+    Ok(HttpResponse::Ok()
+        .json(History::debt(db.into_inner(), &parse_user_header(&req)?, q.into_inner()).await?))
 }

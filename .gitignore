@@ -18,3 +18,4 @@ frontend2/target
 frontend/dist
 frontend/target
 shared/target
+goals.json

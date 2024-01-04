@@ -40,4 +40,28 @@ impl ExtrapolationItem {
                 - ((contract_expenses + planned_savings) as i64),
         }
     }
+
+    pub fn equalize_freely_available(&self, new_freely_available: i64) -> Self {
+        Self {
+            date: self.date.clone(),
+            contract_expenses: self.contract_expenses,
+            contract_income: self.contract_income,
+            planned_savings: (self.planned_savings as i64 + self.freely_available
+                - new_freely_available) as u32,
+            freely_available: new_freely_available,
+        }
+    }
+
+    pub fn max_freely_available(&self) -> i64 {
+        self.freely_available + self.planned_savings as i64
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, Default)]
+pub struct Extrapolation {
+    pub date: DateTime<Local>,
+    pub freely_available: i64,
+    pub planned_savings: u32,
+    pub normal: Vec<ExtrapolationItem>,
+    pub equalized_free_money: Vec<ExtrapolationItem>,
 }

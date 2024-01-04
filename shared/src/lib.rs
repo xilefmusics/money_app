@@ -1,3 +1,3 @@
 pub mod contract;
-pub mod exploration_item;
+pub mod extrapolation;
 pub mod goal;

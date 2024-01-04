@@ -5,14 +5,11 @@ mod iter_transactions;
 mod iter_wealth;
 mod query_params;
 pub mod rest;
-mod value_diff;
-mod wealth;
 
 pub use history::History;
 use iter_associated_types::{AssociatedTypeDiffValues, AssociatedTypeValuesIterator};
 use iter_date::DateIterator;
 use iter_transactions::TransactionsIterator;
 use iter_wealth::WealthIterator;
+use money_app_shared::history::{Diff, ValueDiff, Wealth};
 pub use query_params::QueryParams;
-use value_diff::{Diff, ValueDiff};
-pub use wealth::Wealth;

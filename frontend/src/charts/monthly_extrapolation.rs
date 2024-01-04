@@ -1,4 +1,3 @@
-
 use fancy_yew::components::{ChartJs, ConfigBuilder};
 use money_app_shared::extrapolation::Extrapolation;
 
@@ -13,14 +12,13 @@ pub fn MonthlyExtrapolation() -> Html {
         use_effect_with((), move |_| {
             let extrapolation = extrapolation.clone();
             wasm_bindgen_futures::spawn_local(async move {
-                let fetched_extrapolation: Extrapolation =
-                    Request::get("/api/extrapolation")
-                        .send()
-                        .await
-                        .unwrap()
-                        .json()
-                        .await
-                        .unwrap();
+                let fetched_extrapolation: Extrapolation = Request::get("/api/extrapolation")
+                    .send()
+                    .await
+                    .unwrap()
+                    .json()
+                    .await
+                    .unwrap();
                 extrapolation.set(Some(fetched_extrapolation));
             });
             || ()
@@ -28,48 +26,54 @@ pub fn MonthlyExtrapolation() -> Html {
     }
 
     let chart_config = if let Some(extrapolation) = (*extrapolation).clone() {
-        Some(ConfigBuilder::bar()
-        .labels(
-            &extrapolation.normal
-                .iter()
-                .map(|item| item.date.format("%b").to_string())
-                .collect::<Vec<String>>(),
+        Some(
+            ConfigBuilder::bar()
+                .labels(
+                    &extrapolation
+                        .normal
+                        .iter()
+                        .map(|item| item.date.format("%b").to_string())
+                        .collect::<Vec<String>>(),
+                )
+                .dataset(
+                    &extrapolation
+                        .normal
+                        .iter()
+                        .map(|item| (item.contract_expenses as f64) / 100.)
+                        .collect::<Vec<f64>>(),
+                )
+                .dataset_stack(0)
+                .dataset_label("Expenses")
+                .dataset_border_width(1)
+                .dataset_border_color_str("orange")
+                .dataset_background_color_str("orange")
+                .dataset(
+                    &extrapolation
+                        .normal
+                        .iter()
+                        .map(|item| (item.planned_savings as f64) / 100.)
+                        .collect::<Vec<f64>>(),
+                )
+                .dataset_stack(0)
+                .dataset_label("Savings")
+                .dataset_border_width(1)
+                .dataset_border_color_str("blue")
+                .dataset_background_color_str("blue")
+                .dataset(
+                    &extrapolation
+                        .normal
+                        .iter()
+                        .map(|item| (item.freely_available as f64) / 100.)
+                        .collect::<Vec<f64>>(),
+                )
+                .dataset_stack(0)
+                .dataset_label("Free")
+                .dataset_border_width(1)
+                .dataset_border_color_str("green")
+                .dataset_background_color_str("green")
+                .build()
+                .unwrap(),
         )
-        .dataset(
-            &extrapolation.normal
-                .iter()
-                .map(|item| (item.contract_expenses as f64) / 100.)
-                .collect::<Vec<f64>>(),
-        )
-        .dataset_stack(0)
-        .dataset_label("Expenses")
-        .dataset_border_color_rgba(150, 50, 0, 0.5)
-        .dataset_border_width(1)
-        .dataset_background_color_rgba(150, 50, 0, 0.2)
-        .dataset(
-            &extrapolation.normal
-                .iter()
-                .map(|item| (item.planned_savings as f64) / 100.)
-                .collect::<Vec<f64>>(),
-        )
-        .dataset_stack(0)
-        .dataset_label("Savings")
-        .dataset_border_color_rgba(50, 50, 230, 0.5)
-        .dataset_border_width(1)
-        .dataset_background_color_rgba(50, 50, 230, 0.2)
-        .dataset(
-            &extrapolation.normal
-                .iter()
-                .map(|item| (item.freely_available as f64) / 100.)
-                .collect::<Vec<f64>>(),
-        )
-        .dataset_stack(0)
-        .dataset_label("Free")
-        .dataset_border_color_rgba(0, 80, 0, 0.5)
-        .dataset_border_width(1)
-        .dataset_background_color_rgba(0, 80, 0, 0.2)
-        .build()
-        .unwrap())
     } else {
         None
     };

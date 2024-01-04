@@ -32,6 +32,13 @@ pub struct Payment {
 }
 
 impl Payment {
+    pub fn has_income(&self) -> bool {
+        match self.kind {
+            PaymentKind::Credit => true,
+            _ => false,
+        }
+    }
+
     pub fn debt_sum(&self) -> u32 {
         self.debts.values().cloned().sum()
     }
@@ -41,9 +48,10 @@ impl Payment {
     }
 
     pub fn signed_amount(&self) -> i64 {
-        match self.kind {
-            PaymentKind::Credit => self.amount() as i64,
-            _ => -(self.amount() as i64),
+        if self.has_income() {
+            self.amount() as i64
+        } else {
+            -(self.amount() as i64)
         }
     }
 

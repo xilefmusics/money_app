@@ -1,6 +1,7 @@
 mod attachment;
 mod contract;
 mod error;
+mod extrapolation;
 mod history;
 mod import;
 mod rest;
@@ -61,6 +62,7 @@ async fn main() -> Result<(), AppError> {
             .service(contract::rest::put)
             .service(contract::rest::post)
             .service(contract::rest::delete)
+            .service(extrapolation::rest::get)
             .service(rest::get_index)
             .service(rest::get_static_files)
             .service(

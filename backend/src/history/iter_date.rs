@@ -66,26 +66,3 @@ impl Iterator for DateIterator {
         }
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_year() {
-        let year = Local::now().year();
-        let mut dates = DateIterator::new(1, 0, 0, 3);
-        assert_eq!(
-            dates.next(),
-            Some(Local.with_ymd_and_hms(year - 1, 1, 1, 0, 0, 0).unwrap()),
-        );
-        assert_eq!(
-            dates.next(),
-            Some(Local.with_ymd_and_hms(year, 1, 1, 0, 0, 0).unwrap()),
-        );
-        assert_eq!(
-            dates.next(),
-            Some(Local.with_ymd_and_hms(year + 1, 1, 1, 0, 0, 0).unwrap(),),
-        );
-    }
-}

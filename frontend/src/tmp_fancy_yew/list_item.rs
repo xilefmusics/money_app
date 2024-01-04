@@ -6,13 +6,16 @@ pub struct Props {
     pub title: String,
     pub subtitle: String,
     pub amount: i64,
+    #[prop_or_default]
+    pub color_amount: Option<i64>,
 }
 
 #[function_component]
 pub fn ListItem(props: &Props) -> Html {
-    let color = if props.amount > 0 {
+    let color_amount = props.color_amount.unwrap_or(props.amount);
+    let color = if color_amount > 0 {
         "green"
-    } else if props.amount < 0 {
+    } else if color_amount < 0 {
         "red"
     } else {
         "gray"

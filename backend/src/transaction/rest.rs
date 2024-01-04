@@ -1,4 +1,4 @@
-use super::{Filter, QueryParams, Transaction};
+use super::{Filter, QueryParams, Transaction, TransactionModel};
 
 use crate::error::AppError;
 use crate::rest::parse_user_header;
@@ -16,7 +16,7 @@ pub async fn get(
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
-        Transaction::get(
+        TransactionModel::get(
             db.into_inner(),
             &parse_user_header(&req)?,
             &Filter::new(
@@ -40,7 +40,8 @@ pub async fn get_id(
     id: Path<String>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
-        Transaction::get_one(db.into_inner(), &parse_user_header(&req)?, &id.into_inner()).await?,
+        TransactionModel::get_one(db.into_inner(), &parse_user_header(&req)?, &id.into_inner())
+            .await?,
     ))
 }
 
@@ -51,7 +52,7 @@ pub async fn put(
     db: Data<Client>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Created().json(
-        Transaction::put(
+        TransactionModel::put(
             db.into_inner(),
             &parse_user_header(&req)?,
             transactions.into_inner(),
@@ -67,7 +68,7 @@ pub async fn delete(
     db: Data<Client>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::NoContent().json(
-        Transaction::delete(
+        TransactionModel::delete(
             db.into_inner(),
             &parse_user_header(&req)?,
             transactions.into_inner(),
@@ -83,7 +84,7 @@ pub async fn post(
     db: Data<Client>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Created().json(
-        Transaction::create(
+        TransactionModel::create(
             db.into_inner(),
             &parse_user_header(&req)?,
             transactions.into_inner(),
@@ -99,7 +100,7 @@ pub async fn get_pods(
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
-        Transaction::get_associated_type(
+        TransactionModel::get_associated_type(
             db.into_inner(),
             &parse_user_header(&req)?,
             &q.into_inner().to_filter(),
@@ -116,7 +117,7 @@ pub async fn get_budgets(
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
-        Transaction::get_associated_type(
+        TransactionModel::get_associated_type(
             db.into_inner(),
             &parse_user_header(&req)?,
             &q.into_inner().to_filter(),
@@ -133,7 +134,7 @@ pub async fn get_inbudgets(
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
-        Transaction::get_associated_type(
+        TransactionModel::get_associated_type(
             db.into_inner(),
             &parse_user_header(&req)?,
             &q.into_inner().to_filter(),
@@ -150,7 +151,7 @@ pub async fn get_debts(
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
-        Transaction::get_associated_type(
+        TransactionModel::get_associated_type(
             db.into_inner(),
             &parse_user_header(&req)?,
             &q.into_inner().to_filter(),
@@ -167,7 +168,7 @@ pub async fn get_tags(
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
-        Transaction::get_associated_type(
+        TransactionModel::get_associated_type(
             db.into_inner(),
             &parse_user_header(&req)?,
             &q.into_inner().to_filter(),

@@ -1,9 +1,10 @@
 use super::Filter;
 
 use crate::error::AppError;
+pub use money_app_shared::transaction::{Transaction, Type};
 
 use chrono::{DateTime, Local};
-use fancy_surreal::{Client, Databasable};
+use fancy_surreal::Client;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -51,68 +52,39 @@ impl AssociatedTypeValues {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
-#[serde(rename_all = "lowercase")]
-pub enum Type {
-    In,
-    Out,
-    Move,
-}
+pub struct TransactionModel;
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct Transaction {
-    pub id: Option<String>,
-    #[serde(rename = "type")]
-    pub ttype: Type,
-    pub date: DateTime<Local>,
-    pub amount: usize,
-    pub sender: Option<String>,
-    pub receiver: Option<String>,
-    pub budgets: HashMap<String, usize>,
-    pub inbudgets: HashMap<String, usize>,
-    pub debts: HashMap<String, usize>,
-    pub tags: HashMap<String, String>,
-    pub attachment: Option<String>,
-}
-
-impl Databasable for Transaction {
-    fn get_id(&self) -> Option<String> {
-        self.id.clone()
-    }
-
-    fn set_id(&mut self, id: Option<String>) {
-        self.id = id;
-    }
-}
-
-impl Transaction {
+impl TransactionModel {
     pub async fn get<'a>(
         db: Arc<Client>,
         user: &str,
         filter: &Filter<'a>,
-    ) -> Result<Vec<Self>, AppError> {
+    ) -> Result<Vec<Transaction>, AppError> {
         let mut select = db.table("transactions").owner(user).select()?;
         for condition in &filter.conditions() {
             select = select.condition(condition);
         }
 
-        Ok(select.order_by("content.date").query::<Self>().await?)
+        Ok(select
+            .order_by("content.date")
+            .query::<Transaction>()
+            .await?)
     }
 
-    pub async fn get_one(db: Arc<Client>, user: &str, id: &str) -> Result<Self, AppError> {
+    pub async fn get_one(db: Arc<Client>, user: &str, id: &str) -> Result<Transaction, AppError> {
         Ok(db
             .table("transactions")
             .owner(user)
             .select()?
             .id(id)
-            .query_one::<Self>()
+            .query_one::<Transaction>()
             .await?)
     }
 
     pub async fn put(
         db: Arc<Client>,
         user: &str,
-        transactions: Vec<Self>,
+        transactions: Vec<Transaction>,
     ) -> Result<Vec<Transaction>, AppError> {
         Ok(db
             .table("transactions")
@@ -124,7 +96,7 @@ impl Transaction {
     pub async fn delete(
         db: Arc<Client>,
         user: &str,
-        transactions: Vec<Self>,
+        transactions: Vec<Transaction>,
     ) -> Result<Vec<Transaction>, AppError> {
         Ok(db
             .table("transactions")
@@ -136,7 +108,7 @@ impl Transaction {
     pub async fn create(
         db: Arc<Client>,
         user: &str,
-        transactions: Vec<Self>,
+        transactions: Vec<Transaction>,
     ) -> Result<Vec<Transaction>, AppError> {
         Ok(db
             .table("transactions")
@@ -198,13 +170,13 @@ impl Transaction {
         }
 
         Ok(if associated_type == "pods" {
-            Self::get(db, user, filter)
+            TransactionModel::get(db, user, filter)
                 .await?
                 .into_iter()
                 .map(|t| AssociatedTypeValues::from_transaction_pod(t))
                 .collect()
         } else if associated_type == "debts" {
-            Self::get(db, user, filter)
+            TransactionModel::get(db, user, filter)
                 .await?
                 .into_iter()
                 .map(|t| AssociatedTypeValues::from_transaction_debt(t))
@@ -216,41 +188,5 @@ impl Transaction {
                 .query_direct::<AssociatedTypeValues>()
                 .await?
         })
-    }
-
-    pub fn income(&self) -> i64 {
-        match self.ttype {
-            Type::In => self.amount as i64,
-            Type::Out => 0,
-            Type::Move => 0,
-        }
-    }
-
-    pub fn out(&self) -> i64 {
-        match self.ttype {
-            Type::In => 0,
-            Type::Out => self.amount as i64,
-            Type::Move => 0,
-        }
-    }
-
-    pub fn signed_amount(&self) -> i64 {
-        match self.ttype {
-            Type::In => self.amount as i64,
-            Type::Out => -(self.amount as i64),
-            Type::Move => 0,
-        }
-    }
-
-    pub fn debt_sum(&self) -> i64 {
-        self.debts.values().sum::<usize>() as i64
-    }
-
-    pub fn signed_debt_sum(&self) -> i64 {
-        match self.ttype {
-            Type::In => self.debt_sum(),
-            Type::Out => -self.debt_sum(),
-            Type::Move => 0,
-        }
     }
 }

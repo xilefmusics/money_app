@@ -1,7 +1,7 @@
 use super::{AssociatedTypeDiffValues, QueryParams, Wealth};
 
 use crate::error::AppError;
-use crate::transaction::{Filter, Transaction};
+use crate::transaction::{Filter, TransactionModel};
 use fancy_surreal::Client;
 
 use std::sync::Arc;
@@ -16,7 +16,7 @@ impl History {
     ) -> Result<Vec<Wealth>, AppError> {
         Ok(query_params
             .into_date_iter()
-            .into_transactions_iter(&Transaction::get(db, user, &Filter::default()).await?)
+            .into_transactions_iter(&TransactionModel::get(db, user, &Filter::default()).await?)
             .into_wealth_iter()
             .into_shift_in_out_iter()
             .collect::<Vec<Wealth>>())
@@ -30,7 +30,7 @@ impl History {
         Ok(query_params
             .into_date_iter()
             .into_associated_type_values_iter(
-                &Transaction::get_associated_type_values(
+                &TransactionModel::get_associated_type_values(
                     db.clone(),
                     &user,
                     &Filter::default(),
@@ -39,7 +39,8 @@ impl History {
                 .await?,
             )
             .accumulate(
-                &Transaction::get_associated_type(db, &user, &Filter::default(), "pods").await?,
+                &TransactionModel::get_associated_type(db, &user, &Filter::default(), "pods")
+                    .await?,
             )
             .diff()
             .collect::<Vec<AssociatedTypeDiffValues>>())
@@ -53,7 +54,7 @@ impl History {
         Ok(query_params
             .into_date_iter()
             .into_associated_type_values_iter(
-                &Transaction::get_associated_type_values(
+                &TransactionModel::get_associated_type_values(
                     db.clone(),
                     &user,
                     &Filter::default(),
@@ -62,7 +63,8 @@ impl History {
                 .await?,
             )
             .accumulate(
-                &Transaction::get_associated_type(db, &user, &Filter::default(), "budgets").await?,
+                &TransactionModel::get_associated_type(db, &user, &Filter::default(), "budgets")
+                    .await?,
             )
             .diff()
             .collect::<Vec<AssociatedTypeDiffValues>>())
@@ -76,7 +78,7 @@ impl History {
         Ok(query_params
             .into_date_iter()
             .into_associated_type_values_iter(
-                &Transaction::get_associated_type_values(
+                &TransactionModel::get_associated_type_values(
                     db.clone(),
                     &user,
                     &Filter::default(),
@@ -85,7 +87,7 @@ impl History {
                 .await?,
             )
             .accumulate(
-                &Transaction::get_associated_type(db, &user, &Filter::default(), "inbudgets")
+                &TransactionModel::get_associated_type(db, &user, &Filter::default(), "inbudgets")
                     .await?,
             )
             .diff()
@@ -100,7 +102,7 @@ impl History {
         Ok(query_params
             .into_date_iter()
             .into_associated_type_values_iter(
-                &Transaction::get_associated_type_values(
+                &TransactionModel::get_associated_type_values(
                     db.clone(),
                     &user,
                     &Filter::default(),
@@ -109,7 +111,8 @@ impl History {
                 .await?,
             )
             .accumulate(
-                &Transaction::get_associated_type(db, &user, &Filter::default(), "debts").await?,
+                &TransactionModel::get_associated_type(db, &user, &Filter::default(), "debts")
+                    .await?,
             )
             .diff()
             .collect::<Vec<AssociatedTypeDiffValues>>())

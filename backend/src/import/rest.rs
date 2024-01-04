@@ -2,7 +2,7 @@ use super::import as import_fn;
 
 use crate::error::AppError;
 use crate::rest::parse_user_header;
-use crate::transaction::Transaction;
+use crate::transaction::TransactionModel;
 
 use fancy_surreal::Client;
 
@@ -15,7 +15,7 @@ pub async fn import(
     payload: String,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Created().json(
-        Transaction::create(
+        TransactionModel::create(
             db.into_inner(),
             &parse_user_header(&req)?,
             import_fn(&payload)?,

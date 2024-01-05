@@ -13,3 +13,4 @@ stylist = { version = "0.13.0", features = ["yew_integration", "parser"] }
 web-sys = "0.3.66"
 yew-router = "0.18.0"
 wasm-bindgen-futures = "0.4.39"
+chrono = "0.4.31"

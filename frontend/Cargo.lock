@@ -199,6 +199,7 @@ checksum = "5443807d6dff69373d433ab9ef5378ad8df50ca6298caf15de6e52e24aaf54d5"
 name = "fancy_yew"
 version = "0.1.0"
 dependencies = [
+ "chrono",
  "gloo 0.11.0",
  "rand",
  "serde",
@@ -924,6 +925,7 @@ dependencies = [
 name = "money_app_frontend"
 version = "0.1.0"
 dependencies = [
+ "chrono",
  "fancy_yew",
  "gloo 0.11.0",
  "money_app_shared",

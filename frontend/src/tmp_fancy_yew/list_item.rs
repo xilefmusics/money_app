@@ -4,6 +4,7 @@ use yew::prelude::*;
 #[derive(Properties, PartialEq)]
 pub struct Props {
     pub title: String,
+    #[prop_or_default]
     pub subtitle: String,
     pub amount: i64,
     #[prop_or_default]

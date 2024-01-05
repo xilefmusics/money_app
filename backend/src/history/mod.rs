@@ -7,9 +7,9 @@ mod query_params;
 pub mod rest;
 
 pub use history::History;
-use iter_associated_types::{AssociatedTypeDiffValues, AssociatedTypeValuesIterator};
+use iter_associated_types::AssociatedTypeValuesIterator;
 use iter_date::DateIterator;
 use iter_transactions::TransactionsIterator;
 use iter_wealth::WealthIterator;
-use money_app_shared::history::{Diff, ValueDiff, Wealth};
+use money_app_shared::history::{AssociatedTypeDiffValues, Diff, Wealth};
 pub use query_params::QueryParams;

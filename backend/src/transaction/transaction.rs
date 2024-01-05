@@ -1,56 +1,10 @@
 use super::Filter;
 
 use crate::error::AppError;
-pub use money_app_shared::transaction::{Transaction, Type};
+pub use money_app_shared::transaction::{AssociatedTypeValues, Transaction, Type};
 
-use chrono::{DateTime, Local};
 use fancy_surreal::Client;
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use std::sync::Arc;
-
-#[derive(Debug, Serialize, Deserialize, Clone, Default)]
-pub struct AssociatedTypeValues {
-    pub date: DateTime<Local>,
-    pub data: HashMap<String, i64>,
-}
-
-impl AssociatedTypeValues {
-    pub fn from_transaction_pod(transaction: Transaction) -> AssociatedTypeValues {
-        let mut data = HashMap::<String, i64>::new();
-        let amount = transaction.amount as i64;
-
-        if let Some(receiver) = transaction.receiver {
-            data.insert(receiver, amount);
-        }
-
-        if let Some(sender) = transaction.sender {
-            data.insert(sender, -amount);
-        }
-
-        AssociatedTypeValues {
-            date: transaction.date,
-            data,
-        }
-    }
-
-    pub fn from_transaction_debt(transaction: Transaction) -> AssociatedTypeValues {
-        let multiplier = match transaction.ttype {
-            Type::In => 1,
-            Type::Out => -1,
-            Type::Move => 0,
-        };
-
-        AssociatedTypeValues {
-            date: transaction.date,
-            data: transaction
-                .debts
-                .into_iter()
-                .map(|(key, value)| (key, value as i64 * multiplier))
-                .collect(),
-        }
-    }
-}
 
 pub struct TransactionModel;
 

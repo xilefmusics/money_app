@@ -1,11 +1,10 @@
-use super::{DateIterator, ValueDiff};
+use super::{AssociatedTypeDiffValues, DateIterator};
 
 use crate::transaction::AssociatedTypeValues;
 
 use std::collections::HashMap;
 
 use chrono::{DateTime, Local};
-use serde::{Deserialize, Serialize};
 
 pub struct AssociatedTypeValuesIterator<'a> {
     date_iterator: DateIterator,
@@ -90,41 +89,6 @@ impl<'a> Iterator for AssociatedTypeValuesAccumulatorIterator<'a> {
 
         self.current.date = date;
         Some(self.current.clone())
-    }
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone, Default)]
-pub struct AssociatedTypeDiffValues {
-    pub date: DateTime<Local>,
-    pub data: HashMap<String, ValueDiff>,
-}
-
-impl AssociatedTypeDiffValues {
-    fn from_one(other: AssociatedTypeValues) -> Self {
-        Self {
-            date: other.date,
-            data: other
-                .data
-                .into_iter()
-                .map(|(k, v)| (k, v.into()))
-                .collect::<HashMap<String, ValueDiff>>(),
-        }
-    }
-
-    fn from_two(first: AssociatedTypeValues, second: AssociatedTypeValues) -> Self {
-        Self {
-            date: first.date,
-            data: first
-                .data
-                .into_iter()
-                .map(|(k, v)| {
-                    (
-                        k.clone(),
-                        (ValueDiff::new(v, *second.data.get(&k).unwrap_or(&0) - v)).into(),
-                    )
-                })
-                .collect::<HashMap<String, ValueDiff>>(),
-        }
     }
 }
 

@@ -1,5 +1,7 @@
+use super::transaction::AssociatedTypeValues;
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::iter::Sum;
 use std::ops::Add;
 
@@ -95,6 +97,41 @@ impl Diff for Wealth {
             change: self.change.diff(&other.change),
             debt: self.debt.diff(&other.debt),
             sum: self.sum.diff(&other.sum),
+        }
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, Default)]
+pub struct AssociatedTypeDiffValues {
+    pub date: DateTime<Local>,
+    pub data: HashMap<String, ValueDiff>,
+}
+
+impl AssociatedTypeDiffValues {
+    pub fn from_one(other: AssociatedTypeValues) -> Self {
+        Self {
+            date: other.date,
+            data: other
+                .data
+                .into_iter()
+                .map(|(k, v)| (k, v.into()))
+                .collect::<HashMap<String, ValueDiff>>(),
+        }
+    }
+
+    pub fn from_two(first: AssociatedTypeValues, second: AssociatedTypeValues) -> Self {
+        Self {
+            date: first.date,
+            data: first
+                .data
+                .into_iter()
+                .map(|(k, v)| {
+                    (
+                        k.clone(),
+                        (ValueDiff::new(v, *second.data.get(&k).unwrap_or(&0) - v)).into(),
+                    )
+                })
+                .collect::<HashMap<String, ValueDiff>>(),
         }
     }
 }

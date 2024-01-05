@@ -2,7 +2,7 @@ mod charts;
 mod pages;
 mod tmp_fancy_yew;
 
-use pages::{Contracts, Dashboard, Goals, Transactions};
+use pages::{Contracts, Dashboard, Goals, Pods, Transactions};
 
 use fancy_yew::components::{DefaultLayout, NavItemBuilder, Navable};
 
@@ -17,6 +17,8 @@ pub enum Route {
     Dashboard,
     #[at("/transactions")]
     Transactions,
+    #[at("/pods")]
+    Pods,
     #[at("/contracts")]
     Contracts,
     #[at("/goals")]
@@ -33,6 +35,7 @@ impl Navable for Route {
         vec![
             Route::Dashboard,
             Route::Transactions,
+            Route::Pods,
             Route::Contracts,
             Route::Goals,
         ]
@@ -54,6 +57,13 @@ impl Navable for Route {
                 .text("Transactions")
                 .callback(Callback::from(|navigator: Navigator| {
                     navigator.push(&Route::Transactions)
+                })),
+            Route::Pods => NavItemBuilder::new()
+                .path("/pods")
+                .icon("wallet")
+                .text("Pods")
+                .callback(Callback::from(|navigator: Navigator| {
+                    navigator.push(&Route::Pods)
                 })),
             Route::Contracts => NavItemBuilder::new()
                 .path("/contracts")
@@ -80,6 +90,7 @@ impl Navable for Route {
                     Route::Index => html! { <h1>{ "Dashboard" }</h1> },
                     Route::Dashboard => html! { <Dashboard /> },
                     Route::Transactions => html! { <Transactions /> },
+                    Route::Pods => html! { <Pods /> },
                     Route::Contracts => html! { <Contracts /> },
                     Route::Goals => html! { <Goals /> },
                     Route::NotFound => html! { <h1>{ "404 Not Found" }</h1> },

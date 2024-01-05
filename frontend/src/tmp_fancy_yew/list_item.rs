@@ -10,7 +10,9 @@ pub struct Props {
     #[prop_or_default]
     pub color_amount: Option<i64>,
     #[prop_or_default]
-    pub onclick: Callback<MouseEvent>,
+    pub onedit: Option<Callback<MouseEvent>>,
+    #[prop_or_default]
+    pub ondelete: Option<Callback<MouseEvent>>,
 }
 
 #[function_component]
@@ -24,10 +26,7 @@ pub fn ListItem(props: &Props) -> Html {
         "gray"
     };
     html! {
-        <li
-            class={Style::new(include_str!("list_item.css")).expect("Unwrapping CSS should work!")}
-            onclick={props.onclick.clone()}
-        >
+        <li class={Style::new(include_str!("list_item.css")).expect("Unwrapping CSS should work!")}>
             <div class="left">
                 <span class="character-icon">
                     {props.title.chars().next().unwrap()}
@@ -42,6 +41,30 @@ pub fn ListItem(props: &Props) -> Html {
                 </span>
             </div>
             <div class="middle-right">
+            {
+                if let Some(onedit) = props.onedit.clone() {
+                    html!{
+                        <button
+                            class="material-symbols-outlined icon"
+                            onclick={onedit}
+                        >{"edit"}</button>
+                    }
+                } else {
+                    html! {}
+                }
+            }
+            {
+                if let Some(ondelete) = props.ondelete.clone() {
+                    html!{
+                        <button
+                            class="material-symbols-outlined icon"
+                            onclick={ondelete}
+                        >{"delete"}</button>
+                    }
+                } else {
+                    html! {}
+                }
+            }
             </div>
             <div class="right">
                 <span class={"amount ".to_string() + color}>

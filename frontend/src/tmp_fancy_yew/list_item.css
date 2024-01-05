@@ -44,6 +44,15 @@
 .middle-right {
   text-align: left;
   width: fit-content;
+  padding-right: 1rem;
+}
+
+button {
+  background-color: var(--bg2);
+}
+
+button:hover {
+  background-color: var(--bg3);
 }
 
 .right {

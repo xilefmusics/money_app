@@ -10,9 +10,9 @@ use yew_router::prelude::*;
 #[function_component]
 pub fn Goals() -> Html {
     let goals = use_state(|| vec![]);
-    {
+    let load_goals = {
         let goals = goals.clone();
-        use_effect_with((), move |_| {
+        move || {
             let goals = goals.clone();
             wasm_bindgen_futures::spawn_local(async move {
                 let fetched_goals: Vec<Goal> = Request::get("/api/goals")
@@ -24,6 +24,12 @@ pub fn Goals() -> Html {
                     .unwrap();
                 goals.set(fetched_goals);
             });
+        }
+    };
+    {
+        let load_goals = load_goals.clone();
+        use_effect_with((), move |_| {
+            load_goals();
             || ()
         });
     }
@@ -48,8 +54,34 @@ pub fn Goals() -> Html {
         })
         .collect::<Vec<Html>>();
 
+    let add = {
+        let load_goals = load_goals.clone();
+        move |_: MouseEvent| {
+            let goals = vec![Goal::default()];
+            let load_goals = load_goals.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                let _: Vec<Goal> = Request::post("/api/goals")
+                    .json(&goals)
+                    .unwrap()
+                    .send()
+                    .await
+                    .unwrap()
+                    .json()
+                    .await
+                    .unwrap();
+                load_goals();
+            });
+        }
+    };
+
     html! {
         <div class={Style::new(include_str!("goals.css")).expect("Unwrapping CSS should work!")}>
+            <div class="header">
+                <button
+                    class="material-symbols-outlined icon"
+                    onclick={add}
+                >{"add"}</button>
+            </div>
             <ul>
                 {goal_items}
             </ul>

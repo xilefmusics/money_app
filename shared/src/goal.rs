@@ -7,7 +7,13 @@ pub enum GoalData {
     RealWealth(u32),
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+impl Default for GoalData {
+    fn default() -> Self {
+        GoalData::RealWealth(0)
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, Default)]
 pub struct Goal {
     pub id: Option<String>,
     pub due: DateTime<Local>,

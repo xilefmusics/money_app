@@ -1,0 +1,10 @@
+:root {
+  padding: 1rem;
+  height: fit-content;
+}
+
+.chart-wrapper {
+  max-width: 85dvh;
+  margin: 0 auto;
+}
+

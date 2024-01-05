@@ -1,3 +1,4 @@
+mod budgets;
 mod contracts;
 mod dashboard;
 mod debts;
@@ -5,6 +6,7 @@ mod goals;
 mod pods;
 mod transactions;
 
+pub use budgets::Budgets;
 pub use contracts::Contracts;
 pub use dashboard::Dashboard;
 pub use debts::Debts;

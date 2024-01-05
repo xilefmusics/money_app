@@ -9,6 +9,8 @@ pub struct Props {
     pub amount: i64,
     #[prop_or_default]
     pub color_amount: Option<i64>,
+    #[prop_or_default]
+    pub onclick: Callback<MouseEvent>,
 }
 
 #[function_component]
@@ -22,7 +24,10 @@ pub fn ListItem(props: &Props) -> Html {
         "gray"
     };
     html! {
-        <li class={Style::new(include_str!("list_item.css")).expect("Unwrapping CSS should work!")}>
+        <li
+            class={Style::new(include_str!("list_item.css")).expect("Unwrapping CSS should work!")}
+            onclick={props.onclick.clone()}
+        >
             <div class="left">
                 <span class="character-icon">
                     {props.title.chars().next().unwrap()}

@@ -1,9 +1,11 @@
 use crate::tmp_fancy_yew::ListItem;
+use crate::Route;
 use money_app_shared::goal::{Goal, GoalData};
 
 use gloo::net::http::Request;
 use stylist::Style;
 use yew::prelude::*;
+use yew_router::prelude::*;
 
 #[function_component]
 pub fn Goals() -> Html {
@@ -26,14 +28,23 @@ pub fn Goals() -> Html {
         });
     }
 
+    let navigator = use_navigator().unwrap();
     let goal_items = goals
         .iter()
         .map(|goal| match goal.data {
-            GoalData::RealWealth(wealth) => html! {<ListItem
-                title={"Wealth"}
-                subtitle={goal.due.format("%d %b %Y").to_string()}
-                amount={wealth as i64}
-            />},
+            GoalData::RealWealth(wealth) => {
+                let navigator = navigator.clone();
+                let id = goal.id.clone().unwrap();
+                let onclick = Callback::from(move |_: MouseEvent| {
+                    navigator.push(&Route::Goal { id: id.clone() })
+                });
+                html! {<ListItem
+                    title={"Wealth"}
+                    subtitle={goal.due.format("%d %b %Y").to_string()}
+                    amount={wealth as i64}
+                    onclick={onclick}
+                />}
+            }
         })
         .collect::<Vec<Html>>();
 

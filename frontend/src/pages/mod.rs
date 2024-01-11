@@ -1,4 +1,5 @@
 mod budgets;
+mod contract;
 mod contracts;
 mod dashboard;
 mod debts;
@@ -8,6 +9,7 @@ mod pods;
 mod transactions;
 
 pub use budgets::Budgets;
+pub use contract::ContractPage as Contract;
 pub use contracts::Contracts;
 pub use dashboard::Dashboard;
 pub use debts::Debts;

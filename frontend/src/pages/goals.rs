@@ -2,7 +2,6 @@ use crate::tmp_fancy_yew::ListItem;
 use crate::Route;
 use money_app_shared::goal::{Goal, GoalData};
 
-use gloo::console::log;
 use gloo::net::http::Request;
 use stylist::Style;
 use yew::prelude::*;

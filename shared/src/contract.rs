@@ -2,25 +2,27 @@ use chrono::{DateTime, Local, Months};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default)]
 #[serde(rename_all = "lowercase")]
 pub enum State {
+    #[default]
     Active,
     Terminated,
     Expired,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default)]
 #[serde(rename_all = "lowercase")]
 pub enum PaymentKind {
     Active,
+    #[default]
     Debit,
     Credit,
     PayPal,
     GooglePay,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default)]
 pub struct Payment {
     pub first: DateTime<Local>,
     pub amount: u32,
@@ -69,7 +71,7 @@ impl Payment {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default)]
 pub struct Contract {
     pub id: Option<String>,
     pub title: String,

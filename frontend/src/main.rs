@@ -2,7 +2,7 @@ mod charts;
 mod pages;
 mod tmp_fancy_yew;
 
-use pages::{Budgets, Contracts, Dashboard, Debts, Goal, Goals, Pods, Transactions};
+use pages::{Budgets, Contract, Contracts, Dashboard, Debts, Goal, Goals, Pods, Transactions};
 
 use fancy_yew::components::{DefaultLayout, NavItemBuilder, Navable};
 
@@ -23,6 +23,8 @@ pub enum Route {
     Budgets,
     #[at("/debts")]
     Debts,
+    #[at("/contracts/:id")]
+    Contract { id: String },
     #[at("/contracts")]
     Contracts,
     #[at("/goals/:id")]
@@ -115,6 +117,7 @@ impl Navable for Route {
                     Route::Pods => html! { <Pods /> },
                     Route::Budgets => html! { <Budgets /> },
                     Route::Debts => html! { <Debts /> },
+                    Route::Contract{id} => html! { <Contract id={id} /> },
                     Route::Contracts => html! { <Contracts /> },
                     Route::Goal{id} => html! { <Goal id={id} /> },
                     Route::Goals => html! { <Goals /> },

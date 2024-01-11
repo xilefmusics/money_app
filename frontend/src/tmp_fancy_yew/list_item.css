@@ -52,7 +52,8 @@ button {
 }
 
 button:hover {
-  background-color: var(--bg3);
+  background-color: var(--fg1);
+  color: var(--bg2);
 }
 
 .right {

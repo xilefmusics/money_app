@@ -118,6 +118,7 @@ pub fn GoalPage(props: &Props) -> Html {
                         <StringInput
                             bind_handle={goal_type.clone()}
                             options={vec!["RealWealth".into()]}
+                            strict=true
                         />
                     </td>
                 </tr>

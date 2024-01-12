@@ -45,25 +45,21 @@ fn destruct_contract(
     term_handle.set(contract.term as f64);
     notice_handle.set(contract.notice as f64);
     management_handle.set(contract.management.clone());
-    let payment = if contract.payments.len() > 0 {
-        contract.payment().clone()
-    } else {
-        Payment::default()
-    };
-    payment_first_handle.set(payment.first);
-    payment_amount_handle.set(payment.amount as f64);
-    payment_fix_handle.set(payment.fix);
-    payment_cycle_handle.set(payment.cycle as f64);
-    payment_kind_handle.set(match payment.kind {
+    payment_first_handle.set(contract.payment.first);
+    payment_amount_handle.set(contract.payment.amount as f64);
+    payment_fix_handle.set(contract.payment.fix);
+    payment_cycle_handle.set(contract.payment.cycle as f64);
+    payment_kind_handle.set(match contract.payment.kind {
         PaymentKind::Active => "Active".into(),
         PaymentKind::Debit => "Debit".into(),
         PaymentKind::Credit => "Credit".into(),
         PaymentKind::PayPal => "PayPal".into(),
         PaymentKind::GooglePay => "GooglePay".into(),
     });
-    payment_pod_handle.set(payment.pod);
+    payment_pod_handle.set(contract.payment.pod.clone());
     payment_debts_handle.set(
-        payment
+        contract
+            .payment
             .debts
             .iter()
             .map(|(key, value)| (key.to_string(), *value as f64))
@@ -120,7 +116,7 @@ fn construct_contract(
     contract.term = term as u32;
     contract.notice = notice as u32;
     contract.management = management;
-    contract.payments.push(payment);
+    contract.payment = payment;
     contract
 }
 

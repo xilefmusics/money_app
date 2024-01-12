@@ -29,7 +29,7 @@ pub fn ListItem(props: &Props) -> Html {
         <li class={Style::new(include_str!("list_item.css")).expect("Unwrapping CSS should work!")}>
             <div class="left">
                 <span class="character-icon">
-                    {props.title.chars().next().unwrap()}
+                    {props.title.chars().next().unwrap_or('?')}
                 </span>
             </div>
             <div class="middle-left">

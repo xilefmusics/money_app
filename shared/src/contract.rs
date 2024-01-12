@@ -58,14 +58,19 @@ impl Payment {
     }
 
     pub fn signed_monthly_amount(&self) -> i64 {
-        self.signed_amount() / (self.cycle as i64)
+        if self.cycle == 0 {
+            self.signed_amount()
+        } else {
+            self.signed_amount() / (self.cycle as i64)
+        }
     }
 
     pub fn date_of_next_payment(&self) -> DateTime<Local> {
         let current = Local::now();
         let mut result = self.first;
+        let cycle = if self.cycle > 0 { self.cycle } else { 1 };
         while result < current {
-            result = result + Months::new(self.cycle);
+            result = result + Months::new(cycle);
         }
         result
     }
@@ -81,14 +86,8 @@ pub struct Contract {
     pub term: u32,   // in months (Mindestvertragslaufzeit)
     pub notice: u32, // in months (Kündigungsfrist)
     pub management: String,
-    pub payments: Vec<Payment>,
+    pub payment: Payment,
     pub attachments: Vec<String>,
-}
-
-impl Contract {
-    pub fn payment<'a>(&'a self) -> &Payment {
-        &self.payments[self.payments.len() - 1]
-    }
 }
 
 #[cfg(feature = "backend")]

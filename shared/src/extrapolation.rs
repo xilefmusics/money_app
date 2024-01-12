@@ -20,7 +20,7 @@ impl ExtrapolationItem {
     ) -> u32 {
         contracts
             .iter()
-            .map(|contract| contract.payment())
+            .map(|contract| contract.payment.clone())
             .filter(|payment| payment.has_income() == income)
             .filter(|payment| payment.first.month() % payment.cycle == date.month() % payment.cycle)
             .map(|payment| payment.amount())

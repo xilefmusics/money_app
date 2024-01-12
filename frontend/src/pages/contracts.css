@@ -3,16 +3,3 @@
   height: fit-content;
 }
 
-.header {
-  display: flex;
-  justify-content: flex-end;
-}
-
-button {
-  background-color: var(--bg1);
-}
-
-button:hover {
-  background-color: var(--bg2);
-}
-

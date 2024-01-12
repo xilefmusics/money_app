@@ -1,5 +1,6 @@
 use crate::tmp_fancy_yew::ListItem;
 use crate::Route;
+use fancy_yew::components::ResourceHeader;
 use fancy_yew::rest::Resource;
 use money_app_shared::goal::{Goal, GoalData};
 
@@ -45,12 +46,7 @@ pub fn Goals() -> Html {
 
     html! {
         <div class={Style::new(include_str!("goals.css")).expect("Unwrapping CSS should work!")}>
-            <div class="header">
-                <button
-                    class="material-symbols-outlined icon"
-                    onclick={Resource::add_default_closure::<MouseEvent>(goals.clone())}
-                >{"add"}</button>
-            </div>
+            <ResourceHeader<Goal> handle={goals.clone()} />
             <ul>
                 {goal_items}
             </ul>

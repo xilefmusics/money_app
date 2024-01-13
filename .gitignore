@@ -19,3 +19,4 @@ frontend/dist
 frontend/target
 shared/target
 goals.json
+backend/attachments

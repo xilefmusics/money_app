@@ -3,26 +3,24 @@ use super::{Attachment, AttachmentModel};
 use crate::error::AppError;
 use crate::rest::parse_user_header;
 
-use std::path::PathBuf;
-
 use fancy_surreal::Client;
 
 use actix_files::NamedFile;
 use actix_web::{get, post, web::Bytes, web::Data, web::Path, HttpRequest, HttpResponse};
 
-#[get("/api/attachments/{id}")]
+#[get("/api/attachments/{id_or_path}")]
 pub async fn get_id(
     req: HttpRequest,
     db: Data<Client>,
-    id: Path<String>,
+    id_or_path: Path<String>,
 ) -> Result<NamedFile, AppError> {
     Ok(NamedFile::open(
-        PathBuf::from(std::env::var("ATTACHMENT_DIR").unwrap_or("attachments".into())).join(
-            PathBuf::from(&AttachmentModel::file_name(
-                &AttachmentModel::get_record(db.into_inner(), &parse_user_header(&req)?, &id)
-                    .await?,
-            )?),
-        ),
+        AttachmentModel::get_path_db(
+            db.into_inner(),
+            &parse_user_header(&req)?,
+            &id_or_path.into_inner(),
+        )
+        .await?,
     )?)
 }
 

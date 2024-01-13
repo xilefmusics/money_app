@@ -5,7 +5,6 @@ use money_app_shared::attachment::Attachment;
 use money_app_shared::contract::{Contract, Payment, PaymentKind, State};
 
 use chrono::{DateTime, Local};
-use gloo::console::log;
 use gloo::net::http::Request;
 use std::collections::HashMap;
 use stylist::Style;
@@ -249,39 +248,35 @@ pub fn ContractPage(props: &Props) -> Html {
         let payment_debts = payment_debts.clone();
         let attachments = attachments.clone();
         move |_: MouseEvent| {
-            log!(format!(
-                "{:?}",
-                construct_contract(
-                    (*id).clone(),
-                    (*title).clone(),
-                    (*partner).clone(),
-                    *start,
-                    (*state).clone(),
-                    *term,
-                    *notice,
-                    (*management).clone(),
-                    *payment_first,
-                    *payment_amount,
-                    *payment_fix,
-                    *payment_cycle,
-                    (*payment_kind).clone(),
-                    (*payment_pod).clone(),
-                    (*payment_debts).clone(),
-                    (*attachments).clone(),
-                )
-            ));
-            // let contracts = vec![construct_contract()];
-            // wasm_bindgen_futures::spawn_local(async move {
-            //     let _: Vec<Goal> = Request::put("/api/goals")
-            //         .json(&goals)
-            //         .unwrap()
-            //         .send()
-            //         .await
-            //         .unwrap()
-            //         .json()
-            //         .await
-            //         .unwrap();
-            // });
+            let contracts = vec![construct_contract(
+                (*id).clone(),
+                (*title).clone(),
+                (*partner).clone(),
+                *start,
+                (*state).clone(),
+                *term,
+                *notice,
+                (*management).clone(),
+                *payment_first,
+                *payment_amount,
+                *payment_fix,
+                *payment_cycle,
+                (*payment_kind).clone(),
+                (*payment_pod).clone(),
+                (*payment_debts).clone(),
+                (*attachments).clone(),
+            )];
+            wasm_bindgen_futures::spawn_local(async move {
+                let _: Vec<Contract> = Request::put("/api/contracts")
+                    .json(&contracts)
+                    .unwrap()
+                    .send()
+                    .await
+                    .unwrap()
+                    .json()
+                    .await
+                    .unwrap();
+            });
         }
     };
 

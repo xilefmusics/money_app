@@ -4,32 +4,18 @@ use std::fs::File;
 use std::io::Write;
 use std::sync::Arc;
 
-use fancy_surreal::{Client, Databasable};
+use fancy_surreal::Client;
 
-use serde::{Deserialize, Serialize};
+pub use money_app_shared::attachment::Attachment;
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct Attachment {
-    pub id: Option<String>,
-    pub content_type: String,
-}
+pub struct AttachmentModel {}
 
-impl Databasable for Attachment {
-    fn get_id(&self) -> Option<String> {
-        self.id.clone()
-    }
-
-    fn set_id(&mut self, id: Option<String>) {
-        self.id = id;
-    }
-}
-
-impl Attachment {
+impl AttachmentModel {
     pub async fn create_record(
         db: Arc<Client>,
         user: &str,
-        attachment: Self,
-    ) -> Result<Vec<Self>, AppError> {
+        attachment: Attachment,
+    ) -> Result<Vec<Attachment>, AppError> {
         Ok(db
             .table("attachments")
             .owner(user)
@@ -37,39 +23,29 @@ impl Attachment {
             .await?)
     }
 
-    pub async fn get_record(db: Arc<Client>, user: &str, id: &str) -> Result<Self, AppError> {
+    pub async fn get_record(db: Arc<Client>, user: &str, id: &str) -> Result<Attachment, AppError> {
         Ok(db
             .table("attachments")
             .owner(user)
             .select()?
             .id(id)
-            .query_one::<Self>()
+            .query_one::<Attachment>()
             .await?)
     }
 
-    pub fn extension(&self) -> Result<&'static str, AppError> {
-        match self.content_type.as_ref() {
-            "application/pdf" => Ok("pdf"),
-            "image/jpeg" => Ok("jpeg"),
-            "image/jpg" => Ok("jpg"),
-            "image/png" => Ok("png"),
-            _ => Err(AppError::Other(format!(
-                "unknown content-type: {}",
-                self.content_type
-            ))),
-        }
-    }
-
-    pub fn file_name(&self) -> Result<String, AppError> {
+    pub fn file_name(attachment: &Attachment) -> Result<String, AppError> {
         Ok(format!(
             "{}.{}",
-            self.id.clone().ok_or(AppError::Other("no id".into()))?,
-            self.extension()?
+            attachment
+                .id
+                .clone()
+                .ok_or(AppError::Other("no id".into()))?,
+            attachment.extension()
         ))
     }
 
-    pub fn save(&self, bytes: &[u8]) -> Result<(), AppError> {
-        let mut file = File::create(&self.file_name()?)?;
+    pub fn save(attachment: &Attachment, bytes: &[u8]) -> Result<(), AppError> {
+        let mut file = File::create(Self::file_name(attachment)?)?;
         file.write_all(bytes)?;
         Ok(())
     }

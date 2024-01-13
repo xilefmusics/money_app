@@ -1,6 +1,7 @@
 use fancy_yew::components::input::{
-    BoolInput, DateInput, NumberInput, StringInput, StringNumberMap,
+    BoolInput, DateInput, NumberInput, RemoteFileInput, StringInput, StringNumberMap,
 };
+use money_app_shared::attachment::Attachment;
 use money_app_shared::contract::{Contract, Payment, PaymentKind, State};
 
 use chrono::{DateTime, Local};
@@ -32,6 +33,7 @@ fn destruct_contract(
     payment_kind_handle: UseStateHandle<String>,
     payment_pod_handle: UseStateHandle<String>,
     payment_debts_handle: UseStateHandle<HashMap<String, f64>>,
+    attachments_handle: UseStateHandle<Vec<String>>,
 ) {
     id_handle.set(contract.id.clone());
     title_handle.set(contract.title.clone());
@@ -65,6 +67,7 @@ fn destruct_contract(
             .map(|(key, value)| (key.to_string(), *value as f64))
             .collect::<HashMap<String, f64>>(),
     );
+    attachments_handle.set(contract.attachments.clone());
 }
 
 fn construct_contract(
@@ -83,41 +86,41 @@ fn construct_contract(
     payment_kind: String,
     payment_pod: String,
     payment_debts: HashMap<String, f64>,
+    attachments: Vec<String>,
 ) -> Contract {
-    let payment = Payment {
-        first: payment_first,
-        amount: payment_amount as u32,
-        fix: payment_fix,
-        cycle: payment_cycle as u32,
-        kind: match payment_kind.as_str() {
-            "Active" => PaymentKind::Active,
-            "Credit" => PaymentKind::Credit,
-            "PayPal" => PaymentKind::PayPal,
-            "GooglePay" => PaymentKind::GooglePay,
-            _ => PaymentKind::Debit,
+    Contract {
+        id,
+        title,
+        partner,
+        start,
+        state: match state.as_str() {
+            "Terminated" => State::Terminated,
+            "Expired" => State::Expired,
+            _ => State::Active,
         },
-        pod: payment_pod,
-        debts: payment_debts
-            .iter()
-            .map(|(key, value)| (key.to_string(), *value as u32))
-            .collect(),
-    };
-
-    let mut contract = Contract::default();
-    contract.id = id;
-    contract.title = title;
-    contract.partner = partner;
-    contract.start = start;
-    contract.state = match state.as_str() {
-        "Terminated" => State::Terminated,
-        "Expired" => State::Expired,
-        _ => State::Active,
-    };
-    contract.term = term as u32;
-    contract.notice = notice as u32;
-    contract.management = management;
-    contract.payment = payment;
-    contract
+        term: term as u32,
+        notice: notice as u32,
+        management,
+        payment: Payment {
+            first: payment_first,
+            amount: payment_amount as u32,
+            fix: payment_fix,
+            cycle: payment_cycle as u32,
+            kind: match payment_kind.as_str() {
+                "Active" => PaymentKind::Active,
+                "Credit" => PaymentKind::Credit,
+                "PayPal" => PaymentKind::PayPal,
+                "GooglePay" => PaymentKind::GooglePay,
+                _ => PaymentKind::Debit,
+            },
+            pod: payment_pod,
+            debts: payment_debts
+                .iter()
+                .map(|(key, value)| (key.to_string(), *value as u32))
+                .collect(),
+        },
+        attachments,
+    }
 }
 
 #[function_component]
@@ -139,7 +142,7 @@ pub fn ContractPage(props: &Props) -> Html {
     let payment_kind = use_state(|| String::default());
     let payment_pod = use_state(|| String::default());
     let payment_debts = use_state(|| HashMap::default());
-    //pub attachments: Vec<String>,
+    let attachments = use_state(|| Vec::default());
 
     {
         let pods = pods.clone();
@@ -159,6 +162,7 @@ pub fn ContractPage(props: &Props) -> Html {
         let payment_kind = payment_kind.clone();
         let payment_pod = payment_pod.clone();
         let payment_debts = payment_debts.clone();
+        let attachments = attachments.clone();
         let query = format!("/api/contracts/{}", props.id);
         use_effect_with((), move |_| {
             let pods = pods.clone();
@@ -178,6 +182,7 @@ pub fn ContractPage(props: &Props) -> Html {
             let payment_kind = payment_kind.clone();
             let payment_pod = payment_pod.clone();
             let payment_debts = payment_debts.clone();
+            let attachments = attachments.clone();
             wasm_bindgen_futures::spawn_local(async move {
                 let fetched_contract: Contract = Request::get(&query)
                     .send()
@@ -203,6 +208,7 @@ pub fn ContractPage(props: &Props) -> Html {
                     payment_kind,
                     payment_pod,
                     payment_debts,
+                    attachments,
                 );
                 let fetched_pods: Vec<String> = Request::get("/api/pods")
                     .send()
@@ -241,6 +247,7 @@ pub fn ContractPage(props: &Props) -> Html {
         let payment_kind = payment_kind.clone();
         let payment_pod = payment_pod.clone();
         let payment_debts = payment_debts.clone();
+        let attachments = attachments.clone();
         move |_: MouseEvent| {
             log!(format!(
                 "{:?}",
@@ -260,6 +267,7 @@ pub fn ContractPage(props: &Props) -> Html {
                     (*payment_kind).clone(),
                     (*payment_pod).clone(),
                     (*payment_debts).clone(),
+                    (*attachments).clone(),
                 )
             ));
             // let contracts = vec![construct_contract()];
@@ -284,7 +292,7 @@ pub fn ContractPage(props: &Props) -> Html {
                     <td>{"Title"}</td>
                     <td>
                         <StringInput
-                            bind_handle={title.clone()}
+                            bind_handle={title}
                         />
                     </td>
                 </tr>
@@ -292,7 +300,7 @@ pub fn ContractPage(props: &Props) -> Html {
                     <td>{"Partner"}</td>
                     <td>
                         <StringInput
-                            bind_handle={partner.clone()}
+                            bind_handle={partner}
                         />
                     </td>
                 </tr>
@@ -300,7 +308,7 @@ pub fn ContractPage(props: &Props) -> Html {
                     <td>{"Start"}</td>
                     <td>
                         <DateInput
-                            bind_handle={start.clone()}
+                            bind_handle={start}
                         />
                     </td>
                 </tr>
@@ -308,7 +316,7 @@ pub fn ContractPage(props: &Props) -> Html {
                     <td>{"State"}</td>
                     <td>
                         <StringInput
-                            bind_handle={state.clone()}
+                            bind_handle={state}
                             options={vec!["Active".into(), "Terminated".into(), "Expired".into()]}
                             strict=true
                         />
@@ -318,7 +326,7 @@ pub fn ContractPage(props: &Props) -> Html {
                     <td>{"Term"}</td>
                     <td>
                         <NumberInput
-                            bind_handle={term.clone()}
+                            bind_handle={term}
                             min=0.
                         />
                     </td>
@@ -327,7 +335,7 @@ pub fn ContractPage(props: &Props) -> Html {
                     <td>{"Notice"}</td>
                     <td>
                         <NumberInput
-                            bind_handle={notice.clone()}
+                            bind_handle={notice}
                             min=0.
                         />
                     </td>
@@ -336,7 +344,7 @@ pub fn ContractPage(props: &Props) -> Html {
                     <td>{"Management"}</td>
                     <td>
                         <StringInput
-                            bind_handle={management.clone()}
+                            bind_handle={management}
                         />
                     </td>
                 </tr>
@@ -347,7 +355,7 @@ pub fn ContractPage(props: &Props) -> Html {
                     <td>{"First"}</td>
                     <td>
                         <DateInput
-                            bind_handle={payment_first.clone()}
+                            bind_handle={payment_first}
                         />
                     </td>
                 </tr>
@@ -364,7 +372,7 @@ pub fn ContractPage(props: &Props) -> Html {
                     <td>{"Fix"}</td>
                     <td>
                         <BoolInput
-                            bind_handle={payment_fix.clone()}
+                            bind_handle={payment_fix}
                         />
                     </td>
                 </tr>
@@ -372,7 +380,7 @@ pub fn ContractPage(props: &Props) -> Html {
                     <td>{"Cycle"}</td>
                     <td>
                         <NumberInput
-                            bind_handle={payment_cycle.clone()}
+                            bind_handle={payment_cycle}
                             min=0.
                         />
                     </td>
@@ -381,7 +389,7 @@ pub fn ContractPage(props: &Props) -> Html {
                     <td>{"Kind"}</td>
                     <td>
                         <StringInput
-                            bind_handle={payment_kind.clone()}
+                            bind_handle={payment_kind}
                             options={vec!["Active".into(), "Debit".into(), "Credit".into(), "PayPal".into(), "GooglePay".into()]}
                             strict=true
                         />
@@ -391,7 +399,7 @@ pub fn ContractPage(props: &Props) -> Html {
                     <td>{"Pod"}</td>
                     <td>
                         <StringInput
-                            bind_handle={payment_pod.clone()}
+                            bind_handle={payment_pod}
                             options={(*pods).clone()}
                         />
                     </td>
@@ -408,6 +416,19 @@ pub fn ContractPage(props: &Props) -> Html {
                             min=0.
                             max={*payment_amount}
                             options={(*debts).clone()}
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        {"Attachments"}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <RemoteFileInput<Attachment>
+                            bind_handle={attachments}
+                            endpoint="/api/attachments"
                         />
                     </td>
                 </tr>

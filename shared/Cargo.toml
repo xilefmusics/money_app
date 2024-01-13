@@ -9,6 +9,7 @@ serde = { version = "1.0.163", features = ["derive"] }
 serde_json = "1.0.108"
 serde_with = { version = "3.4.0", features = ["chrono"] }
 chrono = "0.4.31"
+mime_guess = "2.0.4"
 
 [features]
 backend = ["fancy_surreal"]

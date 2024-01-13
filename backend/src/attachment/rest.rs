@@ -1,4 +1,4 @@
-use super::Attachment;
+use super::{Attachment, AttachmentModel};
 
 use crate::error::AppError;
 use crate::rest::parse_user_header;
@@ -18,11 +18,10 @@ pub async fn get_id(
 ) -> Result<NamedFile, AppError> {
     Ok(NamedFile::open(
         PathBuf::from(std::env::var("ATTACHMENT_DIR").unwrap_or("attachments".into())).join(
-            PathBuf::from(
-                &Attachment::get_record(db.into_inner(), &parse_user_header(&req)?, &id)
-                    .await?
-                    .file_name()?,
-            ),
+            PathBuf::from(&AttachmentModel::file_name(
+                &AttachmentModel::get_record(db.into_inner(), &parse_user_header(&req)?, &id)
+                    .await?,
+            )?),
         ),
     )?)
 }
@@ -34,7 +33,7 @@ pub async fn post(
     payload: Bytes,
 ) -> Result<HttpResponse, AppError> {
     let user = parse_user_header(&req)?;
-    let attachments = Attachment::create_record(
+    let attachments = AttachmentModel::create_record(
         db.into_inner(),
         &user,
         Attachment {
@@ -53,7 +52,7 @@ pub async fn post(
         .get(0)
         .ok_or(AppError::Other("no attachment created".into()))?;
 
-    attachment.save(&payload.to_vec())?;
+    AttachmentModel::save(&attachment, &payload.to_vec())?;
 
     Ok(HttpResponse::Created().json(attachment))
 }

@@ -14,7 +14,7 @@ use error::AppError;
 use fancy_surreal::Client;
 use settings::Settings;
 
-use actix_web::{web::Data, App, HttpServer};
+use actix_web::{web::Data, web::PayloadConfig, App, HttpServer};
 
 use env_logger::Env;
 
@@ -40,6 +40,7 @@ async fn main() -> Result<(), AppError> {
         let database = database.clone();
         App::new()
             .app_data(database)
+            .app_data(PayloadConfig::new(1 << 25))
             .service(transaction::rest::get_id)
             .service(transaction::rest::get)
             .service(transaction::rest::put)

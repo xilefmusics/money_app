@@ -164,24 +164,6 @@ pub fn ContractPage(props: &Props) -> Html {
         let attachments = attachments.clone();
         let query = format!("/api/contracts/{}", props.id);
         use_effect_with((), move |_| {
-            let pods = pods.clone();
-            let debts = debts.clone();
-            let id = id.clone();
-            let title = title.clone();
-            let partner = partner.clone();
-            let start = start.clone();
-            let state = state.clone();
-            let term = term.clone();
-            let notice = notice.clone();
-            let management = management.clone();
-            let payment_first = payment_first.clone();
-            let payment_amount = payment_amount.clone();
-            let payment_fix = payment_fix.clone();
-            let payment_cycle = payment_cycle.clone();
-            let payment_kind = payment_kind.clone();
-            let payment_pod = payment_pod.clone();
-            let payment_debts = payment_debts.clone();
-            let attachments = attachments.clone();
             wasm_bindgen_futures::spawn_local(async move {
                 let fetched_contract: Contract = Request::get(&query)
                     .send()

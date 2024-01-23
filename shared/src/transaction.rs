@@ -2,15 +2,16 @@ use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 #[serde(rename_all = "lowercase")]
 pub enum Type {
     In,
+    #[default]
     Out,
     Move,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct Transaction {
     pub id: Option<String>,
     #[serde(rename = "type")]
@@ -65,12 +66,12 @@ impl Transaction {
 
     pub fn title(&self) -> String {
         match self.ttype {
-            Type::In => self.receiver.clone().unwrap(),
-            Type::Out => self.sender.clone().unwrap(),
+            Type::In => self.receiver.clone().unwrap_or("".into()),
+            Type::Out => self.sender.clone().unwrap_or("".into()),
             Type::Move => format!(
                 "{} to {}",
-                self.sender.clone().unwrap(),
-                self.receiver.clone().unwrap()
+                self.sender.clone().unwrap_or("".into()),
+                self.receiver.clone().unwrap_or("".into())
             ),
         }
     }

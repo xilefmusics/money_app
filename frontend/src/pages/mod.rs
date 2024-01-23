@@ -6,6 +6,7 @@ mod debts;
 mod goal;
 mod goals;
 mod pods;
+mod transaction;
 mod transactions;
 
 pub use budgets::Budgets;
@@ -16,4 +17,5 @@ pub use debts::Debts;
 pub use goal::GoalPage as Goal;
 pub use goals::Goals;
 pub use pods::Pods;
+pub use transaction::TransactionPage as Transaction;
 pub use transactions::Transactions;

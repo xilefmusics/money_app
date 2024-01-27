@@ -107,7 +107,7 @@ impl Barclays {
             inbudgets: HashMap::new(),
             debts: HashMap::new(),
             tags: self.to_tags(),
-            attachment: None,
+            attachments: Vec::new(),
         })
     }
 

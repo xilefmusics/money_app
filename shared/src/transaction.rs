@@ -24,7 +24,7 @@ pub struct Transaction {
     pub inbudgets: HashMap<String, usize>,
     pub debts: HashMap<String, usize>,
     pub tags: HashMap<String, String>,
-    pub attachment: Option<String>,
+    pub attachments: Vec<String>,
 }
 
 impl Transaction {

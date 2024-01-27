@@ -61,13 +61,7 @@ fn destruct_transaction(
             .collect::<HashMap<String, f64>>(),
     );
     tags_handle.set(transaction.tags.clone());
-    attachments_handle.set(
-        transaction
-            .attachment
-            .clone()
-            .map(|a| vec![a])
-            .unwrap_or(vec![]),
-    );
+    attachments_handle.set(transaction.attachments.clone());
 }
 
 fn construct_transaction(
@@ -115,7 +109,7 @@ fn construct_transaction(
             .map(|(key, value)| (key.to_string(), *value as usize))
             .collect::<HashMap<String, usize>>(),
         tags,
-        attachment: attachments.get(0).map(|s| s.to_string()),
+        attachments: attachments.to_owned(),
     }
 }
 

@@ -15,3 +15,5 @@ yew-router = "0.18.0"
 wasm-bindgen-futures = "0.4.39"
 chrono = "0.4.31"
 js-sys = "0.3.67"
+serde = { version = "1.0.163", features = ["derive"] }
+url = "2.5.0"

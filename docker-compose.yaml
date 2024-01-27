@@ -1,0 +1,9 @@
+version: '3'
+services:
+  db:
+    image: surrealdb/surrealdb:1.0.0
+    command: start --log debug --user root --pass root memory --allow-scripting
+  backend:
+    image: money-app:latest
+    ports:
+    - 8000:8000

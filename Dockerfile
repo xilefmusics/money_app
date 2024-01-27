@@ -1,25 +1,39 @@
-FROM node:19.5.0-alpine3.17 as FrontendBuilder
-WORKDIR money_app
-COPY /frontend ./frontend
-WORKDIR /money_app/frontend
-RUN npm install &&\
-    npm run build
-
 FROM bitnami/git:2.43.0-debian-11-r4 as DependencyDownloader
+
 WORKDIR /fancy_surreal
 RUN git clone --depth 1 --branch 0.1.2 https://github.com/xilefmusics/fancy_surreal.git .
 
-FROM rust:1.74.1-slim-buster as BackendBuilder
+WORKDIR /fancy_yew
+RUN git clone --depth 1 --branch 0.1.0 https://github.com/xilefmusics/fancy_yew.git .
+
+
+FROM rust:1.75-bookworm as Builder
+
+RUN cargo install --locked trunk && \
+    rustup target add wasm32-unknown-unknown
+
 COPY --from=DependencyDownloader /fancy_surreal /fancy_surreal
+COPY --from=DependencyDownloader /fancy_yew /fancy_yew
+
 WORKDIR /money_app
-COPY /backend ./backend
+COPY ./shared ./shared
+
+WORKDIR /money_app
+COPY ./backend ./backend
 WORKDIR /money_app/backend
 RUN cargo build --release
 
+WORKDIR /money_app
+COPY ./frontend ./frontend
+WORKDIR /money_app/frontend
+RUN trunk build --release
+
+
 FROM ubuntu:22.04
 
-COPY --from=FrontendBuilder money_app/frontend/build /app/static
-COPY --from=BackendBuilder money_app/backend/target/release/backend /app/worship_viewer
+
+COPY --from=builder /money_app/frontend/dist/ /app/static
+COPY --from=builder /money_app/backend/target/release/backend /app/worship_viewer
 
 ENV PORT="8000" \
     DB_HOST="db" \

@@ -10,8 +10,13 @@ use yew_router::prelude::*;
 
 #[function_component]
 pub fn Transactions() -> Html {
-    let transactions: UseStateHandle<Resource<Transaction>> =
-        use_state(|| Resource::new("/api/transactions".into(), Vec::default()));
+    let transactions: UseStateHandle<Resource<Transaction>> = use_state(|| {
+        Resource::new(
+            "/api/transactions".into(),
+            "transactions".into(),
+            Vec::default(),
+        )
+    });
     {
         let transactions = transactions.clone();
         use_effect_with((), move |_| {

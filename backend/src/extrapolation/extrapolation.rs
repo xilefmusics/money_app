@@ -8,8 +8,12 @@ pub use money_app_shared::extrapolation::{Extrapolation, ExtrapolationItem};
 
 use std::sync::Arc;
 
-pub fn create_extrapolation_pure(contracts: &[Contract], savings_rate: u32) -> Extrapolation {
-    let normal = DateIterator::new()
+pub fn create_extrapolation_pure(
+    contracts: &[Contract],
+    savings_rate: u32,
+    year: i32,
+) -> Extrapolation {
+    let normal = DateIterator::new(year)
         .map(|date| ExtrapolationItem::new(contracts, savings_rate, date))
         .collect::<Vec<ExtrapolationItem>>();
 
@@ -40,8 +44,12 @@ pub fn create_extrapolation_pure(contracts: &[Contract], savings_rate: u32) -> E
     }
 }
 
-pub async fn create_extrapolation(db: Arc<Client>, user: &str) -> Result<Extrapolation, AppError> {
+pub async fn create_extrapolation(
+    db: Arc<Client>,
+    user: &str,
+    year: i32,
+) -> Result<Extrapolation, AppError> {
     let contracts = ContractModel::get(db.clone(), user).await?;
     let savings_rate = savings_rate(db, user).await?;
-    Ok(create_extrapolation_pure(&contracts, savings_rate))
+    Ok(create_extrapolation_pure(&contracts, savings_rate, year))
 }

@@ -6,9 +6,7 @@ pub struct DateIterator {
 }
 
 impl DateIterator {
-    pub fn new() -> Self {
-        let current = Local::now();
-        let year = current.year();
+    pub fn new(year: i32) -> Self {
         let current = Local.with_ymd_and_hms(year, 1, 1, 0, 0, 0).unwrap();
 
         Self { current, year }

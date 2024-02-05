@@ -115,7 +115,7 @@ impl Navable for Route {
         html! {
             <DefaultLayout<Route> nav_routes={Route::route_items()}>{
                 match route {
-                    Route::Index => html! { <h1>{ "Dashboard" }</h1> },
+                    Route::Index => html! { <Dashboard /> },
                     Route::Dashboard => html! { <Dashboard /> },
                     Route::Transaction{id} => html! { <Transaction id={id} /> },
                     Route::Transactions => html! { <Transactions /> },

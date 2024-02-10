@@ -20,6 +20,7 @@ pub async fn get(
             db.into_inner(),
             &parse_user_header(&req)?,
             q.year.unwrap_or(Local::now().year()),
+            q.month.unwrap_or(Local::now().month()),
         )
         .await?,
     ))

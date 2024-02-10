@@ -1,6 +1,6 @@
-use super::{AssociatedTypeValuesIterator, TransactionsIterator};
+use super::AssociatedTypeValuesIterator;
 
-use crate::transaction::{AssociatedTypeValues, Transaction};
+use crate::transaction::AssociatedTypeValues;
 
 use chrono::{DateTime, Datelike, Days, Local, Months, TimeZone};
 
@@ -35,13 +35,6 @@ impl DateIterator {
             day,
             left: len,
         }
-    }
-
-    pub fn into_transactions_iter<'a>(
-        self,
-        transactions: &'a [Transaction],
-    ) -> TransactionsIterator<'a> {
-        TransactionsIterator::new(self, transactions)
     }
 
     pub fn into_associated_type_values_iter<'a>(

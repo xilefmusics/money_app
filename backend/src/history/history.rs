@@ -4,6 +4,7 @@ use crate::error::AppError;
 use crate::transaction::{Filter, TransactionModel};
 use fancy_surreal::Client;
 
+use chrono::Local;
 use std::sync::Arc;
 
 pub struct History;
@@ -14,12 +15,14 @@ impl History {
         user: &str,
         query_params: QueryParams,
     ) -> Result<Vec<Wealth>, AppError> {
-        Ok(query_params
-            .into_date_iter()
-            .into_transactions_iter(&TransactionModel::get(db, user, &Filter::default()).await?)
-            .into_wealth_iter()
-            .into_shift_in_out_iter()
-            .collect::<Vec<Wealth>>())
+        Ok(Wealth::history(
+            TransactionModel::get(db, user, &Filter::default()).await?,
+            Local::now(),
+            query_params.year.unwrap_or(0),
+            query_params.month.unwrap_or(0),
+            query_params.day.unwrap_or(0),
+            query_params.len.unwrap_or(1),
+        ))
     }
 
     pub async fn pod(

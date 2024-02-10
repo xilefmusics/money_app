@@ -8,13 +8,13 @@ use std::ops::Add;
 
 #[derive(Debug, Serialize, Deserialize, Default, Clone)]
 pub struct Wealth {
-    date: DateTime<Local>,
-    income: ValueDiff<i64>,
-    out: ValueDiff<i64>,
-    change: ValueDiff<i64>,
-    real: ValueDiff<i64>,
-    debt: ValueDiff<i64>,
-    sum: ValueDiff<i64>,
+    pub date: DateTime<Local>,
+    pub income: ValueDiff<i64>,
+    pub out: ValueDiff<i64>,
+    pub change: ValueDiff<i64>,
+    pub real: ValueDiff<i64>,
+    pub debt: ValueDiff<i64>,
+    pub sum: ValueDiff<i64>,
 }
 
 impl Add for Wealth {
@@ -99,12 +99,20 @@ impl Wealth {
         }
     }
 
-    pub fn history(transactions: Vec<Transaction>) -> Vec<Wealth> {
+    pub fn history(
+        transactions: Vec<Transaction>,
+        date: DateTime<Local>,
+        year: u32,
+        month: u32,
+        day: u64,
+        len: u32,
+    ) -> Vec<Wealth> {
         transactions
             .into_iter()
-            .cluster(DateIterator::new(Local::now(), 1, 0, 0, 3), |transaction| {
-                transaction.date
-            })
+            .cluster(
+                DateIterator::new(date, year, month, day, len),
+                |transaction| transaction.date,
+            )
             .map(|(date, transactions)| Wealth::from((transactions, date)))
             .scan(Wealth::default(), |acc, new| new.accumulate(acc))
             .pairs()
@@ -112,21 +120,5 @@ impl Wealth {
             .pairs()
             .map(|(current, next)| current.diff(&next.unwrap_or(current.clone())))
             .collect()
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    use std::fs::File;
-    use std::io::BufReader;
-
-    #[test]
-    fn wealth() {
-        let transactions: Vec<Transaction> =
-            serde_json::from_reader(BufReader::new(File::open("./transactions.json").unwrap()))
-                .unwrap();
-        let history = Wealth::history(transactions);
     }
 }

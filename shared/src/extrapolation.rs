@@ -1,4 +1,5 @@
 use crate::contract::Contract;
+use crate::history2::Wealth;
 
 use chrono::{DateTime, Datelike, Local};
 use serde::{Deserialize, Serialize};
@@ -10,6 +11,24 @@ pub struct ExtrapolationItem {
     pub contract_income: u32,
     pub planned_savings: u32,
     pub freely_available: i64,
+    pub actual_expenses: u32,
+    pub actual_income: u32,
+    pub actual_savings: u32,
+}
+
+impl From<Wealth> for ExtrapolationItem {
+    fn from(item: Wealth) -> Self {
+        Self {
+            date: item.date,
+            contract_expenses: 0,
+            contract_income: 0,
+            planned_savings: 0,
+            freely_available: 0,
+            actual_expenses: item.out.value as u32,
+            actual_income: item.income.value as u32,
+            actual_savings: item.real.diff as u32,
+        }
+    }
 }
 
 impl ExtrapolationItem {
@@ -38,6 +57,9 @@ impl ExtrapolationItem {
             planned_savings,
             freely_available: (contract_income as i64)
                 - ((contract_expenses + planned_savings) as i64),
+            actual_expenses: 0,
+            actual_income: 0,
+            actual_savings: 0,
         }
     }
 
@@ -49,6 +71,9 @@ impl ExtrapolationItem {
             planned_savings: (self.planned_savings as i64 + self.freely_available
                 - new_freely_available) as u32,
             freely_available: new_freely_available,
+            actual_expenses: 0,
+            actual_income: 0,
+            actual_savings: 0,
         }
     }
 

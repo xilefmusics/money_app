@@ -27,7 +27,7 @@ where
         }
     }
 
-    pub fn next_with_key(&mut self, key: K) -> Option<Vec<T>> {
+    pub fn next_with_key(&mut self, key: K) -> Option<(Option<K>, Vec<T>)> {
         let mut cluster = if let Some(cache) = self.cache.take() {
             vec![cache]
         } else {
@@ -41,10 +41,10 @@ where
             cluster.push(item);
         }
 
-        Some(cluster)
+        Some((Some(key), cluster))
     }
 
-    pub fn next_without_key(&mut self) -> Option<Vec<T>> {
+    pub fn next_without_key(&mut self) -> Option<(Option<K>, Vec<T>)> {
         let mut cluster = if let Some(cache) = self.cache.take() {
             vec![cache]
         } else {
@@ -55,7 +55,7 @@ where
         }
 
         if cluster.len() > 0 {
-            Some(cluster)
+            Some((None, cluster))
         } else {
             None
         }
@@ -69,7 +69,7 @@ where
     J: Iterator<Item = K>,
     K: PartialOrd + Clone,
 {
-    type Item = Vec<T>;
+    type Item = (Option<K>, Vec<T>);
 
     fn next(&mut self) -> Option<Self::Item> {
         if let Some(key) = self.keys.next() {
@@ -80,6 +80,27 @@ where
     }
 }
 
+pub trait IntoClusterIterator<T, K, J, F>
+where
+    Self: Iterator<Item = T> + Sized,
+    F: Fn(&T) -> K,
+    J: Iterator<Item = K>,
+    K: PartialOrd + Clone,
+{
+    fn cluster(self, keys: J, tokey: F) -> ClusterIterator<Self, T, K, J, F> {
+        ClusterIterator::new(self, keys, tokey)
+    }
+}
+
+impl<T, K, J, F, I> IntoClusterIterator<T, K, J, F> for I
+where
+    I: Iterator<Item = T> + Sized,
+    F: Fn(&T) -> K,
+    J: Iterator<Item = K>,
+    K: PartialOrd + Clone,
+{
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -88,8 +109,8 @@ mod tests {
     fn cluster_iterator() {
         assert_eq!(
             ClusterIterator::new(vec![1, 2, 3, 4].into_iter(), vec![2, 3].into_iter(), |n| *n)
-                .collect::<Vec<Vec<usize>>>(),
-            vec![vec![1], vec![2], vec![3, 4]]
+                .collect::<Vec<(Option<usize>, Vec<usize>)>>(),
+            vec![(Some(2), vec![1]), (Some(3), vec![2]), (None, vec![3, 4])]
         );
     }
 
@@ -97,8 +118,8 @@ mod tests {
     fn cluster_iterator_empty_data() {
         assert_eq!(
             ClusterIterator::new(vec![].into_iter(), vec![42].into_iter(), |n| *n)
-                .collect::<Vec<Vec<usize>>>(),
-            vec![vec![]]
+                .collect::<Vec<(Option<usize>, Vec<usize>)>>(),
+            vec![(Some(42), Vec::<usize>::default())]
         );
     }
 
@@ -106,8 +127,8 @@ mod tests {
     fn cluster_iterator2() {
         assert_eq!(
             ClusterIterator::new(vec![1].into_iter(), vec![3].into_iter(), |n| *n)
-                .collect::<Vec<Vec<usize>>>(),
-            vec![vec![1]]
+                .collect::<Vec<(Option<usize>, Vec<usize>)>>(),
+            vec![(Some(3), vec![1])]
         );
     }
 }

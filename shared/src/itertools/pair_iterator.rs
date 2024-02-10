@@ -1,4 +1,4 @@
-pub struct PairIterator<T, I>
+pub struct PairIterator<I, T>
 where
     I: Iterator<Item = T>,
     T: Clone,
@@ -7,7 +7,7 @@ where
     cache: Option<T>,
 }
 
-impl<T, I> PairIterator<T, I>
+impl<I, T> PairIterator<I, T>
 where
     I: Iterator<Item = T>,
     T: Clone,
@@ -18,7 +18,7 @@ where
     }
 }
 
-impl<T, I> Iterator for PairIterator<T, I>
+impl<I, T> Iterator for PairIterator<I, T>
 where
     I: Iterator<Item = T>,
     T: Clone,
@@ -26,10 +26,28 @@ where
     type Item = (T, Option<T>);
 
     fn next(&mut self) -> Option<Self::Item> {
-        let last = self.cache.take()?;
-        self.cache = self.inner.next();
-        Some((last, self.cache.clone()))
+        let current = self.cache.take()?;
+        let next = self.inner.next();
+        self.cache = next.clone();
+        Some((current, next))
     }
+}
+
+pub trait IntoPairIterator<T>
+where
+    Self: Iterator<Item = T> + Sized,
+    T: Clone,
+{
+    fn pairs(self) -> PairIterator<Self, T> {
+        PairIterator::new(self)
+    }
+}
+
+impl<I, T> IntoPairIterator<T> for I
+where
+    I: Iterator<Item = T> + Sized,
+    T: Clone,
+{
 }
 
 #[cfg(test)]

@@ -1,5 +1,5 @@
 use crate::contract::Contract;
-use crate::history2::Wealth;
+use crate::history::Wealth;
 
 use chrono::{DateTime, Datelike, Local};
 use serde::{Deserialize, Serialize};

@@ -1,5 +1,5 @@
 use fancy_yew::components::{ChartJs, ConfigBuilder};
-use money_app_shared::history2::Wealth;
+use money_app_shared::history::Wealth;
 
 use gloo::net::http::Request;
 use yew::prelude::*;

@@ -1,6 +1,6 @@
 use crate::tmp_fancy_yew::ListItem;
 use fancy_yew::components::{ChartJs, ConfigBuilder};
-use money_app_shared::history::AssociatedTypeDiffValues;
+use money_app_shared::history::AssociatedTypeValues;
 
 use gloo::net::http::Request;
 use stylist::Style;
@@ -23,7 +23,7 @@ pub fn Pods() -> Html {
         use_effect_with((), move |_| {
             let pod_history = pod_history.clone();
             wasm_bindgen_futures::spawn_local(async move {
-                let fetched_pod_history: Vec<AssociatedTypeDiffValues> = Request::get(&query)
+                let fetched_pod_history: Vec<AssociatedTypeValues> = Request::get(&query)
                     .send()
                     .await
                     .unwrap()

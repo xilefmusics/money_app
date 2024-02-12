@@ -1,6 +1,6 @@
 use crate::tmp_fancy_yew::ListItem;
 use fancy_yew::components::{ChartJs, ConfigBuilder};
-use money_app_shared::history::AssociatedTypeDiffValues;
+use money_app_shared::history::AssociatedTypeValues;
 
 use gloo::net::http::Request;
 use stylist::Style;
@@ -27,7 +27,7 @@ pub fn Budgets() -> Html {
         use_effect_with((), move |_| {
             let budget_history = budget_history.clone();
             wasm_bindgen_futures::spawn_local(async move {
-                let fetched_budget_history: Vec<AssociatedTypeDiffValues> = Request::get(&query)
+                let fetched_budget_history: Vec<AssociatedTypeValues> = Request::get(&query)
                     .send()
                     .await
                     .unwrap()
@@ -46,14 +46,13 @@ pub fn Budgets() -> Html {
         use_effect_with((), move |_| {
             let inbudget_history = inbudget_history.clone();
             wasm_bindgen_futures::spawn_local(async move {
-                let fetched_inbudget_history: Vec<AssociatedTypeDiffValues> =
-                    Request::get(&query_in)
-                        .send()
-                        .await
-                        .unwrap()
-                        .json()
-                        .await
-                        .unwrap();
+                let fetched_inbudget_history: Vec<AssociatedTypeValues> = Request::get(&query_in)
+                    .send()
+                    .await
+                    .unwrap()
+                    .json()
+                    .await
+                    .unwrap();
                 inbudget_history.set(fetched_inbudget_history);
             });
             || ()

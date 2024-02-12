@@ -1,6 +1,6 @@
 use crate::tmp_fancy_yew::ListItem;
 use fancy_yew::components::{ChartJs, ConfigBuilder};
-use money_app_shared::history::AssociatedTypeDiffValues;
+use money_app_shared::history::{AssociatedTypeValues, ValueDiff};
 
 use gloo::net::http::Request;
 use stylist::Style;
@@ -23,7 +23,7 @@ pub fn Debts() -> Html {
         use_effect_with((), move |_| {
             let debt_history = debt_history.clone();
             wasm_bindgen_futures::spawn_local(async move {
-                let fetched_debt_history: Vec<AssociatedTypeDiffValues> = Request::get(&query)
+                let fetched_debt_history: Vec<AssociatedTypeValues> = Request::get(&query)
                     .send()
                     .await
                     .unwrap()
@@ -63,7 +63,7 @@ pub fn Debts() -> Html {
             .collect::<Vec<String>>();
         let mut config_builder = ConfigBuilder::line().labels(&labels);
 
-        let datasets = debt_history[0]
+        let datasets = debt_history[debt_history.len() - 1]
             .data
             .keys()
             .map(|debt| {
@@ -71,7 +71,9 @@ pub fn Debts() -> Html {
                     debt.to_string(),
                     debt_history
                         .iter()
-                        .map(|item| item.data.get(debt).unwrap().value as f64 / 100.)
+                        .map(|item| {
+                            item.data.get(debt).unwrap_or(&ValueDiff::default()).value as f64 / 100.
+                        })
                         .collect::<Vec<f64>>(),
                 )
             })

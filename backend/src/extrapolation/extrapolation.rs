@@ -6,7 +6,7 @@ use crate::history::{History, QueryParams};
 use crate::AppError;
 use fancy_surreal::Client;
 pub use money_app_shared::extrapolation::{Extrapolation, ExtrapolationItem};
-use money_app_shared::history2::Wealth;
+use money_app_shared::history::Wealth;
 
 use chrono::Datelike;
 use std::sync::Arc;

@@ -1,4 +1,4 @@
-use super::{AssociatedTypeDiffValues, QueryParams, Wealth};
+use super::{AssociatedTypeValues, QueryParams, Wealth};
 
 use crate::error::AppError;
 use crate::transaction::{Filter, TransactionModel};
@@ -25,99 +25,52 @@ impl History {
         ))
     }
 
+    async fn associated_type_values(
+        db: Arc<Client>,
+        user: &str,
+        query_params: QueryParams,
+        t: &str,
+    ) -> Result<Vec<AssociatedTypeValues>, AppError> {
+        Ok(AssociatedTypeValues::history(
+            TransactionModel::get_associated_type_values(db.clone(), &user, &Filter::default(), t)
+                .await?,
+            Local::now(),
+            query_params.year.unwrap_or(0),
+            query_params.month.unwrap_or(0),
+            query_params.day.unwrap_or(0),
+            query_params.len.unwrap_or(1),
+        ))
+    }
+
     pub async fn pod(
         db: Arc<Client>,
         user: &str,
         query_params: QueryParams,
-    ) -> Result<Vec<AssociatedTypeDiffValues>, AppError> {
-        Ok(query_params
-            .into_date_iter()
-            .into_associated_type_values_iter(
-                &TransactionModel::get_associated_type_values(
-                    db.clone(),
-                    &user,
-                    &Filter::default(),
-                    "pods",
-                )
-                .await?,
-            )
-            .accumulate(
-                &TransactionModel::get_associated_type(db, &user, &Filter::default(), "pods")
-                    .await?,
-            )
-            .diff()
-            .collect::<Vec<AssociatedTypeDiffValues>>())
+    ) -> Result<Vec<AssociatedTypeValues>, AppError> {
+        Self::associated_type_values(db, user, query_params, "pods").await
     }
 
     pub async fn budget(
         db: Arc<Client>,
         user: &str,
         query_params: QueryParams,
-    ) -> Result<Vec<AssociatedTypeDiffValues>, AppError> {
-        Ok(query_params
-            .into_date_iter()
-            .into_associated_type_values_iter(
-                &TransactionModel::get_associated_type_values(
-                    db.clone(),
-                    &user,
-                    &Filter::default(),
-                    "budgets",
-                )
-                .await?,
-            )
-            .accumulate(
-                &TransactionModel::get_associated_type(db, &user, &Filter::default(), "budgets")
-                    .await?,
-            )
-            .diff()
-            .collect::<Vec<AssociatedTypeDiffValues>>())
+    ) -> Result<Vec<AssociatedTypeValues>, AppError> {
+        Self::associated_type_values(db, user, query_params, "budgets").await
     }
 
     pub async fn inbudget(
         db: Arc<Client>,
         user: &str,
         query_params: QueryParams,
-    ) -> Result<Vec<AssociatedTypeDiffValues>, AppError> {
-        Ok(query_params
-            .into_date_iter()
-            .into_associated_type_values_iter(
-                &TransactionModel::get_associated_type_values(
-                    db.clone(),
-                    &user,
-                    &Filter::default(),
-                    "inbudgets",
-                )
-                .await?,
-            )
-            .accumulate(
-                &TransactionModel::get_associated_type(db, &user, &Filter::default(), "inbudgets")
-                    .await?,
-            )
-            .diff()
-            .collect::<Vec<AssociatedTypeDiffValues>>())
+    ) -> Result<Vec<AssociatedTypeValues>, AppError> {
+        Self::associated_type_values(db, user, query_params, "inbudgets").await
     }
 
     pub async fn debt(
         db: Arc<Client>,
         user: &str,
         query_params: QueryParams,
-    ) -> Result<Vec<AssociatedTypeDiffValues>, AppError> {
-        Ok(query_params
-            .into_date_iter()
-            .into_associated_type_values_iter(
-                &TransactionModel::get_associated_type_values(
-                    db.clone(),
-                    &user,
-                    &Filter::default(),
-                    "debts",
-                )
-                .await?,
-            )
-            .accumulate(
-                &TransactionModel::get_associated_type(db, &user, &Filter::default(), "debts")
-                    .await?,
-            )
-            .diff()
-            .collect::<Vec<AssociatedTypeDiffValues>>())
+    ) -> Result<Vec<AssociatedTypeValues>, AppError> {
+        Self::associated_type_values(db, user, query_params, "debts").await
     }
 }

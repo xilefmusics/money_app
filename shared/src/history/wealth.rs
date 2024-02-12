@@ -106,15 +106,15 @@ impl Wealth {
         month: u32,
         day: u64,
         len: u32,
-    ) -> Vec<Wealth> {
+    ) -> Vec<Self> {
         transactions
             .into_iter()
             .cluster(
                 DateIterator::new(date, year, month, day, len),
                 |transaction| transaction.date,
             )
-            .map(|(date, transactions)| Wealth::from((transactions, date)))
-            .scan(Wealth::default(), |acc, new| new.accumulate(acc))
+            .map(|(date, transactions)| Self::from((transactions, date)))
+            .scan(Self::default(), |acc, new| new.accumulate(acc))
             .pairs()
             .map(|(current, next)| current.shift(&next.unwrap_or(Self::default())))
             .pairs()

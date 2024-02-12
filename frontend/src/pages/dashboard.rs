@@ -9,10 +9,10 @@ pub fn Dashboard() -> Html {
         <div class={Style::new(include_str!("dashboard.css")).expect("Unwrapping CSS should work!")}>
             <h1>{"Wealth History"}</h1>
             <WealthHistory
-                len=26
+                len=24
                 year=0
                 month=1
-                day=1
+                day=0
             />
             <h1>{"Monthly Extrapolation"}</h1>
             <MonthlyExtrapolation />

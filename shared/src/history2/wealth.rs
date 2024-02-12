@@ -116,7 +116,7 @@ impl Wealth {
             .map(|(date, transactions)| Wealth::from((transactions, date)))
             .scan(Wealth::default(), |acc, new| new.accumulate(acc))
             .pairs()
-            .map(|(current, next)| current.clone().shift(&next.unwrap_or(current.clone())))
+            .map(|(current, next)| current.shift(&next.unwrap_or(Self::default())))
             .pairs()
             .map(|(current, next)| current.diff(&next.unwrap_or(current.clone())))
             .collect()

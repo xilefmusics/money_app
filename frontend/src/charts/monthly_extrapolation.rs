@@ -71,6 +71,30 @@ pub fn MonthlyExtrapolation() -> Html {
                 .dataset_border_width(1)
                 .dataset_border_color_str("green")
                 .dataset_background_color_str("green")
+                .dataset(
+                    &extrapolation
+                        .normal
+                        .iter()
+                        .map(|item| (item.actual_expenses as f64) / 100.)
+                        .collect::<Vec<f64>>(),
+                )
+                .dataset_stack(0)
+                .dataset_label("Spent")
+                .dataset_border_width(1)
+                .dataset_border_color_str("red")
+                .dataset_background_color_str("red")
+                .dataset(
+                    &extrapolation
+                        .normal
+                        .iter()
+                        .map(|item| (item.actual_savings as f64) / 100.)
+                        .collect::<Vec<f64>>(),
+                )
+                .dataset_stack(0)
+                .dataset_label("Saved")
+                .dataset_border_width(1)
+                .dataset_border_color_str("green")
+                .dataset_background_color_str("green")
                 .build()
                 .unwrap(),
         )

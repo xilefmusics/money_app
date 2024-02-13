@@ -21,7 +21,13 @@ pub fn Contracts() -> Html {
     }
 
     let navigator = use_navigator().unwrap();
-    let contract_items = contracts
+    let mut contracts_sorted = (*contracts).clone();
+    contracts_sorted.sort_by(|a, b| {
+        a.payment
+            .date_of_next_payment()
+            .cmp(&b.payment.date_of_next_payment())
+    });
+    let contract_items = contracts_sorted
         .iter()
         .map(|contract| {
             let navigator = navigator.clone();

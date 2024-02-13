@@ -1,6 +1,6 @@
 use crate::tmp_fancy_yew::ListItem;
 use fancy_yew::components::{ChartJs, ConfigBuilder};
-use money_app_shared::history::AssociatedTypeValues;
+use money_app_shared::history::{AssociatedTypeValues, ValueDiff};
 
 use gloo::net::http::Request;
 use stylist::Style;
@@ -62,7 +62,7 @@ pub fn Pods() -> Html {
             .collect::<Vec<String>>();
         let mut config_builder = ConfigBuilder::line().labels(&labels);
 
-        let datasets = pod_history[0]
+        let datasets = pod_history[pod_history.len() - 1]
             .data
             .keys()
             .map(|pod| {
@@ -70,7 +70,9 @@ pub fn Pods() -> Html {
                     pod.to_string(),
                     pod_history
                         .iter()
-                        .map(|item| item.data.get(pod).unwrap().value as f64 / 100.)
+                        .map(|item| {
+                            item.data.get(pod).unwrap_or(&ValueDiff::default()).value as f64 / 100.
+                        })
                         .collect::<Vec<f64>>(),
                 )
             })

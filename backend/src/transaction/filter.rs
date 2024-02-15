@@ -69,7 +69,7 @@ impl<'a> Filter<'a> {
             conditions.push(format!("content.budgets[\"{}\"]", budget))
         }
         if let Some(inbudget) = self.inbudget {
-            conditions.push(format!("content.inbudget[\"{}\"]", inbudget))
+            conditions.push(format!("content.inbudgets[\"{}\"]", inbudget))
         }
         if let Some(ttype) = self.ttype {
             conditions.push(format!("content.type == \"{}\"", ttype))

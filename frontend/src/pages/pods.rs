@@ -1,10 +1,13 @@
 use crate::tmp_fancy_yew::ListItem;
+use crate::Route;
 use fancy_yew::components::{ChartJs, ConfigBuilder};
 use money_app_shared::history::{AssociatedTypeValues, ValueDiff};
 
 use gloo::net::http::Request;
+use std::collections::HashMap;
 use stylist::Style;
 use yew::prelude::*;
+use yew_router::prelude::*;
 
 #[function_component]
 pub fn Pods() -> Html {
@@ -36,6 +39,7 @@ pub fn Pods() -> Html {
         });
     }
 
+    let navigator = use_navigator().unwrap();
     let list_items = if pod_history.len() > 0 {
         Some(
             pod_history[pod_history.len() - 1]
@@ -44,9 +48,22 @@ pub fn Pods() -> Html {
                 .map(|(key, value)| (key, value.value))
                 .filter(|(_, value)| *value != 0)
                 .map(|(key, value)| {
+                    let onfilter = {
+                        let name = key.clone();
+                        let navigator = navigator.clone();
+                        Callback::from(move |_: MouseEvent| {
+                            navigator
+                                .push_with_query(
+                                    &Route::Transactions,
+                                    &([("pod", &name)].iter().cloned().collect::<HashMap<_, _>>()),
+                                )
+                                .unwrap()
+                        })
+                    };
                     html! {<ListItem
                         title={key.clone()}
                         amount={value}
+                        onfilter={onfilter}
                     />}
                 })
                 .collect::<Vec<Html>>(),

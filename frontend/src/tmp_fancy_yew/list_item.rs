@@ -13,6 +13,8 @@ pub struct Props {
     pub onedit: Option<Callback<MouseEvent>>,
     #[prop_or_default]
     pub ondelete: Option<Callback<MouseEvent>>,
+    #[prop_or_default]
+    pub onfilter: Option<Callback<MouseEvent>>,
 }
 
 #[function_component]
@@ -41,6 +43,18 @@ pub fn ListItem(props: &Props) -> Html {
                 </span>
             </div>
             <div class="middle-right">
+            {
+                if let Some(onfilter) = props.onfilter.clone() {
+                    html!{
+                        <button
+                            class="material-symbols-outlined icon"
+                            onclick={onfilter}
+                        >{"list_alt"}</button>
+                    }
+                } else {
+                    html! {}
+                }
+            }
             {
                 if let Some(onedit) = props.onedit.clone() {
                     html!{

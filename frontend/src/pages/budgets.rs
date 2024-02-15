@@ -1,10 +1,13 @@
 use crate::tmp_fancy_yew::ListItem;
+use crate::Route;
 use fancy_yew::components::{ChartJs, ConfigBuilder};
 use money_app_shared::history::AssociatedTypeValues;
 
 use gloo::net::http::Request;
+use std::collections::HashMap;
 use stylist::Style;
 use yew::prelude::*;
+use yew_router::prelude::*;
 
 #[function_component]
 pub fn Budgets() -> Html {
@@ -59,6 +62,7 @@ pub fn Budgets() -> Html {
         });
     }
 
+    let navigator = use_navigator().unwrap();
     let list_items = if budget_history.len() > 0 {
         Some(
             budget_history[budget_history.len() - 1]
@@ -67,10 +71,26 @@ pub fn Budgets() -> Html {
                 .map(|(key, value)| (key, value.value))
                 .filter(|(_, value)| *value != 0)
                 .map(|(key, value)| {
+                    let onfilter = {
+                        let name = key.clone();
+                        let navigator = navigator.clone();
+                        Callback::from(move |_: MouseEvent| {
+                            navigator
+                                .push_with_query(
+                                    &Route::Transactions,
+                                    &([("budget", &name)]
+                                        .iter()
+                                        .cloned()
+                                        .collect::<HashMap<_, _>>()),
+                                )
+                                .unwrap()
+                        })
+                    };
                     html! {<ListItem
                         title={key.clone()}
                         amount={value}
                         color_amount={-value}
+                        onfilter={onfilter}
                     />}
                 })
                 .collect::<Vec<Html>>(),
@@ -87,9 +107,25 @@ pub fn Budgets() -> Html {
                 .map(|(key, value)| (key, value.value))
                 .filter(|(_, value)| *value != 0)
                 .map(|(key, value)| {
+                    let onfilter = {
+                        let name = key.clone();
+                        let navigator = navigator.clone();
+                        Callback::from(move |_: MouseEvent| {
+                            navigator
+                                .push_with_query(
+                                    &Route::Transactions,
+                                    &([("inbudget", &name)]
+                                        .iter()
+                                        .cloned()
+                                        .collect::<HashMap<_, _>>()),
+                                )
+                                .unwrap()
+                        })
+                    };
                     html! {<ListItem
                         title={key.clone()}
                         amount={value}
+                        onfilter={onfilter}
                     />}
                 })
                 .collect::<Vec<Html>>(),

@@ -21,7 +21,7 @@ pub enum Type {
 
 #[derive(Deserialize, Debug)]
 pub struct N26 {
-    #[serde(rename = "Datum", with = "super::serde_custom::yyyy_mm_dd")]
+    #[serde(rename = "Datum", with = "crate::serde_custom::yyyy_mm_dd")]
     date: DateTime<Local>,
     #[serde(rename = "Empfänger")]
     receiver: String,
@@ -31,7 +31,7 @@ pub struct N26 {
     ttype: Type,
     #[serde(rename = "Verwendungszweck")]
     purpose: String,
-    #[serde(rename = "Betrag (EUR)", with = "super::serde_custom::amount")]
+    #[serde(rename = "Betrag (EUR)", with = "crate::serde_custom::amount")]
     amount: usize,
     #[serde(rename = "Betrag (Fremdwährung)")]
     foreign_amount: Option<f64>,

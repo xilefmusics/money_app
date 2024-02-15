@@ -8,6 +8,7 @@ mod import;
 mod rest;
 mod settings;
 mod transaction;
+mod serde_custom;
 
 use actix_files::Files;
 use error::AppError;

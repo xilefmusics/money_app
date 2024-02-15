@@ -1,11 +1,14 @@
 use super::Filter;
 
-use serde::{Deserialize, Serialize};
+use chrono::{DateTime, Local};
+use serde::Deserialize;
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct QueryParams {
-    pub year: Option<i32>,
-    pub month: Option<u32>,
+    #[serde(default, with = "crate::serde_custom::yyyy_mm_dd_option")]
+    pub start: Option<DateTime<Local>>,
+    #[serde(default, with = "crate::serde_custom::yyyy_mm_dd_option")]
+    pub end: Option<DateTime<Local>>,
     pub pod: Option<String>,
     pub debt: Option<String>,
     pub budget: Option<String>,
@@ -17,8 +20,8 @@ pub struct QueryParams {
 impl QueryParams {
     pub fn to_filter<'a>(&'a self) -> Filter<'a> {
         Filter::new(
-            self.year,
-            self.month,
+            self.start,
+            self.end,
             self.pod.as_deref(),
             self.debt.as_deref(),
             self.budget.as_deref(),

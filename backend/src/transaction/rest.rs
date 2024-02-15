@@ -1,4 +1,4 @@
-use super::{Filter, QueryParams, Transaction, TransactionModel};
+use super::{QueryParams, Transaction, TransactionModel};
 
 use crate::error::AppError;
 use crate::rest::parse_user_header;
@@ -19,15 +19,7 @@ pub async fn get(
         TransactionModel::get(
             db.into_inner(),
             &parse_user_header(&req)?,
-            &Filter::new(
-                q.year,
-                q.month,
-                q.pod.as_deref(),
-                q.debt.as_deref(),
-                q.budget.as_deref(),
-                q.inbudget.as_deref(),
-                q.ttype.as_deref(),
-            ),
+            &q.to_filter(),
         )
         .await?,
     ))

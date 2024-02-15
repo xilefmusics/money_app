@@ -3,40 +3,62 @@ use crate::Route;
 use fancy_yew::components::{ChartJs, ConfigBuilder};
 use money_app_shared::history::AssociatedTypeValues;
 
+use chrono::{Datelike, Local};
 use gloo::net::http::Request;
+use serde::Deserialize;
 use std::collections::HashMap;
 use stylist::Style;
+use url::Url;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
+#[derive(Deserialize, Debug, Clone, Default)]
+pub struct Query {
+    pub start: Option<String>,
+    pub end: Option<String>,
+}
+impl Query {
+    pub fn api_url(&self, t: &str) -> String {
+        let base = Url::parse("https://example.net").unwrap();
+        let mut url = Url::parse(&format!("https://example.net/api/history/{}", t)).unwrap();
+        {
+            let mut query_pairs = url.query_pairs_mut();
+            query_pairs.append_pair(
+                "start",
+                &self
+                    .start
+                    .clone()
+                    .unwrap_or(Local::now().year().to_string()),
+            );
+            if let Some(end) = &self.end {
+                query_pairs.append_pair("end", end);
+            }
+        }
+        base.make_relative(&url).unwrap().to_string()
+    }
+}
 #[function_component]
 pub fn Budgets() -> Html {
-    let year = 0;
-    let month = 3;
-    let day = 0;
-    let len = 1;
-    let query = format!(
-        "/api/history/budgets?year={}&month={}&day={}&len={}",
-        year, month, day, len
-    );
-    let query_in = format!(
-        "/api/history/inbudgets?year={}&month={}&day={}&len={}",
-        year, month, day, len
-    );
+    let query = use_location()
+        .unwrap()
+        .query::<Query>()
+        .unwrap_or(Query::default());
 
     let budget_history = use_state(|| vec![]);
     {
         let budget_history = budget_history.clone();
+        let query = query.clone();
         use_effect_with((), move |_| {
             let budget_history = budget_history.clone();
             wasm_bindgen_futures::spawn_local(async move {
-                let fetched_budget_history: Vec<AssociatedTypeValues> = Request::get(&query)
-                    .send()
-                    .await
-                    .unwrap()
-                    .json()
-                    .await
-                    .unwrap();
+                let fetched_budget_history: Vec<AssociatedTypeValues> =
+                    Request::get(&query.api_url("budgets"))
+                        .send()
+                        .await
+                        .unwrap()
+                        .json()
+                        .await
+                        .unwrap();
                 budget_history.set(fetched_budget_history);
             });
             || ()
@@ -49,13 +71,14 @@ pub fn Budgets() -> Html {
         use_effect_with((), move |_| {
             let inbudget_history = inbudget_history.clone();
             wasm_bindgen_futures::spawn_local(async move {
-                let fetched_inbudget_history: Vec<AssociatedTypeValues> = Request::get(&query_in)
-                    .send()
-                    .await
-                    .unwrap()
-                    .json()
-                    .await
-                    .unwrap();
+                let fetched_inbudget_history: Vec<AssociatedTypeValues> =
+                    Request::get(&query.api_url("inbudgets"))
+                        .send()
+                        .await
+                        .unwrap()
+                        .json()
+                        .await
+                        .unwrap();
                 inbudget_history.set(fetched_inbudget_history);
             });
             || ()

@@ -91,6 +91,8 @@ pub async fn create_extrapolation(
             month: Some(1),
             day: None,
             len: Some(month + 1),
+            start: None,
+            end: None,
         },
     )
     .await?;

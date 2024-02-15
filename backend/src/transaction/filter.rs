@@ -1,9 +1,9 @@
-use chrono::{Local, TimeZone};
+use chrono::{Local, DateTime};
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct Filter<'a> {
-    year: Option<i32>,
-    month: Option<u32>,
+    start: Option<DateTime<Local>>,
+    end: Option<DateTime<Local>>,
     pod: Option<&'a str>,
     debt: Option<&'a str>,
     budget: Option<&'a str>,
@@ -13,8 +13,8 @@ pub struct Filter<'a> {
 
 impl<'a> Filter<'a> {
     pub fn new(
-        year: Option<i32>,
-        month: Option<u32>,
+        start: Option<DateTime<Local>>,
+        end: Option<DateTime<Local>>,
         pod: Option<&'a str>,
         debt: Option<&'a str>,
         budget: Option<&'a str>,
@@ -22,8 +22,8 @@ impl<'a> Filter<'a> {
         ttype: Option<&'a str>,
     ) -> Self {
         Self {
-            year,
-            month,
+            start,
+            end,
             pod,
             debt,
             budget,
@@ -32,27 +32,26 @@ impl<'a> Filter<'a> {
         }
     }
 
+    pub fn start_option(self, start: Option<DateTime<Local>>) -> Self {
+        let mut result = self.clone();
+        result.start = start;
+        result
+    }
+
     pub fn conditions(&self) -> Vec<String> {
         let mut conditions = Vec::new();
 
-        if let Some(year) = self.year {
-            let from = if let Some(month) = self.month {
-                Local.with_ymd_and_hms(year, month, 1, 0, 0, 0).unwrap()
-            } else {
-                Local.with_ymd_and_hms(year, 1, 1, 0, 0, 0).unwrap()
-            };
-            let to = if let Some(month) = self.month {
-                if month == 12 {
-                    Local.with_ymd_and_hms(year + 1, 1, 1, 0, 0, 0).unwrap()
-                } else {
-                    Local.with_ymd_and_hms(year, month + 1, 1, 0, 0, 0).unwrap()
-                }
-            } else {
-                Local.with_ymd_and_hms(year + 1, 1, 1, 0, 0, 0).unwrap()
-            };
+        if let Some(start) = self.start {
             conditions.push(format!(
-                "content.date > \"{}\" AND content.date < \"{}\"",
-                from, to
+                "content.date >= \"{}\"",
+                start
+            ))
+        }
+
+        if let Some(end) = self.end {
+            conditions.push(format!(
+                "content.date < \"{}\"",
+                end
             ))
         }
 

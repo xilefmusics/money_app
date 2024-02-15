@@ -13,15 +13,15 @@ pub struct Barclays {
     reference_number: String,
     #[serde(
         rename = "Buchungsdatum",
-        with = "super::serde_custom::dd_mm_yyyy_option"
+        with = "crate::serde_custom::dd_mm_yyyy_option"
     )]
     date: Option<DateTime<Local>>,
     #[serde(
         rename = "Buchungsdatum2",
-        with = "super::serde_custom::dd_mm_yyyy_option"
+        with = "crate::serde_custom::dd_mm_yyyy_option"
     )]
     date2: Option<DateTime<Local>>,
-    #[serde(rename = "Betrag", with = "super::serde_custom::amount")]
+    #[serde(rename = "Betrag", with = "crate::serde_custom::amount")]
     amount: usize,
     #[serde(rename = "Beschreibung")]
     description: String,
@@ -31,7 +31,7 @@ pub struct Barclays {
     _state: String,
     #[serde(rename = "Kartennummer")]
     card_number: String,
-    #[serde(rename = "Originalbetrag", with = "super::serde_custom::amount")]
+    #[serde(rename = "Originalbetrag", with = "crate::serde_custom::amount")]
     original_amount: usize,
     #[serde(rename = "Mögliche Zahlpläne")]
     possible_payments: String,

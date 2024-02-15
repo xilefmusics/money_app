@@ -1,9 +1,9 @@
 mod barclays;
-mod n26;
-mod serde_custom;
 mod import;
+mod n26;
 pub mod rest;
 
-use n26::N26;
 use barclays::Barclays;
 pub use import::import;
+use n26::N26;
+

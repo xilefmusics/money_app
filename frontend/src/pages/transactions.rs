@@ -13,8 +13,8 @@ use yew_router::prelude::*;
 
 #[derive(Deserialize, Debug, Clone, Default)]
 pub struct Query {
-    pub year: Option<String>,
-    pub month: Option<String>,
+    pub start: Option<String>,
+    pub end: Option<String>,
     pub pod: Option<String>,
     pub debt: Option<String>,
     pub budget: Option<String>,
@@ -26,21 +26,17 @@ impl Query {
     pub fn api_url(&self) -> String {
         let base = Url::parse("https://example.net").unwrap();
         let mut url = Url::parse("https://example.net/api/transactions").unwrap();
-        let current = Local::now();
         {
             let mut query_pairs = url.query_pairs_mut();
-            if let Some(year) = self
-                .year
-                .clone()
-                .unwrap_or(current.year().to_string())
-                .parse::<i64>()
-                .ok()
-                .map(|year| year.to_string())
-            {
-                query_pairs.append_pair("year", &year);
-            }
-            if let Some(month) = &self.month {
-                query_pairs.append_pair("month", month);
+            query_pairs.append_pair(
+                "start",
+                &self
+                    .start
+                    .clone()
+                    .unwrap_or(Local::now().year().to_string()),
+            );
+            if let Some(end) = &self.end {
+                query_pairs.append_pair("end", end);
             }
             if let Some(pod) = &self.pod {
                 query_pairs.append_pair("pod", pod);

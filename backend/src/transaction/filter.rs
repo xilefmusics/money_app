@@ -58,7 +58,7 @@ impl<'a> Filter<'a> {
 
         if let Some(pod) = self.pod {
             conditions.push(format!(
-                "content.sender == \"{}\" OR content.receiver == \"{}\"",
+                "(content.sender == \"{}\" OR content.receiver == \"{}\")",
                 pod, pod
             ))
         }

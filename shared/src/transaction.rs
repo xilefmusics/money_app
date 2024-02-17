@@ -11,7 +11,7 @@ pub enum Type {
     Move,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Transaction {
     pub id: Option<String>,
     #[serde(rename = "type")]
@@ -25,6 +25,24 @@ pub struct Transaction {
     pub debts: HashMap<String, usize>,
     pub tags: HashMap<String, String>,
     pub attachments: Vec<String>,
+}
+
+impl Default for Transaction {
+    fn default() -> Self {
+        Self {
+            id: Option::default(),
+            ttype: Type::default(),
+            date: Local::now(),
+            amount: usize::default(),
+            sender: Option::default(),
+            receiver: Option::default(),
+            budgets: HashMap::default(),
+            inbudgets: HashMap::default(),
+            debts: HashMap::default(),
+            tags: HashMap::default(),
+            attachments: Vec::default(),
+        }
+    }
 }
 
 impl Transaction {

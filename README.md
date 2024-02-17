@@ -30,7 +30,27 @@ You will then be redirected to the login page and can log in again.
 
 ### Development
 
-TODO
+As a development setup, the frontend and the backend must be started separately to ensure an auto rebuild for both components.
+Proxauth can now be configured to forward frontend requests to the frontend and backend requests to the backend.
+An example configuration for this can be found in [proxauth-config.yaml](https://github.com/xilefmusics/money-app/blob/main/proxauth-config.yaml).
+
+Surrealdb (1.0.0) and proxauth (0.1.0) must be installed as dependencies.
+In addition, the two crates [fancy-yew](https://github.com/xilefmusics/fancy_yew) and [fancy-surreal](https://github.com/xilefmusics/fancy_surreal) are required, which unfortunately are not yet on [crates.io](https://crates.io/) and are therefore needed in parallel to the money-app repository.
+More detailed information can be found in the [Dockerfile](https://github.com/xilefmusics/money-app/blob/main/Dockerfile).
+
+Once all dependencies have been installed, the four components can be started using the following four commands:
+
+``` bash
+surreal start --log debug --user root --pass root memory --allow-scripting
+cd backend && cargo watch -cqx run
+cd frontend && trunk serve
+CONFIG_FILE="./proxauth-config.yaml" proxauth
+```
+
+Now you can login at `localhost:8081` using the user `test` and the password `test`.
+This login is valid for 24h.
+If you see an error message after this time, you have not been logged out automatically and can log out via `localhost:8080/logout`. 
+You will then be redirected to the login page and can log in again.
 
 ## License
 

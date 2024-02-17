@@ -13,16 +13,21 @@ impl TransactionModel {
         db: Arc<Client>,
         user: &str,
         filter: &Filter<'a>,
+        reverse: bool,
     ) -> Result<Vec<Transaction>, AppError> {
         let mut select = db.table("transactions").owner(user).select()?;
         for condition in &filter.conditions() {
             select = select.condition(condition);
         }
 
-        Ok(select
+        let mut transactions = select
             .order_by("content.date")
             .query::<Transaction>()
-            .await?)
+            .await?;
+        if reverse {
+            transactions.reverse();
+        }
+        Ok(transactions)
     }
 
     pub async fn get_one(db: Arc<Client>, user: &str, id: &str) -> Result<Transaction, AppError> {
@@ -124,13 +129,13 @@ impl TransactionModel {
         }
 
         Ok(if associated_type == "pods" {
-            TransactionModel::get(db, user, filter)
+            TransactionModel::get(db, user, filter, false)
                 .await?
                 .into_iter()
                 .map(|t| AssociatedTypeValues::from_transaction_pod(t))
                 .collect()
         } else if associated_type == "debts" {
-            TransactionModel::get(db, user, filter)
+            TransactionModel::get(db, user, filter, false)
                 .await?
                 .into_iter()
                 .map(|t| AssociatedTypeValues::from_transaction_debt(t))

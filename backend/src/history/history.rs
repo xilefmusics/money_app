@@ -16,7 +16,7 @@ impl History {
         query_params: QueryParams,
     ) -> Result<Vec<Wealth>, AppError> {
         Ok(Wealth::history(
-            TransactionModel::get(db, user, &Filter::default().start_option(query_params.start)).await?,
+            TransactionModel::get(db, user, &Filter::default().start_option(query_params.start), false).await?,
             query_params.end.unwrap_or(Local::now()),
             query_params.year.unwrap_or(0),
             query_params.month.unwrap_or(0),

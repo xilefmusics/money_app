@@ -20,6 +20,7 @@ pub async fn get(
             db.into_inner(),
             &parse_user_header(&req)?,
             &q.to_filter(),
+            true,
         )
         .await?,
     ))

@@ -91,6 +91,7 @@ pub fn Transactions() -> Html {
                 title={transaction.title()}
                 subtitle={transaction.date.format("%d %b %Y").to_string()}
                 amount={transaction.amount as i64}
+                highlight={!transaction.validate()}
                 color_amount={transaction.signed_amount()}
                 onedit={onedit}
                 ondelete={Resource::delete_callback(transaction.clone(),transactions.clone())}

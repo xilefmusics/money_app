@@ -46,6 +46,16 @@ impl Default for Transaction {
 }
 
 impl Transaction {
+    pub fn validate(&self) -> bool {
+        match self.ttype {
+            Type::In => self.amount as i64 == (self.debt_sum() + self.inbudget_sum()),
+            Type::Out => self.amount as i64 == (self.debt_sum() + self.budget_sum()),
+            Type::Move => {
+                self.debt_sum() == 0 && self.budget_sum() == 0 && self.inbudget_sum() == 0
+            }
+        }
+    }
+
     pub fn income(&self) -> i64 {
         match self.ttype {
             Type::In => self.amount as i64,
@@ -68,6 +78,14 @@ impl Transaction {
             Type::Out => -(self.amount as i64),
             Type::Move => 0,
         }
+    }
+
+    pub fn budget_sum(&self) -> i64 {
+        self.budgets.values().sum::<usize>() as i64
+    }
+
+    pub fn inbudget_sum(&self) -> i64 {
+        self.inbudgets.values().sum::<usize>() as i64
     }
 
     pub fn debt_sum(&self) -> i64 {

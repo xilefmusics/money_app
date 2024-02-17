@@ -1,9 +1,16 @@
 :root {
+}
+
+.container {
   display: flex;
 	padding: 1em;
 	margin: 0.75em;
 	background-color: var(--bg2);
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
+}
+
+.highlight {
+	background-color: rgba(255, 255, 255, 0.2);
 }
 
 .left {
@@ -48,7 +55,7 @@
 }
 
 button {
-  background-color: var(--bg2);
+  background-color: rgba(0,0,0,0);
 }
 
 button:hover {

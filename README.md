@@ -8,16 +8,25 @@ In short, the aim of this app is to get control and an overview of your finances
 
 ## Usage
 
-The app consists of a backend ([`actix-web`](https://actix.rs/)) and a frontend ([`yew`](https://yew.rs/)), which are both built together in a Docker image.
-The backend communicates with a [`SurrealDB`](https://surrealdb.com/) database.
+The app consists of a backend ([actix-web](https://actix.rs/)) and a frontend ([yew](https://yew.rs/)), which are both built together in a Docker image.
+The backend communicates with a [SurrealDB](https://surrealdb.com/) database.
 The app is designed for multi-tenant operation, but does not take care of authentication itself. 
-Instead, it relies on an authentication proxy such as [`Proxauth`](https://github.com/xilefmusics/proxauth), which sets the `X-Remote-User` header.
+Instead, it relies on an authentication proxy such as [Proxauth](https://github.com/xilefmusics/proxauth), which sets the `X-Remote-User` header.
 
 ### Production
 
-For productive operation, it is recommended to use the Docker Image, which is already built on [`DockerHub`](https://hub.docker.com/repository/docker/xilefmusics/money-app) for the respective releases.
-In addition, the [`SurrealDB`](https://hub.docker.com/r/surrealdb/surrealdb) and [`Proxauth`](https://hub.docker.com/r/xilefmusics/proxauth) image can be used to create a fully functional overall system.
-An example configuration can be seen in [docker-compose.yaml](https://github.com/xilefmusics/money-app/blob/main/docker-compose.yaml) and started via `docker compose up`.
+For productive operation, it is recommended to use the Docker Image, which is already built on [DockerHub](https://hub.docker.com/repository/docker/xilefmusics/money-app) for the respective releases.
+In addition, the [SurrealDB](https://hub.docker.com/r/surrealdb/surrealdb) and [Proxauth](https://hub.docker.com/r/xilefmusics/proxauth) image can be used to create a fully functional overall system.
+An example configuration can be seen in [docker-compose.yaml](https://github.com/xilefmusics/money-app/blob/main/docker-compose.yaml) and started via:
+
+```bash
+docker compose up
+```
+
+Now you can login at `localhost:8080` using the user `test` and the password `test`.
+This login is valid for 24h.
+If you see an error message after this time, you have not been logged out automatically and can log out via `localhost:8080/logout`. 
+You will then be redirected to the login page and can log in again.
 
 ### Development
 

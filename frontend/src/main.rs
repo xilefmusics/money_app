@@ -1,6 +1,6 @@
 mod charts;
+mod components;
 mod pages;
-mod tmp_fancy_yew;
 
 use pages::{
     Budgets, Contract, Contracts, Dashboard, Debts, Goal, Goals, Pods, Transaction, Transactions,

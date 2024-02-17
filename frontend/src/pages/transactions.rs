@@ -1,4 +1,4 @@
-use crate::tmp_fancy_yew::ListItem;
+use crate::components::ListItem;
 use crate::Route;
 use fancy_yew::components::ResourceHeader;
 use fancy_yew::rest::Resource;

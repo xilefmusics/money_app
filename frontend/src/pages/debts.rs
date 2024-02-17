@@ -41,12 +41,17 @@ pub fn Debts() -> Html {
 
     let navigator = use_navigator().unwrap();
     let list_items = if debt_history.len() > 0 {
+        let mut tupels = debt_history[debt_history.len() - 1]
+            .data
+            .clone()
+            .into_iter()
+            .map(|(key, value)| (key, value.value))
+            .filter(|(_, value)| *value != 0)
+            .collect::<Vec<(String, i64)>>();
+        tupels.sort_by(|a, b| a.0.cmp(&b.0));
         Some(
-            debt_history[debt_history.len() - 1]
-                .data
+            tupels
                 .iter()
-                .map(|(key, value)| (key, value.value))
-                .filter(|(_, value)| *value != 0)
                 .map(|(key, value)| {
                     let onfilter = {
                         let name = key.clone();

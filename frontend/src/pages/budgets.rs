@@ -87,12 +87,17 @@ pub fn Budgets() -> Html {
 
     let navigator = use_navigator().unwrap();
     let list_items = if budget_history.len() > 0 {
+        let mut tupels = budget_history[budget_history.len() - 1]
+            .data
+            .clone()
+            .into_iter()
+            .map(|(key, value)| (key, value.value))
+            .filter(|(_, value)| *value != 0)
+            .collect::<Vec<(String, i64)>>();
+        tupels.sort_by(|a, b| a.0.cmp(&b.0));
         Some(
-            budget_history[budget_history.len() - 1]
-                .data
+            tupels
                 .iter()
-                .map(|(key, value)| (key, value.value))
-                .filter(|(_, value)| *value != 0)
                 .map(|(key, value)| {
                     let onfilter = {
                         let name = key.clone();
@@ -123,12 +128,17 @@ pub fn Budgets() -> Html {
     };
 
     let list_items_in = if inbudget_history.len() > 0 {
+        let mut tupels = inbudget_history[inbudget_history.len() - 1]
+            .data
+            .clone()
+            .into_iter()
+            .map(|(key, value)| (key, value.value))
+            .filter(|(_, value)| *value != 0)
+            .collect::<Vec<(String, i64)>>();
+        tupels.sort_by(|a, b| a.0.cmp(&b.0));
         Some(
-            inbudget_history[inbudget_history.len() - 1]
-                .data
+            tupels
                 .iter()
-                .map(|(key, value)| (key, value.value))
-                .filter(|(_, value)| *value != 0)
                 .map(|(key, value)| {
                     let onfilter = {
                         let name = key.clone();

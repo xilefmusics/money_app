@@ -1,10 +1,10 @@
 # Money App
 
-Die Money App ist eine app zum analysieren, visualisieren und vorhersagen von Vermögen, Ausgaben und einnahmen.
+The Money App is an app for analyzing, visualizing and predicting assets, expenses and income.
 Transactions from different banks can be imported and also created manually. 
 These transactions can then be visualized and evaluated in dashboards. 
 In addition, a potential forecast can be made by creating contracts and financial targets.
-In short, the aim of this app is to get control and an overview of your finances and to have all the important information about them in one place
+In short, the aim of this app is to get control and an overview of your finances and to have all the important information about them in one place.
 
 ## Usage
 

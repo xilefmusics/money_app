@@ -14,6 +14,7 @@ rules:
   title: "Money-App"
 - toPort: 8080
   allowedUsers: [test]
+  redirectToLogin: true
   backgroundColor: "#1e1e1e"
   textColor: "#BCBCBC"
   primaryColor: "#bb0000"

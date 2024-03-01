@@ -17,6 +17,7 @@ services:
         - toHost: backend
           toPort: 8000
           allowedUsers: [test]
+          redirectToLogin: true
           backgroundColor: "#1e1e1e"
           textColor: "#BCBCBC"
           primaryColor: "#bb0000"

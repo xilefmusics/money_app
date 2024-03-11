@@ -58,7 +58,7 @@ impl Transaction {
 
     pub fn income(&self) -> i64 {
         match self.ttype {
-            Type::In => self.amount as i64,
+            Type::In => (self.amount as i64) - self.debt_sum(),
             Type::Out => 0,
             Type::Move => 0,
         }
@@ -67,7 +67,7 @@ impl Transaction {
     pub fn out(&self) -> i64 {
         match self.ttype {
             Type::In => 0,
-            Type::Out => self.amount as i64,
+            Type::Out => (self.amount as i64) - self.debt_sum(),
             Type::Move => 0,
         }
     }

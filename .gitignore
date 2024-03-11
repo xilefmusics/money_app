@@ -20,3 +20,5 @@ frontend/target
 shared/target
 goals.json
 backend/attachments
+frontend/Cargo.lock
+shared/Cargo.lock

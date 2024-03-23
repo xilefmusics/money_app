@@ -104,7 +104,9 @@ pub mod amount {
 
         let mut iter = s.split(".");
         let before = iter.next().unwrap().parse::<i64>().unwrap();
-        let after = iter.next().unwrap().parse::<i64>().unwrap();
+        let after_str = iter.next().unwrap();
+        let after_mul = if after_str.starts_with('0') { 1 } else { 10 };
+        let after = after_str.parse::<i64>().unwrap() * after_mul;
         Ok((before.abs() * 100 + after) as usize)
     }
 }

@@ -1,7 +1,10 @@
 use crate::components::ListItem;
 use crate::Route;
+use fancy_yew::components::input::FileInput;
 use fancy_yew::components::ResourceHeader;
+use fancy_yew::rest::FileUploader;
 use fancy_yew::rest::Resource;
+use gloo::file::File;
 use money_app_shared::transaction::Transaction;
 
 use chrono::{Datelike, Local};
@@ -60,6 +63,8 @@ impl Query {
 
 #[function_component]
 pub fn Transactions() -> Html {
+    let files_handle = use_state(|| Vec::new());
+    let files_handle_visible = use_state(|| false);
     let query = use_location()
         .unwrap()
         .query::<Query>()
@@ -99,9 +104,42 @@ pub fn Transactions() -> Html {
         })
         .collect::<Vec<Html>>();
 
+    let onimport_button = {
+        let files_handle_visible = files_handle_visible.clone();
+        move |_: MouseEvent| files_handle_visible.set(!*files_handle_visible)
+    };
+
+    let onimport = {
+        let files_handle_visible = files_handle_visible.clone();
+        move |files: Vec<File>| {
+            files_handle_visible.set(!*files_handle_visible);
+            wasm_bindgen_futures::spawn_local(
+                async move { FileUploader::upload("/api/import", &files[0]).await },
+            );
+        }
+    };
+
     html! {
         <div class={Style::new(include_str!("transactions.css")).expect("Unwrapping CSS should work!")}>
-            <ResourceHeader<Transaction> handle={transactions.clone()} />
+            <ResourceHeader<Transaction> handle={transactions.clone()}>
+                {
+                    if *files_handle_visible {
+                        html!{
+                            <FileInput
+                                bind_handle={files_handle}
+                                callback={onimport}
+                            />
+                        }
+                    } else {
+                        html!()
+                    }
+                }
+
+                <button
+                    class="material-symbols-outlined icon"
+                    onclick={onimport_button}
+                >{"upload_2"}</button>
+            </ResourceHeader<Transaction>>
             <ul>
                 {transaction_items}
             </ul>

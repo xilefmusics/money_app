@@ -76,16 +76,24 @@ pub mod amount {
     use serde::{self, Deserialize, Deserializer};
 
     fn trim(s: &str) -> &str {
-        let remove_first = s.starts_with("+");
-        let remove_last = s.ends_with("€");
-        let mut chars = s.chars();
-        if remove_first {
-            chars.next();
+        let mut start = 0;
+        let mut end = s.len();
+
+        for (i, c) in s.char_indices().rev() {
+            if c.is_digit(10) {
+                end = i + c.len_utf8();
+                break;
+            }
         }
-        if remove_last {
-            chars.next_back();
+
+        for (i, c) in s.char_indices() {
+            if c.is_digit(10) {
+                start = i;
+                break;
+            }
         }
-        chars.as_str().trim()
+
+        &s[start..end]
     }
 
     fn handle_comma_dot(s: &str) -> String {
@@ -101,12 +109,15 @@ pub mod amount {
         D: Deserializer<'de>,
     {
         let s = handle_comma_dot(trim(&String::deserialize(deserializer)?));
-
         let mut iter = s.split(".");
         let before = iter.next().unwrap().parse::<i64>().unwrap();
         let after_str = iter.next().unwrap();
-        let after_mul = if after_str.starts_with('0') { 1 } else { 10 };
+        let after_mul = if !after_str.starts_with('0') && after_str.len() == 1 {
+            10
+        } else {
+            1
+        };
         let after = after_str.parse::<i64>().unwrap() * after_mul;
-        Ok((before.abs() * 100 + after) as usize)
+        Ok((before * 100 + after) as usize)
     }
 }

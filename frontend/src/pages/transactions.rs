@@ -111,10 +111,15 @@ pub fn Transactions() -> Html {
 
     let onimport = {
         let files_handle_visible = files_handle_visible.clone();
+        let transactions = transactions.clone();
         move |files: Vec<File>| {
             files_handle_visible.set(!*files_handle_visible);
+            let transactions = transactions.clone();
             wasm_bindgen_futures::spawn_local(
-                async move { FileUploader::upload("/api/import", &files[0]).await },
+                async move {
+                    FileUploader::upload::<Vec<Transaction>>("/api/import", &files[0]).await;
+                    Resource::reload(transactions);
+                },
             );
         }
     };

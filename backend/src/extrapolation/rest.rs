@@ -12,7 +12,7 @@ use actix_web::{get, web::Data, web::Query, HttpRequest, HttpResponse};
 #[get("/api/extrapolation")]
 pub async fn get(
     req: HttpRequest,
-    db: Data<Client>,
+    db: Data<Client<'_>>,
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(

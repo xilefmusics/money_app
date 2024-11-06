@@ -12,7 +12,7 @@ use actix_web::{
 #[get("/api/transactions")]
 pub async fn get(
     req: HttpRequest,
-    db: Data<Client>,
+    db: Data<Client<'_>>,
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
@@ -29,7 +29,7 @@ pub async fn get(
 #[get("/api/transactions/{id}")]
 pub async fn get_id(
     req: HttpRequest,
-    db: Data<Client>,
+    db: Data<Client<'_>>,
     id: Path<String>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
@@ -42,7 +42,7 @@ pub async fn get_id(
 pub async fn put(
     req: HttpRequest,
     transactions: Json<Vec<Transaction>>,
-    db: Data<Client>,
+    db: Data<Client<'_>>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Created().json(
         TransactionModel::put(
@@ -58,7 +58,7 @@ pub async fn put(
 pub async fn delete(
     req: HttpRequest,
     transactions: Json<Vec<Transaction>>,
-    db: Data<Client>,
+    db: Data<Client<'_>>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::NoContent().json(
         TransactionModel::delete(
@@ -74,7 +74,7 @@ pub async fn delete(
 pub async fn post(
     req: HttpRequest,
     transactions: Json<Vec<Transaction>>,
-    db: Data<Client>,
+    db: Data<Client<'_>>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Created().json(
         TransactionModel::create(
@@ -89,7 +89,7 @@ pub async fn post(
 #[get("/api/pods")]
 pub async fn get_pods(
     req: HttpRequest,
-    db: Data<Client>,
+    db: Data<Client<'_>>,
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
@@ -106,7 +106,7 @@ pub async fn get_pods(
 #[get("/api/budgets")]
 pub async fn get_budgets(
     req: HttpRequest,
-    db: Data<Client>,
+    db: Data<Client<'_>>,
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
@@ -123,7 +123,7 @@ pub async fn get_budgets(
 #[get("/api/inbudgets")]
 pub async fn get_inbudgets(
     req: HttpRequest,
-    db: Data<Client>,
+    db: Data<Client<'_>>,
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
@@ -140,7 +140,7 @@ pub async fn get_inbudgets(
 #[get("/api/debts")]
 pub async fn get_debts(
     req: HttpRequest,
-    db: Data<Client>,
+    db: Data<Client<'_>>,
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
@@ -157,7 +157,7 @@ pub async fn get_debts(
 #[get("/api/tags")]
 pub async fn get_tags(
     req: HttpRequest,
-    db: Data<Client>,
+    db: Data<Client<'_>>,
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(

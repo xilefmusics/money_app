@@ -1,6 +1,6 @@
 use crate::components::ListItem;
 use crate::Route;
-use fancy_yew::components::{ChartJs, ConfigBuilder};
+use fancy_yew::components::{Chart, ConfigBuilder};
 use money_app_shared::history::{AssociatedTypeValues, ValueDiff};
 
 use gloo::net::http::Request;
@@ -118,7 +118,7 @@ pub fn Debts() -> Html {
             {
                 if let Some(chart_config) = chart_config {
                     html! {
-                        <ChartJs config={chart_config}/>
+                        <Chart config={chart_config}/>
                     }
                 } else {
                     html! {}

@@ -8,7 +8,7 @@ use std::sync::Arc;
 pub struct GoalModel;
 
 impl GoalModel {
-    pub async fn get<'a>(db: Arc<Client>, user: &str) -> Result<Vec<Goal>, AppError> {
+    pub async fn get<'a>(db: Arc<Client<'_>>, user: &str) -> Result<Vec<Goal>, AppError> {
         Ok(db
             .table("goals")
             .owner(user)
@@ -17,7 +17,7 @@ impl GoalModel {
             .await?)
     }
 
-    pub async fn get_one(db: Arc<Client>, user: &str, id: &str) -> Result<Goal, AppError> {
+    pub async fn get_one(db: Arc<Client<'_>>, user: &str, id: &str) -> Result<Goal, AppError> {
         Ok(db
             .table("goals")
             .owner(user)
@@ -27,12 +27,16 @@ impl GoalModel {
             .await?)
     }
 
-    pub async fn put(db: Arc<Client>, user: &str, goals: Vec<Goal>) -> Result<Vec<Goal>, AppError> {
+    pub async fn put(
+        db: Arc<Client<'_>>,
+        user: &str,
+        goals: Vec<Goal>,
+    ) -> Result<Vec<Goal>, AppError> {
         Ok(db.table("goals").owner(user).update(goals).await?)
     }
 
     pub async fn delete(
-        db: Arc<Client>,
+        db: Arc<Client<'_>>,
         user: &str,
         goals: Vec<Goal>,
     ) -> Result<Vec<Goal>, AppError> {
@@ -40,7 +44,7 @@ impl GoalModel {
     }
 
     pub async fn create(
-        db: Arc<Client>,
+        db: Arc<Client<'_>>,
         user: &str,
         goals: Vec<Goal>,
     ) -> Result<Vec<Goal>, AppError> {

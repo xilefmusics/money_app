@@ -11,12 +11,18 @@ pub struct History;
 
 impl History {
     pub async fn wealth(
-        db: Arc<Client>,
+        db: Arc<Client<'_>>,
         user: &str,
         query_params: QueryParams,
     ) -> Result<Vec<Wealth>, AppError> {
         Ok(Wealth::history(
-            TransactionModel::get(db, user, &Filter::default().start_option(query_params.start), false).await?,
+            TransactionModel::get(
+                db,
+                user,
+                &Filter::default().start_option(query_params.start),
+                false,
+            )
+            .await?,
             query_params.end.unwrap_or(Local::now()),
             query_params.year.unwrap_or(0),
             query_params.month.unwrap_or(0),
@@ -26,14 +32,19 @@ impl History {
     }
 
     async fn associated_type_values(
-        db: Arc<Client>,
+        db: Arc<Client<'_>>,
         user: &str,
         query_params: QueryParams,
         t: &str,
     ) -> Result<Vec<AssociatedTypeValues>, AppError> {
         Ok(AssociatedTypeValues::history(
-            TransactionModel::get_associated_type_values(db.clone(), &user, &Filter::default().start_option(query_params.start), t)
-                .await?,
+            TransactionModel::get_associated_type_values(
+                db.clone(),
+                &user,
+                &Filter::default().start_option(query_params.start),
+                t,
+            )
+            .await?,
             query_params.end.unwrap_or(Local::now()),
             query_params.year.unwrap_or(0),
             query_params.month.unwrap_or(0),
@@ -43,7 +54,7 @@ impl History {
     }
 
     pub async fn pod(
-        db: Arc<Client>,
+        db: Arc<Client<'_>>,
         user: &str,
         query_params: QueryParams,
     ) -> Result<Vec<AssociatedTypeValues>, AppError> {
@@ -51,7 +62,7 @@ impl History {
     }
 
     pub async fn budget(
-        db: Arc<Client>,
+        db: Arc<Client<'_>>,
         user: &str,
         query_params: QueryParams,
     ) -> Result<Vec<AssociatedTypeValues>, AppError> {
@@ -59,7 +70,7 @@ impl History {
     }
 
     pub async fn inbudget(
-        db: Arc<Client>,
+        db: Arc<Client<'_>>,
         user: &str,
         query_params: QueryParams,
     ) -> Result<Vec<AssociatedTypeValues>, AppError> {
@@ -67,7 +78,7 @@ impl History {
     }
 
     pub async fn debt(
-        db: Arc<Client>,
+        db: Arc<Client<'_>>,
         user: &str,
         query_params: QueryParams,
     ) -> Result<Vec<AssociatedTypeValues>, AppError> {

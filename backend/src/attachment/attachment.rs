@@ -13,7 +13,7 @@ pub struct AttachmentModel {}
 
 impl AttachmentModel {
     pub async fn create_record(
-        db: Arc<Client>,
+        db: Arc<Client<'_>>,
         user: &str,
         attachment: Attachment,
     ) -> Result<Vec<Attachment>, AppError> {
@@ -24,7 +24,11 @@ impl AttachmentModel {
             .await?)
     }
 
-    pub async fn get_record(db: Arc<Client>, user: &str, id: &str) -> Result<Attachment, AppError> {
+    pub async fn get_record(
+        db: Arc<Client<'_>>,
+        user: &str,
+        id: &str,
+    ) -> Result<Attachment, AppError> {
         Ok(db
             .table("attachments")
             .owner(user)
@@ -59,7 +63,7 @@ impl AttachmentModel {
     }
 
     pub async fn get_path_db(
-        db: Arc<Client>,
+        db: Arc<Client<'_>>,
         user: &str,
         id_or_path: &str,
     ) -> Result<PathBuf, AppError> {

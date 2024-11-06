@@ -1,5 +1,6 @@
 :root {
 	margin: 0.75em;
+	list-style-type: none;
 }
 
 .container {
@@ -55,12 +56,13 @@
 }
 
 button {
-  background-color: rgba(0,0,0,0);
+  border: none;
+  background-color: inherit;
 }
 
 button:hover {
   background-color: var(--fg1);
-  color: var(--bg2);
+  color: var(--bg1);
 }
 
 .right {

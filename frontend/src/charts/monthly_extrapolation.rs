@@ -1,4 +1,4 @@
-use fancy_yew::components::{ChartJs, ConfigBuilder};
+use fancy_yew::components::{Chart, ConfigBuilder};
 use money_app_shared::extrapolation::Extrapolation;
 
 use gloo::net::http::Request;
@@ -104,7 +104,7 @@ pub fn MonthlyExtrapolation() -> Html {
 
     if let Some(chart_config) = chart_config {
         html! {
-            <ChartJs config={chart_config}/>
+            <Chart config={chart_config}/>
         }
     } else {
         html! {}

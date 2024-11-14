@@ -4,11 +4,33 @@
 }
 
 button {
+  border: none;
+  background-color: inherit;
   width: 100%;
+  padding: 0.4rem;
+  font-weight: bold;
 }
 
-input {
+button:hover {
+  background-color: var(--fg1);
+  color: var(--bg1);
+}
+
+button.update {
+  background-color: var(--primary);
+}
+
+button.update:hover {
+  filter: brightness(1.1);
+}
+
+input, select {
   width: 100%;
+	background-color: var(--fg1);
+	color: var(--bg2);
+  padding: 0.4rem;
+  border: none;
+  font-family: "Rubik", sans-serif;
 }
 
 table {

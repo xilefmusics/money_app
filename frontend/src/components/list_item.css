@@ -58,6 +58,7 @@
 button {
   border: none;
   background-color: inherit;
+  padding: 0.4rem;
 }
 
 button:hover {

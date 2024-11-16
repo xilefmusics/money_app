@@ -142,6 +142,6 @@ Referenznummer,Buchungsdatum,Buchungsdatum,Betrag,Beschreibung,Typ,Status,Karten
 123456,01.12.2023,,\"+1,23 €\",Transaction 1,Überweisung,vorgemerkt,9876,\"+1,23 €\",Nein,DE,Name,Visa,Ja
 123457,02.12.2023,03.12.2023,\"-1,23 €\",Transaction2,Belastung,noch nicht abgerechnet,5432,\"-1,23 €\",Nein,DE,Name,Visa,Nein
 ";
-        dbg!(Barclays::parse_transactions(input).unwrap());
+        println!("{:?}", Barclays::parse_transactions(input).unwrap());
     }
 }

@@ -135,6 +135,6 @@ mod tests {
 \"2023-12-01\",\"Receiver 1\",\"DE123...456\",\"Überweisung\",\"Transaction 1\",\"-123.4\",\"\",\"\",\"\"
 \"2023-12-02\",\"Receiver 2\",\"DE123...456\",\"Lastschrift\",\"Transaction 2\",\"-8.99\",\"\",\"\",\"\"
 ";
-        dbg!(N26::parse_transactions(input));
+        println!("{:?}", N26::parse_transactions(input).unwrap());
     }
 }

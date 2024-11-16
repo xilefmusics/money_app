@@ -3,6 +3,7 @@ use crate::history::Wealth;
 
 use chrono::{DateTime, Datelike, Local};
 use serde::{Deserialize, Serialize};
+use std::cmp::max;
 
 #[derive(Debug, Serialize, Deserialize, Clone, Default)]
 pub struct ExtrapolationItem {
@@ -14,6 +15,7 @@ pub struct ExtrapolationItem {
     pub actual_expenses: u32,
     pub actual_income: u32,
     pub actual_savings: u32,
+    pub actual_overspent: u32,
 }
 
 impl From<Wealth> for ExtrapolationItem {
@@ -26,7 +28,8 @@ impl From<Wealth> for ExtrapolationItem {
             freely_available: 0,
             actual_expenses: item.out.value as u32,
             actual_income: item.income.value as u32,
-            actual_savings: item.real.diff as u32,
+            actual_savings: max(item.real.diff, 0) as u32,
+            actual_overspent: max(item.real.diff * -1, 0) as u32,
         }
     }
 }
@@ -60,6 +63,7 @@ impl ExtrapolationItem {
             actual_expenses: 0,
             actual_income: 0,
             actual_savings: 0,
+            actual_overspent: 0,
         }
     }
 
@@ -74,6 +78,7 @@ impl ExtrapolationItem {
             actual_expenses: 0,
             actual_income: 0,
             actual_savings: 0,
+            actual_overspent: 0,
         }
     }
 

@@ -10,18 +10,20 @@ use actix_web::{
 };
 
 #[get("/api/contracts")]
-pub async fn get(req: HttpRequest, db: Data<Client>) -> Result<HttpResponse, AppError> {
-    Ok(HttpResponse::Ok().json(ContractModel::get(db.into_inner(), &parse_user_header(&req)?).await?))
+pub async fn get(req: HttpRequest, db: Data<Client<'_>>) -> Result<HttpResponse, AppError> {
+    Ok(HttpResponse::Ok()
+        .json(ContractModel::get(db.into_inner(), &parse_user_header(&req)?).await?))
 }
 
 #[get("/api/contracts/{id}")]
 pub async fn get_id(
     req: HttpRequest,
-    db: Data<Client>,
+    db: Data<Client<'_>>,
     id: Path<String>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
-        ContractModel::get_one(db.into_inner(), &parse_user_header(&req)?, &id.into_inner()).await?,
+        ContractModel::get_one(db.into_inner(), &parse_user_header(&req)?, &id.into_inner())
+            .await?,
     ))
 }
 
@@ -29,7 +31,7 @@ pub async fn get_id(
 pub async fn put(
     req: HttpRequest,
     contracts: Json<Vec<Contract>>,
-    db: Data<Client>,
+    db: Data<Client<'_>>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Created().json(
         ContractModel::put(
@@ -45,7 +47,7 @@ pub async fn put(
 pub async fn delete(
     req: HttpRequest,
     contracts: Json<Vec<Contract>>,
-    db: Data<Client>,
+    db: Data<Client<'_>>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::NoContent().json(
         ContractModel::delete(
@@ -61,7 +63,7 @@ pub async fn delete(
 pub async fn post(
     req: HttpRequest,
     contracts: Json<Vec<Contract>>,
-    db: Data<Client>,
+    db: Data<Client<'_>>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Created().json(
         ContractModel::create(

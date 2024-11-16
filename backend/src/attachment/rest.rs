@@ -11,7 +11,7 @@ use actix_web::{get, post, web::Bytes, web::Data, web::Path, HttpRequest, HttpRe
 #[get("/api/attachments/{id_or_path}")]
 pub async fn get_id(
     req: HttpRequest,
-    db: Data<Client>,
+    db: Data<Client<'_>>,
     id_or_path: Path<String>,
 ) -> Result<NamedFile, AppError> {
     Ok(NamedFile::open(
@@ -27,7 +27,7 @@ pub async fn get_id(
 #[post("/api/attachments")]
 pub async fn post(
     req: HttpRequest,
-    db: Data<Client>,
+    db: Data<Client<'_>>,
     payload: Bytes,
 ) -> Result<HttpResponse, AppError> {
     let user = parse_user_header(&req)?;

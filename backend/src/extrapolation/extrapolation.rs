@@ -76,7 +76,7 @@ pub fn create_extrapolation_pure(
 }
 
 pub async fn create_extrapolation(
-    db: Arc<Client>,
+    db: Arc<Client<'_>>,
     user: &str,
     year: i32,
     month: u32,

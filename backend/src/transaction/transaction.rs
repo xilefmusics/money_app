@@ -10,7 +10,7 @@ pub struct TransactionModel;
 
 impl TransactionModel {
     pub async fn get<'a>(
-        db: Arc<Client>,
+        db: Arc<Client<'_>>,
         user: &str,
         filter: &Filter<'a>,
         reverse: bool,
@@ -30,7 +30,11 @@ impl TransactionModel {
         Ok(transactions)
     }
 
-    pub async fn get_one(db: Arc<Client>, user: &str, id: &str) -> Result<Transaction, AppError> {
+    pub async fn get_one(
+        db: Arc<Client<'_>>,
+        user: &str,
+        id: &str,
+    ) -> Result<Transaction, AppError> {
         Ok(db
             .table("transactions")
             .owner(user)
@@ -41,7 +45,7 @@ impl TransactionModel {
     }
 
     pub async fn put(
-        db: Arc<Client>,
+        db: Arc<Client<'_>>,
         user: &str,
         transactions: Vec<Transaction>,
     ) -> Result<Vec<Transaction>, AppError> {
@@ -53,7 +57,7 @@ impl TransactionModel {
     }
 
     pub async fn delete(
-        db: Arc<Client>,
+        db: Arc<Client<'_>>,
         user: &str,
         transactions: Vec<Transaction>,
     ) -> Result<Vec<Transaction>, AppError> {
@@ -65,7 +69,7 @@ impl TransactionModel {
     }
 
     pub async fn create(
-        db: Arc<Client>,
+        db: Arc<Client<'_>>,
         user: &str,
         transactions: Vec<Transaction>,
     ) -> Result<Vec<Transaction>, AppError> {
@@ -77,7 +81,7 @@ impl TransactionModel {
     }
 
     pub async fn get_associated_type<'a>(
-        db: Arc<Client>,
+        db: Arc<Client<'_>>,
         user: &str,
         filter: &Filter<'a>,
         associated_type: &str,
@@ -114,7 +118,7 @@ impl TransactionModel {
     }
 
     pub async fn get_associated_type_values<'a>(
-        db: Arc<Client>,
+        db: Arc<Client<'_>>,
         user: &str,
         filter: &Filter<'a>,
         associated_type: &str,

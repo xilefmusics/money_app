@@ -10,7 +10,7 @@ use actix_web::{get, web::Data, web::Query, HttpRequest, HttpResponse};
 #[get("/api/history/wealth")]
 pub async fn get_wealth(
     req: HttpRequest,
-    db: Data<Client>,
+    db: Data<Client<'_>>,
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok()
@@ -20,7 +20,7 @@ pub async fn get_wealth(
 #[get("/api/history/pods")]
 pub async fn get_pods(
     req: HttpRequest,
-    db: Data<Client>,
+    db: Data<Client<'_>>,
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok()
@@ -30,7 +30,7 @@ pub async fn get_pods(
 #[get("/api/history/budgets")]
 pub async fn get_budgets(
     req: HttpRequest,
-    db: Data<Client>,
+    db: Data<Client<'_>>,
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok()
@@ -40,7 +40,7 @@ pub async fn get_budgets(
 #[get("/api/history/inbudgets")]
 pub async fn get_inbudgets(
     req: HttpRequest,
-    db: Data<Client>,
+    db: Data<Client<'_>>,
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok()
@@ -50,7 +50,7 @@ pub async fn get_inbudgets(
 #[get("/api/history/debts")]
 pub async fn get_debts(
     req: HttpRequest,
-    db: Data<Client>,
+    db: Data<Client<'_>>,
     q: Query<QueryParams>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok()

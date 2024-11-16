@@ -6,7 +6,7 @@ use pages::{
     Budgets, Contract, Contracts, Dashboard, Debts, Goal, Goals, Pods, Transaction, Transactions,
 };
 
-use fancy_yew::components::{DefaultLayout, NavItemBuilder, Navable};
+use fancy_yew::layouts::{HorizontalLayout, NavItemBuilder, Navable};
 
 use yew::prelude::*;
 use yew_router::prelude::*;
@@ -113,7 +113,7 @@ impl Navable for Route {
 
     fn render(route: Route) -> Html {
         html! {
-            <DefaultLayout<Route> nav_routes={Route::route_items()}>{
+            <HorizontalLayout<Route> nav_routes={Route::route_items()}>{
                 match route {
                     Route::Index => html! { <Dashboard /> },
                     Route::Dashboard => html! { <Dashboard /> },
@@ -128,7 +128,7 @@ impl Navable for Route {
                     Route::Goals => html! { <Goals /> },
                     Route::NotFound => html! { <h1>{ "404 Not Found" }</h1> },
         }}
-            </DefaultLayout<Route>>
+            </HorizontalLayout<Route>>
         }
     }
 }

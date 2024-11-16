@@ -411,7 +411,7 @@ pub fn ContractPage(props: &Props) -> Html {
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <button onclick={update}>{"Update"}</button>
+                        <button onclick={update} class="update">{"Update"}</button>
                     </td>
                 </tr>
            </table>

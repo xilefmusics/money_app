@@ -8,7 +8,7 @@ use std::sync::Arc;
 pub struct ContractModel;
 
 impl ContractModel {
-    pub async fn get<'a>(db: Arc<Client>, user: &str) -> Result<Vec<Contract>, AppError> {
+    pub async fn get<'a>(db: Arc<Client<'_>>, user: &str) -> Result<Vec<Contract>, AppError> {
         Ok(db
             .table("contracts")
             .owner(user)
@@ -17,7 +17,7 @@ impl ContractModel {
             .await?)
     }
 
-    pub async fn get_one(db: Arc<Client>, user: &str, id: &str) -> Result<Contract, AppError> {
+    pub async fn get_one(db: Arc<Client<'_>>, user: &str, id: &str) -> Result<Contract, AppError> {
         Ok(db
             .table("contracts")
             .owner(user)
@@ -28,7 +28,7 @@ impl ContractModel {
     }
 
     pub async fn put(
-        db: Arc<Client>,
+        db: Arc<Client<'_>>,
         user: &str,
         contracts: Vec<Contract>,
     ) -> Result<Vec<Contract>, AppError> {
@@ -36,7 +36,7 @@ impl ContractModel {
     }
 
     pub async fn delete(
-        db: Arc<Client>,
+        db: Arc<Client<'_>>,
         user: &str,
         contracts: Vec<Contract>,
     ) -> Result<Vec<Contract>, AppError> {
@@ -44,7 +44,7 @@ impl ContractModel {
     }
 
     pub async fn create(
-        db: Arc<Client>,
+        db: Arc<Client<'_>>,
         user: &str,
         contracts: Vec<Contract>,
     ) -> Result<Vec<Contract>, AppError> {

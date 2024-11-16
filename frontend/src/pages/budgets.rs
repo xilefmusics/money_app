@@ -1,6 +1,6 @@
 use crate::components::ListItem;
 use crate::Route;
-use fancy_yew::components::{ChartJs, ConfigBuilder};
+use fancy_yew::components::{Chart, ConfigBuilder};
 use money_app_shared::history::AssociatedTypeValues;
 
 use chrono::{Datelike, Local};
@@ -207,7 +207,7 @@ pub fn Budgets() -> Html {
                 if let Some(chart_config) = chart_config {
                     html! {
                         <div class="chart-wrapper">
-                            <ChartJs config={chart_config}/>
+                            <Chart config={chart_config}/>
                         </div>
                     }
                 } else {
@@ -223,7 +223,7 @@ pub fn Budgets() -> Html {
                 if let Some(chart_config) = chart_config_in {
                     html! {
                         <div class="chart-wrapper">
-                            <ChartJs config={chart_config}/>
+                            <Chart config={chart_config}/>
                         </div>
                     }
                 } else {

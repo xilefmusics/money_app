@@ -11,7 +11,7 @@ use actix_web::{post, web::Data, HttpRequest, HttpResponse};
 #[post("/api/import")]
 pub async fn import(
     req: HttpRequest,
-    db: Data<Client>,
+    db: Data<Client<'_>>,
     payload: String,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Created().json(

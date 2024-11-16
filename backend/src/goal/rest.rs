@@ -10,14 +10,14 @@ use actix_web::{
 };
 
 #[get("/api/goals")]
-pub async fn get(req: HttpRequest, db: Data<Client>) -> Result<HttpResponse, AppError> {
+pub async fn get(req: HttpRequest, db: Data<Client<'_>>) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(GoalModel::get(db.into_inner(), &parse_user_header(&req)?).await?))
 }
 
 #[get("/api/goals/{id}")]
 pub async fn get_id(
     req: HttpRequest,
-    db: Data<Client>,
+    db: Data<Client<'_>>,
     id: Path<String>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().json(
@@ -29,7 +29,7 @@ pub async fn get_id(
 pub async fn put(
     req: HttpRequest,
     goals: Json<Vec<Goal>>,
-    db: Data<Client>,
+    db: Data<Client<'_>>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Created().json(
         GoalModel::put(
@@ -45,7 +45,7 @@ pub async fn put(
 pub async fn delete(
     req: HttpRequest,
     goals: Json<Vec<Goal>>,
-    db: Data<Client>,
+    db: Data<Client<'_>>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::NoContent().json(
         GoalModel::delete(
@@ -61,7 +61,7 @@ pub async fn delete(
 pub async fn post(
     req: HttpRequest,
     goals: Json<Vec<Goal>>,
-    db: Data<Client>,
+    db: Data<Client<'_>>,
 ) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Created().json(
         GoalModel::create(
@@ -72,4 +72,3 @@ pub async fn post(
         .await?,
     ))
 }
-

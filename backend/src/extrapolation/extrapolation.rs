@@ -17,8 +17,12 @@ fn savings_rate(goals: &[Goal], wealth: &Wealth) -> u32 {
         .map(|goal| {
             let months = goal.due.month() as i64 - wealth.date.month() as i64
                 + (goal.due.year() as i64 - wealth.date.year() as i64) * 12;
-            match goal.data {
-                GoalData::RealWealth(goal) => (goal as i64 - wealth.real.value) / months,
+            if months > 0 {
+                match goal.data {
+                    GoalData::RealWealth(goal) => (goal as i64 - wealth.real.value) / months,
+                }
+            } else {
+                0
             }
         })
         .max()

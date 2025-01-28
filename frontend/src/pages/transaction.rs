@@ -204,14 +204,15 @@ pub fn TransactionPage(props: &Props) -> Html {
                     .await
                     .unwrap();
                 debt_types.set(fetched_debt_types);
-                let fetched_tag_types: Vec<String> = Request::get("/api/tags")
-                    .send()
-                    .await
-                    .unwrap()
-                    .json()
-                    .await
-                    .unwrap();
-                tag_types.set(fetched_tag_types);
+                // TODO: fix
+                // let fetched_tag_types: Vec<String> = Request::get("/api/tags")
+                //     .send()
+                //     .await
+                //     .unwrap()
+                //     .json()
+                //     .await
+                //     .unwrap();
+                // tag_types.set(fetched_tag_types);
             });
             || ()
         });

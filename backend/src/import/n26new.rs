@@ -16,6 +16,8 @@ pub enum Type {
     #[serde(rename = "Direct Debit")]
     DirectDebit,
     #[serde(rename = "Presentment")]
+    MoneyBeam,
+    #[serde(rename = "MoneyBeam")]
     Presentment,
 }
 
@@ -26,6 +28,7 @@ impl Type {
             Self::CreditTransfer => "Credit Transfer",
             Self::DirectDebit => "Direct Debit",
             Self::Presentment => "Presentment",
+            Self::MoneyBeam => "MoneyBeam",
         }
         .to_string()
     }

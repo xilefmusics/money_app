@@ -111,7 +111,7 @@ pub mod amount {
         let s = handle_comma_dot(trim(&String::deserialize(deserializer)?));
         let mut iter = s.split(".");
         let before = iter.next().unwrap().parse::<i64>().unwrap();
-        let after_str = iter.next().unwrap();
+        let after_str = iter.next().unwrap_or("0");
         let after_mul = if !after_str.starts_with('0') && after_str.len() == 1 {
             10
         } else {
